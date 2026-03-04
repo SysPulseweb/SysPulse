@@ -1,0 +1,3587 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SysPulse</title>
+
+  <!-- ✅ FAVICON (ROBUSTO): intenta nombres comunes en /static/ y el /favicon.ico del server -->
+  <link rel="icon" href="/favicon.ico?v=6" sizes="any">
+  <link rel="shortcut icon" href="/favicon.ico?v=6">
+  <link rel="icon" href="/static/favicon.ico?v=6" sizes="any">
+  <link rel="shortcut icon" href="/static/favicon.ico?v=6">
+  <link rel="icon" href="/static/Favicon.ico?v=6" sizes="any">
+  <link rel="shortcut icon" href="/static/Favicon.ico?v=6">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon.png?v=6">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon.png?v=6">
+  <link rel="icon" type="image/png" sizes="48x48" href="/static/favicon.png?v=6">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/Favicon.png?v=6">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/Favicon.png?v=6">
+  <link rel="icon" type="image/png" sizes="48x48" href="/static/Favicon.png?v=6">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon.png?v=6">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/Favicon.png?v=6">
+  <meta name="theme-color" content="#070b12">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#070b12;
+      --panel:#0c1422;
+      --panel2:#0a111d;
+      --text:#eaf2ff;
+      --muted:#8aa0bf;
+      --line:rgba(255,255,255,.08);
+      --accent:#3b82f6;
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --radius:18px;
+      --inputBg: rgba(0,0,0,.25);
+    }
+
+    body.theme-dark{}
+    body.theme-light{
+      --bg:#f4f6fb;
+      --panel:#ffffff;
+      --panel2:#ffffff;
+      --text:#0b1220;
+      --muted:#4b5563;
+      --line:rgba(15,23,42,.12);
+      --accent:#2563eb;
+      --shadow:0 10px 26px rgba(2,6,23,.12);
+      --inputBg: rgba(15,23,42,.06);
+    }
+    body.theme-blue{
+      --bg:#061733;
+      --panel:#0a2346;
+      --panel2:#081d3a;
+      --text:#eaf2ff;
+      --muted:#9bb5d6;
+      --line:rgba(255,255,255,.10);
+      --accent:#60a5fa;
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --inputBg: rgba(0,0,0,.22);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 600px at 25% 0%, rgba(59,130,246,.18), transparent 50%),
+                  radial-gradient(900px 500px at 75% 10%, rgba(16,185,129,.12), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    .wrap{max-width:1200px; margin:28px auto; padding:0 18px;}
+    .top{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; margin-bottom:18px;
+    }
+    .brand{display:flex; align-items:center; gap:12px;}
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .logo img{width:100%; height:100%; object-fit:cover}
+    .title{display:flex; flex-direction:column; gap:2px}
+    .title h1{margin:0; font-size:22px; letter-spacing:.3px}
+    .title .sub{color:var(--muted); font-size:13px}
+    .right{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
+    .pill{
+      padding:8px 12px; border-radius:999px; background:rgba(255,255,255,.04);
+      border:1px solid var(--line); color:var(--muted); font-size:13px;
+    }
+    .btn{
+      padding:10px 14px; border-radius:14px; border:1px solid var(--line);
+      background:rgba(255,255,255,.05); color:var(--text); cursor:pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,.22);
+      display:inline-flex; align-items:center; gap:10px;
+    }
+    .btn:hover{filter:brightness(1.08)}
+    .btn.primary{background:rgba(59,130,246,.18); border-color:rgba(59,130,246,.35)}
+    .btn.danger{background:rgba(239,68,68,.18); border-color:rgba(239,68,68,.35)}
+    .btn.warn{background:rgba(245,158,11,.18); border-color:rgba(245,158,11,.35)}
+    .btn.ghost{background:transparent}
+    .btn .ico{
+      width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center;
+      opacity:.95;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,.18));
+    }
+    .btn .txt{display:inline-block}
+
+    .tabs{
+      display:flex; gap:8px; padding:10px; border-radius:999px;
+      background:rgba(255,255,255,.03); border:1px solid var(--line);
+      width:fit-content;
+      flex-wrap:wrap;
+    }
+    .tab{
+      padding:10px 14px; border-radius:999px; cursor:pointer; color:var(--muted);
+      user-select:none;
+    }
+    .tab.active{background:rgba(255,255,255,.06); color:var(--text); border:1px solid var(--line)}
+
+    /* ✅ Mantiene el código de charts tab, pero no se muestra la pestaña */
+    .tab[data-tab="charts"]{ display:none !important; }
+
+    .grid{display:grid; gap:14px;}
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    .card h2{margin:0 0 6px; font-size:18px}
+    .muted{color:var(--muted); font-size:13px}
+    .kpis{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .kpi{
+      padding:8px 12px; border-radius:999px; border:1px solid var(--line);
+      background:rgba(255,255,255,.03); color:var(--muted); font-size:13px;
+    }
+    .kpi b{color:var(--text)}
+    table{width:100%; border-collapse:collapse; font-size:13px;}
+    th,td{padding:10px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+    th{color:var(--muted); font-weight:600; text-align:left;}
+    tr:hover{background:rgba(255,255,255,.03)}
+    .status{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px; border:1px solid var(--line);
+      background:rgba(255,255,255,.03); font-weight:600;
+    }
+    .dot{width:9px; height:9px; border-radius:50%;}
+    .dot.ok{background:var(--good)}
+    .dot.bad{background:var(--bad)}
+
+    .mini{
+      display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;
+      margin-top:10px;
+    }
+    .mini .box{
+      background:rgba(255,255,255,.02);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+    }
+    .mini .box .label{color:var(--muted); font-size:12px}
+    .mini .box .value{font-size:22px; font-weight:800; margin-top:6px}
+    .split{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    .split2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    .hide{display:none}
+    .toast{
+      position:fixed; left:16px; bottom:16px; z-index:9999;
+      background:rgba(0,0,0,.6); border:1px solid var(--line);
+      padding:10px 12px; border-radius:14px; color:var(--text);
+      backdrop-filter: blur(8px);
+      max-width: 560px;
+    }
+
+    /* ✅ LOGIN mejorado (logo + mostrar/ocultar contraseña + error inline) */
+    .login{
+      max-width:420px; margin:8vh auto; padding:22px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow: var(--shadow);
+    }
+    .loginHeader{display:flex; align-items:center; gap:12px; margin-bottom:6px;}
+    .loginLogo{
+      width:46px; height:46px; border-radius:16px;
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .loginLogo img{width:100%; height:100%; object-fit:cover}
+    .login h2{margin:0}
+    .field{display:flex; flex-direction:column; gap:6px; margin:10px 0;}
+    input, select{
+      padding:12px 12px; border-radius:14px; border:1px solid var(--line);
+      background:var(--inputBg); color:var(--text);
+      outline:none;
+    }
+    .footer-note{color:var(--muted); font-size:12px; margin-top:10px}
+    .rightSmall{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap}
+    .dangerText{color:#ffb4b4}
+    .tiny{font-size:11px; color:var(--muted)}
+
+    .inputRow{display:flex; gap:10px; align-items:center;}
+    .inputRow input{flex:1}
+    .iconBtn{
+      width:44px; height:44px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .iconBtn:hover{filter:brightness(1.08)}
+    .loginError{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.10);
+      color: #ffd0d0;
+      font-size: 12.5px;
+      line-height: 1.35;
+    }
+
+    /* ✅ charts cards: arreglos para “ver completo” */
+    .chartShell{
+      position:relative;
+      overflow:hidden;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(900px 240px at 15% 20%, rgba(59,130,246,.14), transparent 60%),
+        radial-gradient(800px 240px at 85% 10%, rgba(16,185,129,.10), transparent 58%),
+        rgba(255,255,255,.02);
+      box-shadow: var(--shadow);
+      padding:14px;
+      min-height: 320px;
+      height: 320px;
+    }
+    .chartShellTall{ min-height: 380px; height: 380px; }
+
+    .chartShell canvas{
+      display:block;
+      width:100% !important;
+      height: calc(100% - 34px) !important;
+    }
+
+    .chartHead{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      margin-bottom:8px;
+      min-height: 26px;
+    }
+    .chartHead h3{margin:0; font-size:15px}
+    .chartHead .hint{color:var(--muted); font-size:12px}
+    .chartWatermark{
+      position:absolute; right:14px; bottom:12px;
+      font-size:11px; color:rgba(255,255,255,.14);
+      letter-spacing:.2px;
+      pointer-events:none;
+      user-select:none;
+    }
+    body.theme-light .chartWatermark{ color: rgba(15,23,42,.12); }
+
+    /* Ayuda / Info */
+    .helpContent h2{margin:0 0 10px; font-size:18px}
+    .helpContent p{margin:8px 0}
+    .helpContent ol{margin:10px 0 0 18px}
+    .helpContent ul{margin:8px 0 0 18px}
+    .helpContent li{margin:6px 0}
+
+    .docContent{max-width:100%; margin:0;}
+    .helpWrap{max-width:100%; margin:0;}
+
+    .docHero{
+      padding: 18px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: radial-gradient(900px 260px at 15% 20%, rgba(59,130,246,.18), transparent 60%),
+                  radial-gradient(800px 240px at 85% 10%, rgba(16,185,129,.14), transparent 58%),
+                  rgba(255,255,255,.02);
+      box-shadow: var(--shadow);
+    }
+    .docHero h2{margin: 0; font-size: 22px; letter-spacing: .2px;}
+    .docHero .subtitle{margin-top: 8px; color: var(--muted); font-size: 13.5px; line-height: 1.45;}
+    .badges{display:flex; gap:8px; flex-wrap:wrap; margin-top: 12px;}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 7px 10px; border-radius: 999px; border: 1px solid var(--line);
+      background: rgba(255,255,255,.04); color: var(--muted); font-size: 12px;
+    }
+    .docGrid{display:grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;}
+    .docSection{
+      border:1px solid var(--line); border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow: var(--shadow); padding: 16px;
+    }
+    .docSection h3{margin: 0 0 10px; font-size: 16px;}
+    .docSection p{margin: 8px 0; color: var(--text); line-height: 1.55;}
+    .docSection .mutedLine{color: var(--muted); font-size: 13px;}
+    .docList{margin: 10px 0 0 18px;}
+    .docList li{margin: 7px 0; color: var(--text);}
+    .callout{
+      margin-top: 14px; padding: 14px 14px; border-radius: 18px;
+      border: 1px solid rgba(59,130,246,.35); background: rgba(59,130,246,.12);
+    }
+    .callout b{ color: var(--text); }
+    .callout .mutedLine{ color: var(--muted); }
+
+    .helpIntro{margin:8px 0 0; color:var(--muted); line-height:1.55;}
+    .helpCards{display:grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;}
+    .helpCard{
+      border:1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .helpCard::before{
+      content:"";
+      position:absolute;
+      inset:-80px auto auto -80px;
+      width:180px; height:180px;
+      background: radial-gradient(circle at 30% 30%, rgba(59,130,246,.18), transparent 60%);
+      transform: rotate(18deg);
+      pointer-events:none;
+    }
+    .helpHead{display:flex; align-items:flex-start; justify-content:space-between; gap:10px;}
+    .stepBadge{
+      display:inline-flex; align-items:center; justify-content:center;
+      min-width:34px; height:34px; padding:0 10px;
+      border-radius: 999px;
+      border:1px solid rgba(59,130,246,.35);
+      background: rgba(59,130,246,.14);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 13px;
+      box-shadow: 0 10px 20px rgba(0,0,0,.18);
+    }
+    .helpTitle{margin:0; font-size: 15.5px; letter-spacing:.1px;}
+    .helpBody{margin-top: 10px; color: var(--text); line-height: 1.55; font-size: 13.5px;}
+    .helpBody p{margin:8px 0;}
+    .helpBody ul, .helpBody ol{margin:8px 0 0 18px;}
+    .helpBody li{margin:6px 0;}
+    .helpHint{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size: 12.5px;
+    }
+
+    /* ✅ ALERTAS PRO + MODAL */
+    #tab_alerts table{ border-collapse: separate; border-spacing: 0 10px; }
+    #tab_alerts thead th{ border-bottom: 1px solid var(--line); }
+    #tab_alerts tbody td{
+      background: rgba(255,255,255,.03);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    #tab_alerts tbody tr:hover td{ filter: brightness(1.06); }
+    #tab_alerts tbody td:first-child{
+      border-left: 1px solid var(--line);
+      border-top-left-radius: 16px;
+      border-bottom-left-radius: 16px;
+      position: relative;
+      padding-left: 18px;
+    }
+    #tab_alerts tbody td:last-child{
+      border-right: 1px solid var(--line);
+      border-top-right-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
+    #tab_alerts tbody td:first-child::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:10px;
+      bottom:10px;
+      width:4px;
+      border-radius:999px;
+      background: var(--bad);
+      box-shadow: 0 0 0 1px rgba(239,68,68,.35), 0 0 18px rgba(239,68,68,.22);
+    }
+    #tab_alerts tbody tr.isOffline td:first-child::before{
+      width:6px;
+      box-shadow: 0 0 0 1px rgba(239,68,68,.45), 0 0 28px rgba(239,68,68,.35);
+    }
+    #tab_alerts tbody tr.isOffline td{
+      background: rgba(239,68,68,.06);
+      border-top-color: rgba(239,68,68,.22);
+      border-bottom-color: rgba(239,68,68,.22);
+    }
+    .alertChip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      font-weight: 900;
+      letter-spacing: .2px;
+      white-space: nowrap;
+    }
+    .alertChip .miniDot{
+      width:8px; height:8px; border-radius:50%;
+      background: var(--bad);
+      box-shadow: 0 0 0 3px rgba(239,68,68,.12);
+    }
+    .alertChip .chipIcon{ font-size: 13px; line-height: 1; opacity: .95; }
+    .alertChip--offline{
+      border-color: rgba(239,68,68,.45);
+      background: rgba(239,68,68,.18);
+      box-shadow: 0 10px 20px rgba(0,0,0,.18);
+    }
+    .alertChip--offline .miniDot{
+      background: var(--bad);
+      box-shadow: 0 0 0 3px rgba(239,68,68,.18), 0 0 18px rgba(239,68,68,.25);
+    }
+    .alertChip--cpu{border-color: rgba(245,158,11,.40); background: rgba(245,158,11,.14);}
+    .alertChip--cpu .miniDot{background: var(--warn); box-shadow: 0 0 0 3px rgba(245,158,11,.14);}
+    .alertChip--ram{border-color: rgba(139,92,246,.40); background: rgba(139,92,246,.14);}
+    .alertChip--ram .miniDot{background: rgba(139,92,246,1); box-shadow: 0 0 0 3px rgba(139,92,246,.14);}
+    .alertChip--disk{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.12);}
+    .alertChip--disk .miniDot{background: var(--good); box-shadow: 0 0 0 3px rgba(34,197,94,.12);}
+    .alertHost{ font-weight: 900; }
+    .alertMsg{ font-weight: 650; }
+    .alertTime{ color: var(--muted); font-size: 12.5px; }
+
+    .modal{position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 10000;}
+    .modal.hide{ display:none; }
+    .modalBackdrop{position:absolute; inset:0; background: rgba(0,0,0,.55); backdrop-filter: blur(7px);}
+    .modalCard{
+      position: relative;
+      width: min(560px, calc(100% - 36px));
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(12,20,34,.92), rgba(10,17,29,.92));
+      box-shadow: 0 22px 70px rgba(0,0,0,.65);
+      padding: 18px;
+    }
+    body.theme-light .modalCard{background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.92));}
+    .modalTitleRow{display:flex; align-items:center; gap:10px; margin-bottom: 8px;}
+    .modalIcon{
+      width: 34px; height: 34px; border-radius: 12px;
+      display:flex; align-items:center; justify-content:center;
+      border: 1px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.14);
+      box-shadow: 0 10px 22px rgba(0,0,0,.18);
+      user-select:none;
+    }
+    .modalTitle{margin: 0; font-size: 16px; font-weight: 900; letter-spacing: .2px;}
+    .modalText{margin: 8px 0 0; color: var(--muted); line-height: 1.5; font-size: 13.5px;}
+    .modalActions{margin-top: 14px; display:flex; justify-content: flex-end; gap: 10px;}
+
+    /* ✅ Export modal UI */
+    .segTabs{
+      display:flex; gap:8px; padding:8px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      width: fit-content;
+      margin-top: 10px;
+      flex-wrap:wrap;
+    }
+    .seg{
+      padding:10px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      cursor:pointer;
+      user-select:none;
+      border:1px solid transparent;
+    }
+    .seg.active{
+      background: rgba(255,255,255,.06);
+      border-color: var(--line);
+      color: var(--text);
+    }
+    .exportGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 560px){
+      .exportGrid{grid-template-columns:1fr;}
+    }
+    .exportHint{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+    body.theme-light .exportHint{background: rgba(15,23,42,.06);}
+
+    /* ✅ INICIO (AGREGADO): look pro sin cambiar tu estilo */
+    .homeHero{
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: radial-gradient(900px 260px at 15% 20%, rgba(59,130,246,.18), transparent 60%),
+                  radial-gradient(800px 240px at 85% 10%, rgba(16,185,129,.14), transparent 58%),
+                  rgba(255,255,255,.02);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .homeHeroTop{
+      display:flex; justify-content:space-between; align-items:flex-start;
+      gap:12px; flex-wrap:wrap;
+    }
+    .homeTitle{margin:0; font-size:18px; letter-spacing:.2px}
+    .homeSub{margin-top:6px; color:var(--muted); font-size:13.5px; line-height:1.45}
+    .homeBadgeRow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .homeBadge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px; border-radius:999px; border:1px solid var(--line);
+      background: rgba(255,255,255,.04); color: var(--muted); font-size: 12px;
+    }
+    .homeKpiGrid{
+      display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-top:14px;
+    }
+    .homeKpi{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background: rgba(255,255,255,.02);
+      padding:12px;
+      min-height:76px;
+    }
+    .homeKpi .label{color:var(--muted); font-size:12px}
+    .homeKpi .value{font-size:22px; font-weight:900; margin-top:6px}
+    .homeActions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .homeBar{
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+      margin-top:10px;
+    }
+    .homeBar > div{
+      height:100%;
+      width:0%;
+      background: rgba(59,130,246,.85);
+    }
+    .homeRankRow{display:flex; flex-direction:column; gap:10px; margin-top:6px}
+    .rankItem{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      border-radius:16px;
+      padding:10px 12px;
+    }
+    .rankTop{
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
+      font-size:13px;
+    }
+    .rankName{font-weight:900}
+    .rankVal{color:var(--muted); font-weight:800}
+    .rankBar{
+      height: 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+      margin-top:8px;
+    }
+    .rankBar > div{
+      height:100%;
+      width:0%;
+      background: rgba(16,185,129,.82);
+    }
+    .locInput{
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.18);
+  color: var(--text);
+  outline: none;
+}
+.locInput:focus{
+  border-color: rgba(120,180,255,.55);
+  box-shadow: 0 0 0 3px rgba(120,180,255,.18);
+}
+.detail-header {
+  margin-bottom: 14px;
+}
+
+.detail-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-hostname {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.detail-status-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.detail-status-badge.online {
+  background: rgba(0, 200, 100, 0.15);
+  color: #2ecc71;
+}
+
+.detail-status-badge.offline {
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff5a5a;
+}
+
+.detail-location {
+  margin-top: 6px;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.detail-location::before {
+  content: " ";
+}
+
+.detail-os {
+  font-size: 13px;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+
+    @media (max-width: 980px){
+      .split{grid-template-columns:1fr}
+      .mini{grid-template-columns:1fr}
+      .split2{grid-template-columns:1fr}
+      .docGrid{ grid-template-columns: 1fr; }
+      .helpCards{ grid-template-columns: 1fr; }
+      .homeKpiGrid{ grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 520px){
+      .homeKpiGrid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body class="theme-dark">
+  <div class="wrap">
+
+    <!-- LOGIN -->
+    <div id="loginView" class="login hide">
+      <div class="loginHeader">
+        <div class="loginLogo" title="SysPulse">
+          <img id="loginLogoImg" src="/static/Logotipo.png?v=6" alt="SysPulse">
+        </div>
+        <div>
+          <h2>SysPulse</h2>
+          <div class="muted" id="i_login_sub">Inicia sesión para ver el dashboard.</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="muted" id="i_login_user">Usuario</label>
+        <input id="loginUser" placeholder="admin" autocomplete="username" />
+      </div>
+
+      <div class="field">
+        <label class="muted" id="i_login_pass">Contraseña</label>
+        <div class="inputRow">
+          <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+          <button class="iconBtn" id="btnTogglePass" type="button" title="Mostrar/Ocultar contraseña" aria-label="Mostrar/Ocultar contraseña">👁️</button>
+        </div>
+        <div class="tiny" id="passHint">Pulsa el icono para ver/ocultar.</div>
+      </div>
+
+      <div class="rightSmall">
+        <button class="btn primary" id="btnLogin" type="button"><span class="txt">Entrar</span></button>
+      </div>
+
+      <div id="loginError" class="loginError hide"></div>
+
+      <div class="footer-note" id="i_login_tip">Tip: Usuario/clave están en variables de entorno del servidor (DASH_USER/DASH_PASS).</div>
+      <div class="footer-note tiny">
+        ✅ Si solo ves 1–2 PCs, revisa que cada PC tenga su propio <b>device_id.txt</b> (no copies la carpeta completa del agente con ese archivo).
+      </div>
+    </div>
+
+    <!-- APP -->
+    <div id="appView" class="hide">
+      <div class="top">
+        <div class="brand">
+          <div class="logo" title="SysPulse">
+            <img id="brandLogo" src="/static/Logotipo.png?v=6" alt="SysPulse">
+          </div>
+          <div class="title">
+            <h1>SysPulse</h1>
+            <div class="sub" id="topSub"></div>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="pill hide" id="whoamiPill"></div>
+
+          <button class="btn primary" id="btnRefresh"><span class="ico">🔄</span><span class="txt">Actualizar</span></button>
+          <button class="btn" id="btnExport"><span class="ico">📄</span><span class="txt">Exportar</span></button>
+          <button class="btn danger" id="btnDelete"><span class="ico">🗑️</span><span class="txt">Quitar PC</span></button>
+          <button class="btn" id="btnLogout"><span class="ico">🚪</span><span class="txt">Cerrar Sesión</span></button>
+
+          <div class="pill hide" id="selectedPill"></div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="home">Inicio</div>
+        <div class="tab" data-tab="pcs">PCs</div>
+        <div class="tab" data-tab="dash">Dashboard</div>
+        <div class="tab" data-tab="alerts">Alertas</div>
+        <div class="tab" data-tab="charts">Gráficas</div>
+        <div class="tab" data-tab="settings">Configuración</div>
+        <div class="tab" data-tab="info">Información SysPulse</div>
+        <div class="tab" data-tab="help">Ayuda</div>
+      </div>
+
+      <div style="height:14px"></div>
+
+      <!-- ✅ INICIO -->
+      <div id="tab_home" class="grid">
+        <div class="homeHero">
+          <div class="homeHeroTop">
+            <div>
+              <h2 class="homeTitle">Centro de control</h2>
+              <div class="homeSub" id="homeSub">
+                Monitoreo en tiempo real • Última sincronización: <b style="color:var(--text)" id="homeLastSync">-</b>
+              </div>
+              <div class="homeBadgeRow">
+                <div class="homeBadge" id="homeHealthBadge">🟦 Salud general: <b style="color:var(--text)">-</b></div>
+                <div class="homeBadge">🧩 Dispositivos: <b style="color:var(--text)" id="homeTotal">0</b></div>
+                <div class="homeBadge">🕒 Zona horaria: <b style="color:var(--text)" id="homeTZ">-</b></div>
+              </div>
+            </div>
+
+            <div class="homeActions">
+              <button class="btn primary" id="homeGoPcs" type="button"><span class="txt">Ver PCs</span></button>
+              <button class="btn" id="homeGoDash" type="button"><span class="txt">Abrir Dashboard</span></button>
+              <button class="btn" id="homeGoSettings" type="button"><span class="txt">Ir a Configuración</span></button>
+              <button class="btn danger" id="homeGoAlerts" type="button"><span class="txt">Ver Alertas</span></button>
+            </div>
+          </div>
+
+          <div class="homeKpiGrid">
+            <div class="homeKpi">
+              <div class="label">Online</div>
+              <div class="value" id="homeOnline">0</div>
+              <div class="muted">Equipos conectados</div>
+            </div>
+            <div class="homeKpi">
+              <div class="label">Offline</div>
+              <div class="value" id="homeOffline">0</div>
+              <div class="muted">Sin reporte</div>
+            </div>
+            <div class="homeKpi">
+              <div class="label">Alertas</div>
+              <div class="value" id="homeAlerts">0</div>
+              <div class="muted">Guardadas en este navegador</div>
+            </div>
+            <div class="homeKpi">
+              <div class="label">Carga promedio (Online)</div>
+              <div class="value" id="homeAvgCpu">-</div>
+              <div class="muted">CPU promedio</div>
+              <div class="homeBar"><div id="homeAvgCpuBar"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="split2">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+              <div>
+                <h2>Últimas alertas</h2>
+                <div class="muted">Vista rápida (top 6). Pulsa “Ver Alertas” para ver todo.</div>
+              </div>
+              <button class="btn danger" id="homeClearAlerts" type="button"><span class="txt">Limpiar</span></button>
+            </div>
+
+            <div style="height:10px"></div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Dispositivo</th>
+                  <th>Mensaje</th>
+                  <th>Hora</th>
+                </tr>
+              </thead>
+              <tbody id="homeAlertsTbody"></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+              <div>
+                <h2>Top equipos (Online)</h2>
+                <div class="muted">Ranking rápido por consumo (último punto).</div>
+              </div>
+              <div class="pill">Top: <b style="color:var(--text)">3</b></div>
+            </div>
+
+            <div style="height:10px"></div>
+
+            <div class="muted" style="font-weight:800">CPU</div>
+            <div class="homeRankRow" id="homeTopCpu"></div>
+
+            <div style="height:10px"></div>
+
+            <div class="muted" style="font-weight:800">RAM</div>
+            <div class="homeRankRow" id="homeTopRam"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PCs -->
+      <div id="tab_pcs" class="grid hide">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
+            <div>
+              <h2>Dispositivos</h2>
+              <div class="muted">Selecciona un PC para ver detalle y gráficas.</div>
+            </div>
+            <div class="kpis">
+              <div class="kpi">Online: <b id="kpiOnline">0</b></div>
+              <div class="kpi">Offline: <b id="kpiOffline">0</b></div>
+              <div class="kpi">Alertas: <b id="kpiAlerts">0</b></div>
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+          <table>
+            <thead>
+              <tr>
+                <th>Estado</th>
+                <th>Hostname</th>
+                <th>Ubicación</th>
+                <th>OS</th>
+                <th>Último reporte</th>
+              </tr>
+            </thead>
+            <tbody id="devicesTbody"></tbody>
+          </table>
+        </div>
+
+        <div class="card" id="pcEmptyState">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+            <div>
+              <h2>Detalle</h2>
+              <div class="muted">Selecciona un PC de la tabla para ver detalle y gráficas.</div>
+            </div>
+            <div class="pill">📌 Tip: haz clic sobre una fila</div>
+          </div>
+        </div>
+
+        <div class="card hide" id="detailCard">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+            <div>
+              <h2>Detalle</h2>
+              <div class="muted">CPU/RAM/DISCO, estado y Top procesos.</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <div class="status" id="detailStatus"><span class="dot bad"></span>offline</div>
+              <button class="btn" id="btnExportInline" type="button"><span class="ico">📄</span><span class="txt">Exportar informe</span></button>
+            </div>
+          </div>
+
+          <div class="mini">
+            <div class="box">
+              <div class="label">CPU</div>
+              <div class="value" id="cpuPct">-</div>
+              <div class="muted">%</div>
+            </div>
+            <div class="box">
+              <div class="label">RAM</div>
+              <div class="value" id="ramPct">-</div>
+              <div class="muted" id="ramText">-</div>
+            </div>
+            <div class="box">
+              <div class="label">Disco</div>
+              <div class="value" id="diskPct">-</div>
+              <div class="muted" id="diskText">-</div>
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+          <div id="detailHeader" class="detail-header">
+            <div class="detail-top-row">
+              <div id="detailHostname" class="detail-hostname"></div>
+              <div id="detailStatusBadge" class="detail-status-badge"></div>
+            </div>
+
+            <div id="detailLocation" class="detail-location"></div>
+            <div id="detailOS" class="detail-os"></div>
+          </div>
+          <div class="muted">Timestamp: <b id="tsText" style="color:var(--text)">-</b></div>
+          <div class="muted">Uptime: <b id="uptimeText" style="color:var(--text)">-</b></div>
+          <div class="muted">Estado: <b id="stateText" style="color:var(--text)">-</b> • Último reporte: <b id="lastSeenText" style="color:var(--text)">-</b></div>
+
+          <div style="height:14px"></div>
+          <div class="split2">
+            <div>
+              <h3 style="margin:0 0 8px; font-size:15px">Top procesos (CPU)</h3>
+              <table>
+                <thead><tr><th>PID</th><th>Proceso</th><th>CPU%</th><th>RAM</th></tr></thead>
+                <tbody id="topCpuTbody"></tbody>
+              </table>
+            </div>
+            <div>
+              <h3 style="margin:0 0 8px; font-size:15px">Top procesos (RAM)</h3>
+              <table>
+                <thead><tr><th>PID</th><th>Proceso</th><th>CPU%</th><th>RAM</th></tr></thead>
+                <tbody id="topRamTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="pcChartsMount" class="hide"></div>
+      </div>
+
+      <!-- Dashboard -->
+      <div id="tab_dash" class="grid hide">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-start;">
+            <div>
+              <h2>Dashboard general</h2>
+              <div class="muted">Promedios reales por estado (último punto por PC).</div>
+            </div>
+            <div class="kpis">
+              <div class="kpi">Online: <b id="dashOnline">0</b></div>
+              <div class="kpi">Offline: <b id="dashOffline">0</b></div>
+              <div class="kpi">Alertas: <b id="dashAlerts">0</b></div>
+            </div>
+          </div>
+
+          <div style="height:14px"></div>
+          <div class="split">
+            <div class="chartShell">
+              <div class="chartHead">
+                <h3>CPU promedio (%)</h3>
+                <div class="hint">Online vs Offline</div>
+              </div>
+              <canvas id="avgCpuChart"></canvas>
+              <div class="chartWatermark">SysPulse</div>
+            </div>
+            <div class="chartShell">
+              <div class="chartHead">
+                <h3>RAM promedio (%)</h3>
+                <div class="hint">Online vs Offline</div>
+              </div>
+              <canvas id="avgRamChart"></canvas>
+              <div class="chartWatermark">SysPulse</div>
+            </div>
+          </div>
+
+          <div style="height:14px"></div>
+          <div class="chartShell">
+            <div class="chartHead">
+              <h3>Disco promedio (%)</h3>
+              <div class="hint">Online vs Offline</div>
+            </div>
+            <canvas id="avgDiskChart"></canvas>
+            <div class="chartWatermark">SysPulse</div>
+          </div>
+
+          <div style="height:14px"></div>
+          <div class="split2">
+            <div class="chartShell chartShellTall">
+              <div class="chartHead">
+                <h3>Top 10 CPU (último punto)</h3>
+                <div class="hint">Ranking</div>
+              </div>
+              <canvas id="topCpuChart"></canvas>
+              <div class="chartWatermark">SysPulse</div>
+            </div>
+            <div class="chartShell chartShellTall">
+              <div class="chartHead">
+                <h3>Top 10 RAM (último punto)</h3>
+                <div class="hint">Ranking</div>
+              </div>
+              <canvas id="topRamChart"></canvas>
+              <div class="chartWatermark">SysPulse</div>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            Si un equipo no tiene métricas aún, no entra en los promedios.
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts (SE MANTIENE, pero se “mueve” visualmente debajo del detalle via JS; no se borra) -->
+      <div id="tab_charts" class="grid hide">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+            <div>
+              <h2>Gráficas</h2>
+              <div class="muted">Histórico del PC seleccionado (estilo rendimiento).</div>
+            </div>
+            <div class="pill">Rango: <b id="rangeLabel" style="color:var(--text)">últimos 120 puntos</b></div>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <div class="chartShell">
+            <div class="chartHead">
+              <h3>CPU (%)</h3>
+              <div class="hint">línea de tiempo</div>
+            </div>
+            <canvas id="cpuLine"></canvas>
+            <div class="chartWatermark">60 segundos</div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="chartShell">
+            <div class="chartHead">
+              <h3>RAM (%)</h3>
+              <div class="hint">línea de tiempo</div>
+            </div>
+            <canvas id="ramLine"></canvas>
+            <div class="chartWatermark">60 segundos</div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="chartShell">
+            <div class="chartHead">
+              <h3>Disco (%)</h3>
+              <div class="hint">línea de tiempo</div>
+            </div>
+            <canvas id="diskLine"></canvas>
+            <div class="chartWatermark">60 segundos</div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="split2">
+            <div class="chartShell">
+              <div class="chartHead">
+                <h3>Distribución RAM (último)</h3>
+                <div class="hint">usado vs libre</div>
+              </div>
+              <canvas id="ramDonut"></canvas>
+              <div class="chartWatermark">SysPulse</div>
+            </div>
+            <div class="chartShell">
+              <div class="chartHead">
+                <h3>Distribución Disco (último)</h3>
+                <div class="hint">usado vs libre</div>
+              </div>
+              <canvas id="diskDonut"></canvas>
+              <div class="chartWatermark">SysPulse</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div id="tab_alerts" class="grid hide">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+            <div>
+              <h2>Alertas</h2>
+              <div class="muted">
+                Se generan por umbrales + offline.
+                (Se guardan en este navegador)
+              </div>
+            </div>
+            <button class="btn danger" id="btnClearAlerts" type="button"><span class="txt">Limpiar</span></button>
+          </div>
+
+          <div style="height:10px"></div>
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Dispositivo</th>
+                <th>Mensaje</th>
+                <th>Hora</th>
+              </tr>
+            </thead>
+            <tbody id="alertsTbody"></tbody>
+          </table>
+
+          <div class="footer-note dangerText">
+            Tip: Ajusta umbrales en Configuración para evitar alertas por RAM alta si tu servidor siempre está cargado.
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div id="tab_settings" class="grid hide">
+        <div class="card">
+          <h2>Configuración</h2>
+          <div class="muted">Umbrales, auto-refresh y modo de visualización.</div>
+
+          <div style="height:14px"></div>
+          <div class="split2">
+            <div class="card" style="padding:14px;">
+              <h3 style="margin:0 0 10px; font-size:15px">General</h3>
+
+              <div class="field">
+                <label class="muted">Correo electrónico del administrador1:</label>
+                <input id="setAdminEmail1" type="email" />
+              </div>
+              <div class="field">
+                <label class="muted">Correo electrónico del administrador2:</label>
+                <input id="setAdminEmail2" type="email" />
+              </div>
+
+              <div class="field">
+                <label class="muted">Zona horaria:</label>
+                <select id="setTimezone">
+                  <option value="America/Bogota">Bogota (UTC-05:00)</option>
+                  <option value="UTC">UTC</option>
+                  <option value="America/New_York">New York (America/New_York)</option>
+                  <option value="Europe/Madrid">Madrid (Europe/Madrid)</option>
+                  <option value="America/Mexico_City">Mexico City (America/Mexico_City)</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label class="muted">Idioma Predeterminado:</label>
+                <select id="setLang">
+                  <option value="es">Español</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="card" style="padding:14px;">
+              <h3 style="margin:0 0 10px; font-size:15px">Tema</h3>
+
+              <div class="field">
+                <label class="muted">Modo de visualización:</label>
+                <select id="setTheme">
+                  <option value="dark">Oscuro</option>
+                  <option value="light">Blanco</option>
+                  <option value="blue">Azul</option>
+                </select>
+              </div>
+
+              <div style="height:8px"></div>
+              <div class="rightSmall">
+                <button class="btn primary" id="btnSaveGeneral" type="button"><span class="txt">Guardar</span></button>
+              </div>
+
+              <div class="footer-note">
+                Nota: guardado en <b>localStorage</b>. Si abres en otro PC, vuelve a ajustar.
+              </div>
+            </div>
+          </div>
+
+          <div style="height:14px"></div>
+          <div class="split2">
+            <div class="card" style="padding:14px;">
+              <h3 style="margin:0 0 10px; font-size:15px">Umbrales de alerta</h3>
+              <div class="field">
+                <label class="muted">CPU alta (%)</label>
+                <input id="setCpuHigh" type="number" min="1" max="100" />
+              </div>
+              <div class="field">
+                <label class="muted">RAM alta (%)</label>
+                <input id="setRamHigh" type="number" min="1" max="100" />
+              </div>
+              <div class="field">
+                <label class="muted">Disco alto (%)</label>
+                <input id="setDiskHigh" type="number" min="1" max="100" />
+              </div>
+              <div class="field">
+                <label class="muted">Offline si no reporta (segundos)</label>
+                <input id="setOfflineSec" type="number" min="10" max="3600" />
+              </div>
+            </div>
+
+            <div class="card" style="padding:14px;">
+              <h3 style="margin:0 0 10px; font-size:15px">Auto Refresh</h3>
+              <div class="field">
+                <label class="muted">Actualizar cada (seg)</label>
+                <input id="setRefreshSec" type="number" min="5" max="300" />
+              </div>
+              <div class="field">
+                <label class="muted">Puntos en gráficas</label>
+                <input id="setChartPoints" type="number" min="30" max="1000" />
+              </div>
+
+              <div style="height:8px"></div>
+              <div class="rightSmall">
+                <button class="btn primary" id="btnSaveSettings" type="button"><span class="txt">Guardar</span></button>
+              </div>
+
+              <div class="footer-note">
+                Nota: guardado en <b>localStorage</b>. Si abres en otro PC, vuelve a ajustar.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div id="tab_info" class="grid hide">
+        <div class="card docContent">
+          <div class="docHero">
+            <h2>ℹ️ Información – SysPulse</h2>
+            <div class="subtitle">
+              SysPulse es una plataforma de monitoreo en tiempo real diseñada para supervisar el estado y rendimiento de múltiples dispositivos dentro de una red.
+              Su objetivo es brindar visibilidad centralizada del consumo de recursos, detectar fallas a tiempo y facilitar la toma de decisiones.
+            </div>
+
+            <div class="badges">
+              <div class="badge">✅ CPU</div>
+              <div class="badge">✅ RAM</div>
+              <div class="badge">✅ Disco</div>
+              <div class="badge">✅ Online / Offline</div>
+              <div class="badge">✅ Alertas</div>
+              <div class="badge">✅ Gráficas</div>
+            </div>
+          </div>
+
+          <div class="docGrid">
+            <div class="docSection">
+              <h3>🔎 ¿Qué monitorea SysPulse?</h3>
+              <ul class="docList">
+                <li>Uso de <b>CPU</b></li>
+                <li>Consumo de <b>Memoria RAM</b></li>
+                <li>Uso de <b>Disco</b></li>
+                <li>Estado del dispositivo: <b>Online / Offline</b></li>
+                <li>Tiempo de actividad: <b>Uptime</b></li>
+                <li><b>Procesos</b> que más consumen recursos</li>
+                <li><b>Historial</b> de métricas y comportamiento</li>
+                <li><b>Alertas</b> por umbrales configurables</li>
+              </ul>
+              <div class="mutedLine">Las métricas se actualizan automáticamente según el intervalo configurado.</div>
+            </div>
+
+            <div class="docSection">
+              <h3>📊 Secciones principales</h3>
+              <ul class="docList">
+                <li><b>Inicio:</b> vista general + acciones rápidas.</li>
+                <li><b>PCs:</b> lista de equipos y acceso al detalle.</li>
+                <li><b>Dashboard:</b> promedios y rankings de consumo.</li>
+                <li><b>Gráficas:</b> histórico del equipo seleccionado.</li>
+                <li><b>Alertas:</b> eventos por umbrales u offline.</li>
+                <li><b>Configuración:</b> umbrales, auto-refresh, idioma, tema, zona horaria.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="docGrid">
+            <div class="docSection">
+              <h3>⚙️ ¿Cómo funciona internamente?</h3>
+              <ol class="docList">
+                <li>Cada dispositivo ejecuta un <b>agente de monitoreo</b>.</li>
+                <li>El agente envía métricas periódicamente al <b>servidor</b>.</li>
+                <li>El servidor almacena y expone los datos por <b>API</b>.</li>
+                <li>El panel web consulta y muestra el estado en tiempo real.</li>
+                <li>Se comparan umbrales y se generan <b>alertas</b> automáticamente.</li>
+              </ol>
+              <div class="mutedLine">Las configuraciones y alertas se guardan en el navegador usando <b>localStorage</b>.</div>
+            </div>
+
+            <div class="docSection">
+              <h3>🚀 Ventajas</h3>
+              <ul class="docList">
+                <li>Interfaz moderna y responsiva.</li>
+                <li>Monitoreo en tiempo real con métricas clave.</li>
+                <li>Alertas configurables y visualización clara.</li>
+                <li>Soporte para múltiples equipos.</li>
+                <li>Personalización: tema, idioma y zona horaria.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="callout">
+            <b>🎯 Objetivo principal</b>
+            <div class="mutedLine" style="margin-top:6px;">
+              SysPulse busca ofrecer una herramienta ligera y eficiente para la supervisión continua de infraestructura,
+              ayudando a prevenir fallos, optimizar recursos y mejorar la estabilidad operativa.
+            </div>
+
+            <div style="height:10px"></div>
+            <b>🛡 Recomendaciones de uso</b>
+            <ul class="docList">
+              <li>Mantén los agentes activos en los equipos monitoreados.</li>
+              <li>Ajusta umbrales de acuerdo con la capacidad real de los equipos.</li>
+              <li>Usa navegadores actualizados (Chrome, Edge, Firefox).</li>
+              <li>Evita abrir múltiples pestañas del mismo panel.</li>
+              <li>Verifica conectividad estable con el servidor.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help -->
+      <div id="tab_help" class="grid hide">
+        <div class="card helpContent helpWrap">
+          <h2>Ayuda y Soporte – SysPulse</h2>
+          <p class="helpIntro">
+            Si la aplicación SysPulse presenta fallos o comportamientos inesperados, sigue estas recomendaciones antes de contactar al administrador.
+          </p>
+
+          <div class="helpCards">
+            <div class="helpCard">
+              <div class="helpHead">
+                <div><h3 class="helpTitle">Actualiza la página</h3></div>
+                <div class="stepBadge">1</div>
+              </div>
+              <div class="helpBody">
+                <p>Presiona el botón <b>Actualizar</b> o recarga el navegador (F5 o Ctrl + R).</p>
+                <p>En muchos casos, esto soluciona errores temporales de conexión o carga de datos.</p>
+              </div>
+              <div class="helpHint">Tip: si la red está lenta, espera 5–10s y vuelve a intentar.</div>
+            </div>
+
+            <div class="helpCard">
+              <div class="helpHead">
+                <div><h3 class="helpTitle">Cierra sesión y vuelve a ingresar</h3></div>
+                <div class="stepBadge">2</div>
+              </div>
+              <div class="helpBody">
+                <p>Si notas que no cargan los dispositivos o aparece un error de autenticación:</p>
+                <ol>
+                  <li>Haz clic en <b>Cerrar Sesión</b>.</li>
+                  <li>Ingresa nuevamente con tu usuario y contraseña.</li>
+                </ol>
+                <p>Esto reinicia tu sesión y puede corregir problemas de token expirado.</p>
+              </div>
+            </div>
+
+            <div class="helpCard">
+              <div class="helpHead">
+                <div><h3 class="helpTitle">Verifica conexión con el servidor</h3></div>
+                <div class="stepBadge">3</div>
+              </div>
+              <div class="helpBody">
+                <p>Confirma que:</p>
+                <ul>
+                  <li>El servidor esté encendido.</li>
+                  <li>Tengas conexión a la red.</li>
+                  <li>La URL del servidor sea accesible desde tu navegador.</li>
+                </ul>
+                <p>Si el servidor está caído, los dispositivos aparecerán como <b>offline</b>.</p>
+              </div>
+            </div>
+
+            <div class="helpCard">
+              <div class="helpHead">
+                <div><h3 class="helpTitle">Problemas visuales o de configuración</h3></div>
+                <div class="stepBadge">4</div>
+              </div>
+              <div class="helpBody">
+                <p>Si el tema, idioma o configuraciones no se aplican correctamente:</p>
+                <ul>
+                  <li>Ve a <b>Configuración</b>.</li>
+                  <li>Guarda nuevamente los ajustes.</li>
+                  <li>Recarga la página.</li>
+                </ul>
+                <p>Recuerda que las configuraciones se guardan en el navegador (<b>localStorage</b>).</p>
+              </div>
+            </div>
+
+            <div class="helpCard">
+              <div class="helpHead">
+                <div><h3 class="helpTitle">No aparecen métricas o gráficas</h3></div>
+                <div class="stepBadge">5</div>
+              </div>
+              <div class="helpBody">
+                <p>Puede deberse a:</p>
+                <ul>
+                  <li>El agente del PC no está enviando datos.</li>
+                  <li>El dispositivo está offline.</li>
+                  <li>No hay suficientes puntos históricos almacenados.</li>
+                </ul>
+                <p>Verifica que el equipo esté activo y reportando.</p>
+              </div>
+            </div>
+
+            <div class="helpCard">
+              <div class="helpHead">
+                <div><h3 class="helpTitle">Alertas excesivas</h3></div>
+                <div class="stepBadge">6</div>
+              </div>
+              <div class="helpBody">
+                <p>Si recibes muchas alertas:</p>
+                <ul>
+                  <li>Ajusta los umbrales de CPU, RAM y Disco en <b>Configuración</b>.</li>
+                  <li>Aumenta el tiempo de detección de offline si es necesario.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="helpCard">
+              <div class="helpHead">
+                <div><h3 class="helpTitle">Soporte técnico</h3></div>
+                <div class="stepBadge">7</div>
+              </div>
+              <div class="helpBody">
+                <p>Si el problema persiste:</p>
+                <ul>
+                  <li>Toma una captura de pantalla del error.</li>
+                  <li>Anota el dispositivo afectado.</li>
+                  <li>Indica la hora aproximada del fallo.</li>
+                  <li>Contacta al administrador del sistema.</li>
+                </ul>
+              </div>
+              <div class="helpHint">Incluye el nombre del PC y la pestaña donde ocurrió (PCs/Dashboard/Gráficas/Alertas).</div>
+            </div>
+
+            <div class="helpCard">
+              <div class="helpHead">
+                <div><h3 class="helpTitle">Recomendación general</h3></div>
+                <div class="stepBadge">★</div>
+              </div>
+              <div class="helpBody">
+                <p>Para mejor rendimiento, utiliza:</p>
+                <ul>
+                  <li>Navegadores actualizados (Chrome, Edge, Firefox).</li>
+                  <li>Conexión estable a la red.</li>
+                  <li>Evita múltiples pestañas abiertas del mismo panel.</li>
+                </ul>
+              </div>
+            </div>
+          </div><!-- helpCards -->
+        </div>
+      </div>
+
+    </div><!-- appView -->
+  </div>
+
+  <div id="toast" class="toast hide"></div>
+
+  <!-- ✅ MODAL DE CONFIRMACIÓN CENTRADO (Sí / No) -->
+  <div id="confirmModal" class="modal hide" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modalBackdrop" id="confirmBackdrop"></div>
+    <div class="modalCard">
+      <div class="modalTitleRow">
+        <div class="modalIcon" id="confirmIcon">⚠️</div>
+        <h3 class="modalTitle" id="confirmTitle">Confirmar</h3>
+      </div>
+      <div class="modalText" id="confirmText">¿Seguro?</div>
+      <div class="modalActions">
+        <button class="btn" id="confirmNo" type="button"><span class="txt">No</span></button>
+        <button class="btn danger" id="confirmYes" type="button"><span class="txt">Sí</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ MODAL EXPORTAR (Día único / Rango + PDF / Excel) -->
+  <div id="exportModal" class="modal hide" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modalBackdrop" id="exportBackdrop"></div>
+    <div class="modalCard">
+      <div class="modalTitleRow">
+        <div class="modalIcon" style="border-color:rgba(59,130,246,.35); background:rgba(59,130,246,.14)">📄</div>
+        <h3 class="modalTitle">Exportar informe</h3>
+      </div>
+      <div class="modalText" id="exportSub">
+        Elige el formato y el rango de fechas (Bogotá). Incluye estado (online/offline), último reporte, detalle y gráficas.
+      </div>
+
+      <div class="segTabs" style="margin-top:12px">
+        <div class="seg active" id="segDay">✅ Día único</div>
+        <div class="seg" id="segRange">📅 Rango</div>
+      </div>
+
+      <div class="exportGrid">
+        <div>
+          <div class="field" style="margin-top:10px;">
+            <label class="muted">Formato</label>
+            <select id="exportFormat">
+              <option value="pdf">PDF</option>
+              <option value="xlsx">Excel</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <div class="field" style="margin-top:10px;">
+            <label class="muted">Zona horaria</label>
+            <input id="exportTZ" disabled />
+          </div>
+        </div>
+      </div>
+
+      <div class="exportGrid" style="margin-top:0">
+        <div class="field">
+          <label class="muted">Desde (YYYY-MM-DD)</label>
+          <input id="exportFrom" type="date" />
+        </div>
+        <div class="field" id="exportToWrap">
+          <label class="muted">Hasta (YYYY-MM-DD)</label>
+          <input id="exportTo" type="date" />
+        </div>
+      </div>
+
+      <div class="exportHint">
+        • <b>Día único</b>: exporta ese día completo (00:00–23:59) en Bogotá.<br/>
+        • <b>Rango</b>: exporta desde “Desde” hasta “Hasta” (incluye ambos).<br/>
+        • Importante: este UI usa los parámetros correctos del server: <b>start</b> y <b>end</b>.
+      </div>
+
+      <div class="modalActions">
+        <button class="btn" id="exportCancel" type="button"><span class="txt">Cancelar</span></button>
+        <button class="btn primary" id="exportDownload" type="button"><span class="txt">Descargar</span></button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================
+   STATE
+========================= */
+const APP = {
+  server: location.origin,
+  selectedDeviceId: null,
+  devices: [],
+  alerts: [],
+  charts: {},
+
+  // ✅ SOLO UNA VEZ
+  locationEdit: { deviceId: null, draft: "" },
+
+  settings: {
+    cpuHigh: 90,
+    ramHigh: 90,
+    diskHigh: 90,
+    offlineSec: 60,
+    refreshSec: 10,
+    chartPoints: 120,
+    adminEmail: "jesus.arbelaez00@usc.edu.co",
+    adminEmail2: "joan.aguirre00@usc.edu.co",
+    timezone: "America/Bogota",
+    lang: "es",
+    theme: "dark"
+  },
+  exportMode: "day"
+};
+
+/* i18n básico */
+const I18N = {
+  es: {
+    login_sub: "Inicia sesión para ver el dashboard.",
+    login_user: "Usuario",
+    login_pass: "Contraseña",
+    login_btn: "Entrar",
+    login_tip: "Tip: Usuario/clave están en variables de entorno del servidor (DASH_USER/DASH_PASS).",
+    btn_logout: "Cerrar Sesión",
+    btn_refresh: "Actualizar",
+    btn_delete: "Quitar PC",
+    btn_clear_alerts: "Limpiar",
+    tab_home: "Inicio",
+    tab_pcs: "PCs",
+    tab_dash: "Dashboard",
+    tab_charts: "Gráficas",
+    tab_alerts: "Alertas",
+    tab_settings: "Configuración",
+    tab_info: "Información SysPulse",
+    tab_help: "Ayuda",
+    toast_saved: "Configuración guardada",
+    login_error_prefix: "Login falló: "
+  },
+  en: {
+    login_sub: "Sign in to view the dashboard.",
+    login_user: "Username",
+    login_pass: "Password",
+    login_btn: "Sign in",
+    login_tip: "Tip: Username/password are in server env vars (DASH_USER/DASH_PASS).",
+    btn_logout: "Log out",
+    btn_refresh: "Refresh",
+    btn_delete: "Remove PC",
+    btn_clear_alerts: "Clear",
+    tab_home: "Home",
+    tab_pcs: "PCs",
+    tab_dash: "Dashboard",
+    tab_charts: "Charts",
+    tab_alerts: "Alerts",
+    tab_settings: "Settings",
+    tab_info: "SysPulse Info",
+    tab_help: "Help",
+    toast_saved: "Settings saved",
+    login_error_prefix: "Login failed: "
+  }
+};
+function tr(key){
+  const lang = APP.settings.lang || "es";
+  return (I18N[lang] && I18N[lang][key]) || I18N.es[key] || key;
+}
+
+/* =========================
+   ASSETS (logo robusto login + app)
+========================= */
+function setLogoRobust(){
+  const candidates = [
+    "/static/Logotipo.png?v=6",
+    "/static/logotipo.png?v=6",
+    "/static/logo.png?v=6",
+    "/static/Logo.png?v=6",
+    "Logotipo.png?v=6",
+    "logo.png?v=6"
+  ];
+
+  function attachFallback(imgEl){
+    if (!imgEl) return;
+    imgEl.dataset.idx = imgEl.dataset.idx || "0";
+    imgEl.onerror = () => {
+      let idx = Number(imgEl.dataset.idx || "0");
+      idx++;
+      if (idx >= candidates.length){
+        imgEl.style.display = "none";
+        return;
+      }
+      imgEl.dataset.idx = String(idx);
+      imgEl.src = candidates[idx];
+    };
+  }
+
+  attachFallback(document.getElementById("brandLogo"));
+  attachFallback(document.getElementById("loginLogoImg"));
+}
+
+/* ======= THEME + i18n ======= */
+function applyTheme(theme){
+  const b = document.body;
+  b.classList.remove("theme-dark","theme-light","theme-blue");
+  if (theme === "light") b.classList.add("theme-light");
+  else if (theme === "blue") b.classList.add("theme-blue");
+  else b.classList.add("theme-dark");
+
+  refreshChartsTheme();
+}
+
+function applyLanguage(){
+  document.documentElement.lang = (APP.settings.lang || "es");
+
+  const elSub = document.getElementById("i_login_sub"); if (elSub) elSub.textContent = tr("login_sub");
+  const elU = document.getElementById("i_login_user"); if (elU) elU.textContent = tr("login_user");
+  const elP = document.getElementById("i_login_pass"); if (elP) elP.textContent = tr("login_pass");
+  const elTip = document.getElementById("i_login_tip"); if (elTip) elTip.textContent = tr("login_tip");
+  const btnLoginTxt = document.querySelector("#btnLogin .txt"); if (btnLoginTxt) btnLoginTxt.textContent = tr("login_btn");
+
+  const logoutTxt = document.querySelector("#btnLogout .txt"); if (logoutTxt) logoutTxt.textContent = tr("btn_logout");
+  const refreshTxt = document.querySelector("#btnRefresh .txt"); if (refreshTxt) refreshTxt.textContent = tr("btn_refresh");
+  const deleteTxt  = document.querySelector("#btnDelete .txt");  if (deleteTxt)  deleteTxt.textContent = tr("btn_delete");
+  const clearTxt   = document.querySelector("#btnClearAlerts .txt"); if (clearTxt) clearTxt.textContent = tr("btn_clear_alerts");
+
+  const tHome = document.querySelector('.tab[data-tab="home"]'); if (tHome) tHome.textContent = tr("tab_home");
+  const tPcs = document.querySelector('.tab[data-tab="pcs"]'); if (tPcs) tPcs.textContent = tr("tab_pcs");
+  const tDash = document.querySelector('.tab[data-tab="dash"]'); if (tDash) tDash.textContent = tr("tab_dash");
+  const tCharts = document.querySelector('.tab[data-tab="charts"]'); if (tCharts) tCharts.textContent = tr("tab_charts");
+  const tAlerts = document.querySelector('.tab[data-tab="alerts"]'); if (tAlerts) tAlerts.textContent = tr("tab_alerts");
+  const tSettings = document.querySelector('.tab[data-tab="settings"]'); if (tSettings) tSettings.textContent = tr("tab_settings");
+  const tInfo = document.querySelector('.tab[data-tab="info"]'); if (tInfo) tInfo.textContent = tr("tab_info");
+  const tHelp = document.querySelector('.tab[data-tab="help"]'); if (tHelp) tHelp.textContent = tr("tab_help");
+
+  updateTopTimezoneLabel();
+  refreshChartsTheme();
+  renderHome().catch(()=>{});
+}
+
+function updateTopTimezoneLabel(){
+  const topSub = document.getElementById("topSub");
+  if (topSub) topSub.textContent = "";
+}
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.remove("hide");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.add("hide"), 3500);
+}
+
+function showLoginError(msg){
+  const box = document.getElementById("loginError");
+  if (!box) return;
+  if (!msg){
+    box.classList.add("hide");
+    box.textContent = "";
+    return;
+  }
+  box.textContent = msg;
+  box.classList.remove("hide");
+}
+
+/* ✅ Manejo central de sesión inválida */
+function onSessionInvalid(message){
+  clearSession();
+  document.getElementById("loginView").classList.remove("hide");
+  document.getElementById("appView").classList.add("hide");
+  showLoginError(message || "Sesión inválida. Inicia sesión de nuevo.");
+  try{ document.getElementById("loginUser")?.focus(); }catch{}
+}
+
+/* =========================
+   MODAL CONFIRM (CENTRADO)
+========================= */
+function confirmCenter(message, title="Confirmar", icon="⚠️"){
+  return new Promise((resolve)=>{
+    const modal = document.getElementById("confirmModal");
+    const backdrop = document.getElementById("confirmBackdrop");
+    const elTitle = document.getElementById("confirmTitle");
+    const elText  = document.getElementById("confirmText");
+    const elIcon  = document.getElementById("confirmIcon");
+    const btnYes  = document.getElementById("confirmYes");
+    const btnNo   = document.getElementById("confirmNo");
+
+    let done = false;
+    function close(answer){
+      if (done) return;
+      done = true;
+      modal.classList.add("hide");
+      modal.setAttribute("aria-hidden","true");
+      cleanup();
+      resolve(answer);
+    }
+    function onKey(e){
+      if (e.key === "Escape") close(false);
+      if (e.key === "Enter") close(true);
+    }
+    function cleanup(){
+      btnYes.removeEventListener("click", onYes);
+      btnNo.removeEventListener("click", onNo);
+      backdrop.removeEventListener("click", onNo);
+      document.removeEventListener("keydown", onKey);
+    }
+    function onYes(){ close(true); }
+    function onNo(){ close(false); }
+
+    elTitle.textContent = title;
+    elText.textContent = message;
+    if (elIcon) elIcon.textContent = icon;
+
+    modal.classList.remove("hide");
+    modal.setAttribute("aria-hidden","false");
+
+    btnYes.addEventListener("click", onYes);
+    btnNo.addEventListener("click", onNo);
+    backdrop.addEventListener("click", onNo);
+    document.addEventListener("keydown", onKey);
+
+    setTimeout(()=>btnYes.focus(), 0);
+  });
+}
+
+/* =========================
+   MODAL EXPORT
+========================= */
+function openExportModal(){
+  if (!APP.selectedDeviceId){
+    alert("Selecciona un PC primero.");
+    return;
+  }
+  const modal = document.getElementById("exportModal");
+  modal.classList.remove("hide");
+  modal.setAttribute("aria-hidden","false");
+
+  document.getElementById("exportTZ").value = APP.settings.timezone || "America/Bogota";
+
+  const todayBogota = getTodayISOInTZ(APP.settings.timezone || "America/Bogota");
+  const from = document.getElementById("exportFrom");
+  const to = document.getElementById("exportTo");
+  if (!from.value) from.value = todayBogota;
+  if (!to.value) to.value = todayBogota;
+
+  setExportMode(APP.exportMode || "day");
+  setTimeout(()=>document.getElementById("exportDownload")?.focus(), 0);
+}
+
+function closeExportModal(){
+  const modal = document.getElementById("exportModal");
+  modal.classList.add("hide");
+  modal.setAttribute("aria-hidden","true");
+}
+
+function setExportMode(mode){
+  APP.exportMode = mode;
+  const day = document.getElementById("segDay");
+  const range = document.getElementById("segRange");
+  const toWrap = document.getElementById("exportToWrap");
+  day.classList.toggle("active", mode === "day");
+  range.classList.toggle("active", mode === "range");
+  toWrap.classList.toggle("hide", mode === "day");
+}
+
+function getTodayISOInTZ(tz){
+  try{
+    const now = new Date();
+    const parts = new Intl.DateTimeFormat("en-CA", { timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit" }).formatToParts(now);
+    const y = parts.find(p=>p.type==="year")?.value;
+    const m = parts.find(p=>p.type==="month")?.value;
+    const d = parts.find(p=>p.type==="day")?.value;
+    return `${y}-${m}-${d}`;
+  }catch{
+    const x = new Date();
+    const y = x.getFullYear();
+    const m = String(x.getMonth()+1).padStart(2,"0");
+    const d = String(x.getDate()).padStart(2,"0");
+    return `${y}-${m}-${d}`;
+  }
+}
+
+/* ✅ Export FIX: el server.py que pegaste usa start/end (NO from/to/mode/tz) */
+async function downloadExport(){
+  if (!APP.selectedDeviceId) return;
+
+  const fmt = document.getElementById("exportFormat").value;
+  const start = document.getElementById("exportFrom").value;
+  const end = document.getElementById("exportTo").value;
+
+  if (!start){
+    alert("Selecciona la fecha (Desde).");
+    return;
+  }
+  if (APP.exportMode === "range" && !end){
+    alert("Selecciona la fecha (Hasta).");
+    return;
+  }
+
+  const qs = new URLSearchParams();
+  qs.set("start", start);
+  if (APP.exportMode === "range") qs.set("end", end);
+
+  const url = `/api/devices/${encodeURIComponent(APP.selectedDeviceId)}/export/${fmt}?` + qs.toString();
+
+  try{
+    const sess = getSession();
+    const res = await fetch(url, {
+      headers: sess.token ? { "Authorization": "Bearer " + sess.token } : {}
+    });
+
+    if (res.status === 401 || res.status === 403){
+      onSessionInvalid("Sesión expirada o inválida. Inicia sesión de nuevo.");
+      return;
+    }
+
+    if (!res.ok){
+      const txt = await res.text().catch(()=> "");
+      let msg = "No se pudo exportar: " + res.status + " " + res.statusText;
+      try{
+        const j = JSON.parse(txt);
+        msg = "No se pudo exportar: " + (j.detail || j.error || msg);
+      }catch{
+        if (txt) msg = "No se pudo exportar: " + txt;
+      }
+      alert(msg);
+      return;
+    }
+
+    const blob = await res.blob();
+    const cd = res.headers.get("content-disposition") || "";
+    let filename = "";
+    const m = cd.match(/filename\*?=(?:UTF-8''|")?([^\";]+)/i);
+    if (m && m[1]) filename = decodeURIComponent(m[1].replace(/"/g,"").trim());
+    if (!filename){
+      filename = `SysPulse_${APP.selectedDeviceId}_${start}${APP.exportMode==="range" ? "_a_"+end : ""}.${fmt}`;
+    }
+
+    const a = document.createElement("a");
+    const objUrl = URL.createObjectURL(blob);
+    a.href = objUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(objUrl);
+
+    closeExportModal();
+    toast("Exportación lista");
+  }catch(e){
+    alert("No se pudo exportar: " + e.message);
+  }
+}
+
+/* =========================
+   UTILS
+========================= */
+function escapeHtml(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function safeNum(x, def=0){
+  const n = Number(x);
+  return Number.isFinite(n) ? n : def;
+}
+function safePct(used, total){
+  used = safeNum(used, 0);
+  total = safeNum(total, 0);
+  if (total <= 0) return 0;
+  return (used/total)*100;
+}
+function fmtGB(bytes){
+  const b = safeNum(bytes, 0);
+  return (b / (1024*1024*1024)).toFixed(2) + " GB";
+}
+function fmtPct(x){
+  const n = safeNum(x, NaN);
+  if (!Number.isFinite(n)) return "-";
+  return (Math.max(0, Math.min(100, n))).toFixed(1) + "%";
+}
+function fmtUptime(sec){
+  sec = Math.max(0, safeNum(sec, 0));
+  const d = Math.floor(sec/86400); sec -= d*86400;
+  const h = Math.floor(sec/3600); sec -= h*3600;
+  const m = Math.floor(sec/60); sec -= m*60;
+  const s = Math.floor(sec);
+  return `${d}d ${h}h ${m}m ${s}s`;
+}
+function toBogota(isoOrDate){
+  try{
+    const d = new Date(isoOrDate);
+    const tz = APP.settings.timezone || "America/Bogota";
+    const locale = (APP.settings.lang === "en") ? "en-US" : "es-CO";
+    return d.toLocaleString(locale, { timeZone: tz });
+  }catch{
+    return String(isoOrDate);
+  }
+}
+
+/* =========================
+   AUTH + API
+========================= */
+function getSession(){
+  return JSON.parse(localStorage.getItem("pcmon_session_v1") || "{}");
+}
+function setSession(obj){
+  localStorage.setItem("pcmon_session_v1", JSON.stringify(obj));
+}
+function clearSession(){
+  localStorage.removeItem("pcmon_session_v1");
+}
+
+async function apiFetch(path, options = {}){
+  const sess = getSession();
+  const headers = options.headers || {};
+  if (sess.token) headers["Authorization"] = "Bearer " + sess.token;
+  if (!headers["Content-Type"] && options.method && options.method !== "GET") {
+    headers["Content-Type"] = "application/json";
+  }
+  options.headers = headers;
+
+  const res = await fetch(path, options);
+  const txt = await res.text();
+  let data;
+  try{ data = JSON.parse(txt); } catch { data = txt; }
+
+  if (res.status === 401 || res.status === 403){
+    // ✅ si la API dice no autorizado, volvemos al login sin romper UI
+    onSessionInvalid("Sesión expirada o inválida. Inicia sesión de nuevo.");
+    throw new Error("Sesión inválida");
+  }
+
+  if (!res.ok){
+    const msg = (data && data.detail) ? data.detail : (typeof data === "string" ? data : JSON.stringify(data));
+    throw new Error(msg);
+  }
+  return data;
+}
+async function saveDeviceLocation(deviceId, location){
+  return await apiFetch(`/api/devices/${encodeURIComponent(deviceId)}/location`, {
+    method: "PATCH",
+    body: JSON.stringify({ location })
+  });
+}
+
+function startEditLocation(deviceId, current){
+  APP.locationEdit.deviceId = deviceId;
+  APP.locationEdit.draft = (current || "");
+  renderDevices();
+  setTimeout(()=>document.getElementById(`locInput_${deviceId}`)?.focus(), 0);
+}
+
+function cancelEditLocation(){
+  APP.locationEdit.deviceId = null;
+  APP.locationEdit.draft = "";
+  renderDevices();
+}
+
+async function commitEditLocation(deviceId){
+  try{
+    const loc = (APP.locationEdit.draft || "").trim();
+    await saveDeviceLocation(deviceId, loc);
+
+    // actualiza en memoria para que se vea inmediato sin esperar refresh
+    const d = (APP.devices || []).find(x => x.device_id === deviceId);
+    if (d) d.location = loc;
+
+    APP.locationEdit.deviceId = null;
+    APP.locationEdit.draft = "";
+    renderDevices();
+    toast("Ubicación guardada");
+  }catch(e){
+    alert("No se pudo guardar la ubicación: " + e.message);
+  }
+}
+
+/* =========================
+   SETTINGS + ALERTS
+========================= */
+function loadSettings(){
+  const s = JSON.parse(localStorage.getItem("pcmon_settings_v1") || "{}");
+  APP.settings = { ...APP.settings, ...s };
+
+  document.getElementById("setCpuHigh").value = APP.settings.cpuHigh;
+  document.getElementById("setRamHigh").value = APP.settings.ramHigh;
+  document.getElementById("setDiskHigh").value = APP.settings.diskHigh;
+  document.getElementById("setOfflineSec").value = APP.settings.offlineSec;
+  document.getElementById("setRefreshSec").value = APP.settings.refreshSec;
+  document.getElementById("setChartPoints").value = APP.settings.chartPoints;
+
+  const a1 = document.getElementById("setAdminEmail1"); if (a1) a1.value = APP.settings.adminEmail1 || "";
+  const a2 = document.getElementById("setAdminEmail2"); if (a2) a2.value = APP.settings.adminEmail2 || "";
+  const tz = document.getElementById("setTimezone"); if (tz) tz.value = APP.settings.timezone || "America/Bogota";
+  const lg = document.getElementById("setLang"); if (lg) lg.value = APP.settings.lang || "es";
+  const th = document.getElementById("setTheme"); if (th) th.value = APP.settings.theme || "dark";
+
+  applyTheme(APP.settings.theme || "dark");
+  applyLanguage();
+}
+function saveSettings(){
+  APP.settings.cpuHigh = safeNum(document.getElementById("setCpuHigh").value, 90);
+  APP.settings.ramHigh = safeNum(document.getElementById("setRamHigh").value, 90);
+  APP.settings.diskHigh = safeNum(document.getElementById("setDiskHigh").value, 90);
+  APP.settings.offlineSec = safeNum(document.getElementById("setOfflineSec").value, 60);
+  APP.settings.refreshSec = safeNum(document.getElementById("setRefreshSec").value, 10);
+  APP.settings.chartPoints = safeNum(document.getElementById("setChartPoints").value, 120);
+
+  const a1 = document.getElementById("setAdminEmail1"); if (a1) APP.settings.adminEmail1 = a1.value || "";
+  const a2 = document.getElementById("setAdminEmail2"); if (a2) APP.settings.adminEmail2 = a2.value || "";
+  const tz = document.getElementById("setTimezone"); if (tz) APP.settings.timezone = tz.value || "America/Bogota";
+  const lg = document.getElementById("setLang"); if (lg) APP.settings.lang = lg.value || "es";
+  const th = document.getElementById("setTheme"); if (th) APP.settings.theme = th.value || "dark";
+
+  localStorage.setItem("pcmon_settings_v1", JSON.stringify(APP.settings));
+  applyTheme(APP.settings.theme);
+  applyLanguage();
+
+  toast(tr("toast_saved"));
+  setupAutoRefresh();
+}
+
+function loadAlerts(){
+  APP.alerts = JSON.parse(localStorage.getItem("pcmon_alerts_v1") || "[]");
+}
+function saveAlerts(){
+  localStorage.setItem("pcmon_alerts_v1", JSON.stringify(APP.alerts.slice(0, 500)));
+}
+function pushAlert(type, hostname, msg){
+  const now = Date.now();
+  const key = `${type}|${hostname}|${msg}`;
+  const last = APP.alerts.find(a => a.key === key);
+  if (last){
+    const dt = now - (new Date(last.ts)).getTime();
+    if (dt < 2*60*1000) return;
+  }
+  const entry = { key, type, hostname, msg, ts: new Date().toISOString() };
+  APP.alerts.unshift(entry);
+  saveAlerts();
+}
+
+/* =========================
+   UI: TABS
+========================= */
+function showTab(name){
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.classList.toggle("active", t.dataset.tab === name);
+  });
+
+  const map = {
+    home:"tab_home",
+    pcs:"tab_pcs",
+    dash:"tab_dash",
+    charts:"tab_charts",
+    alerts:"tab_alerts",
+    settings:"tab_settings",
+    info:"tab_info",
+    help:"tab_help"
+  };
+
+  if (!map[name]) name = "home";
+
+  Object.values(map).forEach(id => document.getElementById(id).classList.add("hide"));
+  document.getElementById(map[name]).classList.remove("hide");
+
+  if (name === "dash") loadDashboard().catch(()=>{});
+  if (name === "alerts") renderAlerts();
+  if (name === "home") renderHome().catch(()=>{});
+
+  requestAnimationFrame(()=>{ forceResizeCharts(); });
+}
+
+/* =========================
+   DEVICES + DETAIL
+========================= */
+function setSelected(deviceId){
+  APP.selectedDeviceId = deviceId;
+  const selectedPill = document.getElementById("selectedPill");
+  if (selectedPill){
+    selectedPill.textContent = "Selected: " + (deviceId || "-");
+    selectedPill.classList.remove("hide");
+  }
+}
+function updateDetailStatus(isOnline){
+  const el = document.getElementById("detailStatus");
+  el.innerHTML = `<span class="dot ${isOnline ? "ok":"bad"}"></span>${isOnline ? "online":"offline"}`;
+}
+function renderTopProcs(tbodyId, items){
+  const tb = document.getElementById(tbodyId);
+  tb.innerHTML = "";
+  (items || []).slice(0,10).forEach(p=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${safeNum(p.pid,0)}</td>
+      <td>${escapeHtml(p.name || "-")}</td>
+      <td>${safeNum(p.cpu,0).toFixed(1)}</td>
+      <td>${fmtGB(p.rss||0)}</td>
+    `;
+    tb.appendChild(tr);
+  });
+  if (!items || items.length===0){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="4" class="muted">Sin datos</td>`;
+    tb.appendChild(tr);
+  }
+}
+function startEditLocation(deviceId, currentLocation){
+  APP.locationEdit.deviceId = deviceId;
+  APP.locationEdit.draft = String(currentLocation || "");
+  APP.locationEdit.saving = false;
+
+  renderDevices();
+
+  // enfocar input (después del render)
+  setTimeout(()=>{
+    const input = document.getElementById(`locInput_${deviceId}`);
+    if (input){
+      input.focus();
+      input.selectionStart = input.selectionEnd = input.value.length;
+    }
+  }, 0);
+}
+
+function cancelEditLocation(){
+  APP.locationEdit.deviceId = null;
+  APP.locationEdit.draft = "";
+  APP.locationEdit.saving = false;
+  renderDevices();
+}
+
+async function commitEditLocation(deviceId){
+  // evita doble click / doble envío
+  if (APP.locationEdit.saving) return;
+
+  const input = document.getElementById(`locInput_${deviceId}`);
+  const value = (input ? input.value : APP.locationEdit.draft || "").trim();
+
+  APP.locationEdit.saving = true;
+
+  try{
+    // ✅ PATCH al endpoint del server
+    const updated = await apiFetch(`/api/devices/${encodeURIComponent(deviceId)}/location`, {
+      method: "POST",
+      body: JSON.stringify({ location: value })
+    });
+
+    // ✅ actualiza en memoria sin recargar toda la lista (evita que “salte”)
+    const idx = (APP.devices || []).findIndex(x => x.device_id === deviceId);
+    if (idx >= 0){
+      APP.devices[idx] = { ...APP.devices[idx], location: updated.location };
+    }
+
+    toast("Ubicación guardada");
+    APP.locationEdit.deviceId = null;
+    APP.locationEdit.draft = "";
+    APP.locationEdit.saving = false;
+
+    renderDevices();
+  }catch(e){
+    APP.locationEdit.saving = false;
+    alert("Error al guardar ubicación: " + e.message);
+    // mantenemos el modo edición para que no pierdas lo escrito
+    renderDevices();
+  }
+}
+function renderDevices(){
+  const tb = document.getElementById("devicesTbody");
+  tb.innerHTML = "";
+
+  let online=0, offline=0;
+
+  (APP.devices || []).forEach(d=>{
+    if (d.status === "online") online++; else offline++;
+    const last = d.last_seen_bogota || d.last_seen || null;
+
+    const isEditing = APP.locationEdit?.deviceId === d.device_id;
+    const locText = (d.location && String(d.location).trim()) ? d.location : "—";
+
+    const tr = document.createElement("tr");
+    tr.style.cursor = "pointer";
+
+    tr.innerHTML = `
+      <td>
+        <span class="status">
+          <span class="dot ${d.status === "online" ? "ok" : "bad"}"></span>
+          ${escapeHtml(d.status)}
+        </span>
+      </td>
+
+      <td>
+        <div>${escapeHtml(d.hostname || "-")}</div>
+        <div class="tiny">${escapeHtml(d.device_id || "")}</div>
+      </td>
+
+      <!-- ✅ UBICACIÓN (modo ver / modo editar) -->
+      <td>
+        ${
+          isEditing
+          ? `
+            <div style="display:flex; gap:10px; align-items:center;">
+              <input
+                id="locInput_${d.device_id}"
+                type="text"
+                value="${escapeHtml(APP.locationEdit.draft || "")}"
+                placeholder="Ej: Piso 2 / Bodega / Oficina"
+                style="min-width:260px;"
+              />
+              <button class="btn" id="locSave_${d.device_id}">Guardar</button>
+              <button class="btn" id="locCancel_${d.device_id}">Cancelar</button>
+            </div>
+          `
+          : `
+            <div style="display:flex; gap:10px; align-items:center;">
+              <div>${escapeHtml(locText)}</div>
+              <button class="btn" id="locEdit_${d.device_id}">Editar</button>
+            </div>
+          `
+        }
+      </td>
+
+      <td>${escapeHtml(d.os || "-")}</td>
+      <td>${last ? toBogota(last) : "-"}</td>
+    `;
+
+    // ✅ click en fila: seleccionar PC (pero NO cuando se esté editando ubicación)
+    tr.addEventListener("click", async ()=>{
+      if (APP.locationEdit?.deviceId) return; // si estás editando, no dejes que se cambie selección
+
+      setSelected(d.device_id);
+
+      document.getElementById("pcEmptyState").classList.add("hide");
+      document.getElementById("detailCard").classList.remove("hide");
+      document.getElementById("pcChartsMount").classList.remove("hide");
+
+      await loadDetailAndCharts();
+      showTab("pcs");
+      toast("Seleccionado: " + (d.hostname || d.device_id));
+      setTimeout(()=>{
+        document.getElementById("detailCard")?.scrollIntoView({behavior:"smooth", block:"start"});
+        forceResizeCharts();
+      }, 80);
+    });
+
+    tb.appendChild(tr);
+
+    // ✅ listeners de botones/inputs (después de insertar el HTML)
+    if (isEditing){
+      const input = document.getElementById(`locInput_${d.device_id}`);
+      const btnSave = document.getElementById(`locSave_${d.device_id}`);
+      const btnCancel = document.getElementById(`locCancel_${d.device_id}`);
+
+      // evita que click dentro del input dispare el click de la fila
+      input.addEventListener("click", (e)=>e.stopPropagation());
+      btnSave.addEventListener("click", (e)=>{ e.stopPropagation(); commitEditLocation(d.device_id); });
+      btnCancel.addEventListener("click", (e)=>{ e.stopPropagation(); cancelEditLocation(); });
+
+      input.addEventListener("input", (e)=>{
+        APP.locationEdit.draft = e.target.value; // mantiene el texto aunque refresque
+      });
+
+      input.addEventListener("keydown", (e)=>{
+        if (e.key === "Enter"){ e.preventDefault(); commitEditLocation(d.device_id); }
+        if (e.key === "Escape"){ e.preventDefault(); cancelEditLocation(); }
+      });
+    }else{
+      const btnEdit = document.getElementById(`locEdit_${d.device_id}`);
+      btnEdit.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        startEditLocation(d.device_id, d.location || "");
+      });
+    }
+  });
+
+  document.getElementById("kpiOnline").textContent = online;
+  document.getElementById("kpiOffline").textContent = offline;
+  document.getElementById("dashOnline").textContent = online;
+  document.getElementById("dashOffline").textContent = offline;
+
+  const homeOnline = document.getElementById("homeOnline"); if (homeOnline) homeOnline.textContent = online;
+  const homeOffline = document.getElementById("homeOffline"); if (homeOffline) homeOffline.textContent = offline;
+  const homeTotal = document.getElementById("homeTotal"); if (homeTotal) homeTotal.textContent = (APP.devices || []).length;
+}
+
+/* =========================
+   CHART HELPERS (PRO - estilo “task manager”)
+========================= */
+function isLightTheme(){ return document.body.classList.contains("theme-light"); }
+function chartColors(){
+  const light = isLightTheme();
+  return {
+    legend: light ? "#0b1220" : "#cfe2ff",
+    tick:   light ? "rgba(15,23,42,.75)" : "#9bb5d6",
+    grid:   light ? "rgba(15,23,42,.12)" : "rgba(255,255,255,.07)",
+    gridSoft: light ? "rgba(15,23,42,.07)" : "rgba(255,255,255,.035)",
+    border: light ? "rgba(15,23,42,.14)" : "rgba(255,255,255,.08)"
+  };
+}
+
+const proFramePlugin = {
+  id: "proFramePlugin",
+  afterDraw(chart){
+    const {ctx, chartArea} = chart;
+    if (!chartArea) return;
+    if (typeof ctx.roundRect !== "function") return;
+
+    const c = chartColors();
+    ctx.save();
+    ctx.strokeStyle = c.border;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(chartArea.left, chartArea.top, chartArea.right-chartArea.left, chartArea.bottom-chartArea.top, 10);
+    ctx.stroke();
+    ctx.restore();
+  }
+};
+
+const donutCenterText = {
+  id: "donutCenterText",
+  afterDraw(chart, args, opts){
+    if (chart.config.type !== "doughnut") return;
+    const {ctx, chartArea} = chart;
+    const text = opts?.text || "";
+    if (!text) return;
+    ctx.save();
+    ctx.font = "900 14px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillStyle = chartColors().legend;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const x = (chartArea.left + chartArea.right)/2;
+    const y = (chartArea.top + chartArea.bottom)/2;
+    ctx.fillText(text, x, y);
+    ctx.restore();
+  }
+};
+
+function upsertChart(key, canvasId, config){
+  const prev = APP.charts[key];
+  if (!prev){
+    const el = document.getElementById(canvasId);
+    if (!el) return;
+    const ctx = el.getContext("2d");
+    APP.charts[key] = new Chart(ctx, config);
+    return;
+  }
+  prev.config.type = config.type;
+  prev.data.labels = config.data.labels;
+  prev.data.datasets = config.data.datasets;
+  prev.options = config.options;
+  prev.update();
+}
+
+function buildTaskLineConfig(canvasId, labels, series, yMax=100){
+  const c = chartColors();
+  return {
+    type: "line",
+    data: {
+      labels,
+      datasets: series.map((s) => ({
+        label: s.label,
+        data: s.data,
+        borderWidth: 2,
+        tension: 0.25,
+        pointRadius: 0,
+        fill: true,
+        borderColor: undefined,
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const {ctx, chartArea} = chart;
+          if (!chartArea) return "rgba(59,130,246,0.18)";
+          const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+          if (canvasId === "cpuLine"){
+            g.addColorStop(0, "rgba(59,130,246,0.35)");
+            g.addColorStop(1, "rgba(59,130,246,0.06)");
+          } else if (canvasId === "ramLine"){
+            g.addColorStop(0, "rgba(139,92,246,0.30)");
+            g.addColorStop(1, "rgba(139,92,246,0.06)");
+          } else {
+            g.addColorStop(0, "rgba(16,185,129,0.28)");
+            g.addColorStop(1, "rgba(16,185,129,0.06)");
+          }
+          return g;
+        }
+      }))
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { labels: { color: c.legend } },
+        tooltip: { enabled: true },
+        proFramePlugin: true
+      },
+      scales: {
+        x: {
+          ticks: { color: c.tick, maxTicksLimit: 8 },
+          grid: { color: c.gridSoft }
+        },
+        y: {
+          suggestedMin: 0,
+          suggestedMax: yMax,
+          ticks: { color: c.tick },
+          grid: { color: c.grid }
+        }
+      }
+    },
+    plugins: [proFramePlugin]
+  };
+}
+
+function buildBarConfig(labels, data, label, yMax=100){
+  const c = chartColors();
+  return {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label,
+        data,
+        borderRadius: 14,
+        borderSkipped: false,
+        borderWidth: 1,
+        backgroundColor: function(context){
+          const chart = context.chart;
+          const {ctx, chartArea} = chart;
+          if (!chartArea) return "rgba(59,130,246,0.85)";
+          const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+          gradient.addColorStop(0, "rgba(59,130,246,0.22)");
+          gradient.addColorStop(1, "rgba(59,130,246,0.95)");
+          return gradient;
+        }
+      }]
+    },
+    options: {
+      responsive:true,
+      maintainAspectRatio:false,
+      animation:false,
+      plugins: {
+        legend: { labels: { color:c.legend } },
+        tooltip: { enabled:true },
+        proFramePlugin: true
+      },
+      scales: {
+        x: { ticks: { color:c.tick }, grid: { color:c.gridSoft } },
+        y: { ticks: { color:c.tick }, grid: { color:c.grid }, suggestedMin:0, suggestedMax:yMax }
+      }
+    },
+    plugins: [proFramePlugin]
+  };
+}
+
+function buildHorizontalBarConfig(labels, data, label, yMax=100){
+  const c = chartColors();
+  return {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label,
+        data,
+        borderRadius: 14,
+        borderSkipped: false,
+        backgroundColor: function(context){
+          const chart = context.chart;
+          const {ctx, chartArea} = chart;
+          if (!chartArea) return "rgba(16,185,129,0.82)";
+          const g = ctx.createLinearGradient(chartArea.left, 0, chartArea.right, 0);
+          g.addColorStop(0, "rgba(16,185,129,0.25)");
+          g.addColorStop(1, "rgba(16,185,129,0.92)");
+          return g;
+        }
+      }]
+    },
+    options: {
+      indexAxis: "y",
+      responsive:true,
+      maintainAspectRatio:false,
+      animation:false,
+      plugins: {
+        legend: { labels: { color:c.legend } },
+        tooltip: { enabled:true },
+        proFramePlugin: true
+      },
+      scales: {
+        x: { ticks: { color:c.tick }, grid: { color:c.grid }, suggestedMin:0, suggestedMax:yMax },
+        y: { ticks: { color:c.tick }, grid: { color:c.gridSoft } }
+      }
+    },
+    plugins: [proFramePlugin]
+  };
+}
+
+function buildDonutConfig(used, total, centerLabel){
+  const c = chartColors();
+  const u = Math.max(0, safeNum(used,0));
+  const t = Math.max(0, safeNum(total,0));
+  const free = Math.max(0, t-u);
+
+  const usedColor = "rgba(59,130,246,0.92)";
+  const freeColor = "rgba(255,99,132,0.82)";
+
+  return {
+    type: "doughnut",
+    data: {
+      labels: ["Usado", "Libre"],
+      datasets: [{
+        data: [u, free],
+        borderWidth: 0,
+        backgroundColor: [usedColor, freeColor],
+        hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive:true,
+      maintainAspectRatio:false,
+      cutout: "72%",
+      animation:false,
+      plugins: {
+        legend: { labels: { color:c.legend } },
+        donutCenterText: { text: centerLabel || "" },
+        proFramePlugin: true
+      }
+    },
+    plugins: [proFramePlugin, donutCenterText]
+  };
+}
+
+function forceResizeCharts(){
+  try{
+    Object.values(APP.charts).forEach(ch=>{
+      try{ ch.resize(); ch.update(); }catch{}
+    });
+  }catch{}
+}
+
+function refreshChartsTheme(){
+  try{
+    if (APP.selectedDeviceId) loadDetailAndCharts().catch(()=>{});
+    const activeTab = document.querySelector(".tab.active")?.dataset?.tab || "home";
+    if (activeTab === "dash") loadDashboard().catch(()=>{});
+    requestAnimationFrame(()=>forceResizeCharts());
+  }catch{}
+}
+
+function mountChartsUnderDetail(){
+  const mount = document.getElementById("pcChartsMount");
+  const chartsTab = document.getElementById("tab_charts");
+  if (!mount || !chartsTab) return;
+
+  const chartsCard = chartsTab.querySelector(".card");
+  if (!chartsCard) return;
+
+  if (chartsCard.dataset.mounted === "1") return;
+  chartsCard.dataset.mounted = "1";
+
+  mount.appendChild(chartsCard);
+  chartsTab.classList.add("hide");
+
+  requestAnimationFrame(()=>forceResizeCharts());
+}
+
+/* =========================
+   LOAD DATA
+========================= */
+async function loadWhoami(){
+  try{
+    const x = await apiFetch("/api/whoami");
+    const pill = document.getElementById("whoamiPill");
+    if (pill){
+      pill.textContent = "User: " + (x.user || "admin");
+      pill.classList.remove("hide");
+    }
+  }catch{}
+}
+
+async function loadDevices(){
+  APP.devices = await apiFetch("/api/devices");
+  renderDevices();
+
+  if (!APP.selectedDeviceId){
+    document.getElementById("pcEmptyState").classList.remove("hide");
+    document.getElementById("detailCard").classList.add("hide");
+    document.getElementById("pcChartsMount").classList.add("hide");
+  }
+}
+
+
+function startEditLocation(deviceId, currentValue){
+  APP.locationEdit.deviceId = deviceId;
+  APP.locationEdit.draft = (currentValue ?? "");
+  renderDevices();
+
+  // enfocar input luego de render
+  requestAnimationFrame(()=>{
+    const el = document.getElementById(`locInput_${deviceId}`);
+    if (el){
+      el.focus();
+      el.setSelectionRange(el.value.length, el.value.length);
+    }
+  });
+}
+
+function cancelEditLocation(){
+  APP.locationEdit.deviceId = null;
+  APP.locationEdit.draft = "";
+  renderDevices();
+}
+
+async function commitEditLocation(deviceId){
+  const val = (APP.locationEdit.draft || "").trim();
+
+  try{
+    await saveDeviceLocation(deviceId, val);
+
+    // actualiza en memoria para que se vea al instante sin esperar refresh
+    const d = (APP.devices || []).find(x => x.device_id === deviceId);
+    if (d) d.location = val;
+
+    APP.locationEdit.deviceId = null;
+    APP.locationEdit.draft = "";
+    renderDevices();
+    toast("Ubicación guardada");
+  }catch(e){
+    alert("No se pudo guardar la ubicación: " + (e.message || e));
+  }
+}
+async function loadLatest(deviceId){
+  return await apiFetch(`/api/devices/${encodeURIComponent(deviceId)}/latest`);
+}
+async function loadMetrics(deviceId){
+  const n = APP.settings.chartPoints;
+  document.getElementById("rangeLabel").textContent = `últimos ${n} puntos`;
+  return await apiFetch(`/api/devices/${encodeURIComponent(deviceId)}/metrics?limit=${n}`);
+}
+
+
+/* =========================
+   ALERTS LOGIC
+========================= */
+function computeAndPushAlerts(dev, latest){
+  const host = dev.hostname || dev.device_id;
+
+  if (dev.status === "offline") {
+    pushAlert("OFFLINE", host, "Dispositivo sin reportar (offline)");
+    return;
+  }
+
+  const cpu = safeNum(latest.cpu,0);
+  const ramP = safePct(latest.ram_used, latest.ram_total);
+  const diskP = safePct(latest.disk_used, latest.disk_total);
+
+  if (cpu >= APP.settings.cpuHigh) pushAlert("CPU", host, `CPU alta: ${cpu.toFixed(1)}% (>= ${APP.settings.cpuHigh}%)`);
+  if (ramP >= APP.settings.ramHigh) pushAlert("RAM", host, `RAM alta: ${ramP.toFixed(1)}% (>= ${APP.settings.ramHigh}%)`);
+  if (diskP >= APP.settings.diskHigh) pushAlert("DISK", host, `Disco alto: ${diskP.toFixed(1)}% (>= ${APP.settings.diskHigh}%)`);
+}
+
+async function computeAlertsForAllDevices(){
+  loadAlerts();
+
+  if (!APP.devices.length){
+    document.getElementById("kpiAlerts").textContent = APP.alerts.length;
+    document.getElementById("dashAlerts").textContent = APP.alerts.length;
+    const homeAlerts = document.getElementById("homeAlerts"); if (homeAlerts) homeAlerts.textContent = APP.alerts.length;
+    return;
+  }
+
+  const promises = APP.devices.map(d =>
+    loadLatest(d.device_id)
+      .then(latest => ({ device: d, latest }))
+      .catch(() => null)
+  );
+
+  const items = (await Promise.all(promises)).filter(Boolean);
+  items.forEach(x => computeAndPushAlerts(x.device, x.latest));
+
+  document.getElementById("kpiAlerts").textContent = APP.alerts.length;
+  document.getElementById("dashAlerts").textContent = APP.alerts.length;
+  const homeAlerts = document.getElementById("homeAlerts"); if (homeAlerts) homeAlerts.textContent = APP.alerts.length;
+
+  renderAlerts();
+}
+
+function renderCharts(metrics, latest){
+  const rows = [...metrics].reverse();
+
+  const labels = rows.map(r => {
+    const ts = r.ts_bogota || r.ts || null;
+    if (!ts) return "";
+    const d = new Date(ts);
+    const tz = APP.settings.timezone || "America/Bogota";
+    const locale = (APP.settings.lang === "en") ? "en-US" : "es-CO";
+    return d.toLocaleTimeString(locale, { timeZone: tz, hour:"2-digit", minute:"2-digit" });
+  });
+
+  const cpu = rows.map(r => safeNum(r.cpu,0));
+  const ramPct = rows.map(r => safePct(r.ram_used, r.ram_total));
+  const diskPct = rows.map(r => safePct(r.disk_used, r.disk_total));
+
+  upsertChart("cpuLine","cpuLine", buildTaskLineConfig("cpuLine", labels, [{label:"CPU %", data:cpu}], 100));
+  upsertChart("ramLine","ramLine", buildTaskLineConfig("ramLine", labels, [{label:"RAM %", data:ramPct}], 100));
+  upsertChart("diskLine","diskLine", buildTaskLineConfig("diskLine", labels, [{label:"DISK %", data:diskPct}], 100));
+
+  const ramCenter = `${fmtPct(safePct(latest.ram_used, latest.ram_total))}`;
+  const diskCenter = `${fmtPct(safePct(latest.disk_used, latest.disk_total))}`;
+  upsertChart("ramDonut","ramDonut", buildDonutConfig(latest.ram_used, latest.ram_total, ramCenter));
+  upsertChart("diskDonut","diskDonut", buildDonutConfig(latest.disk_used, latest.disk_total, diskCenter));
+}
+
+/* =========================
+   DASHBOARD (REAL)
+========================= */
+function mean(arr){
+  const xs = arr.filter(v => Number.isFinite(v));
+  if (!xs.length) return 0;
+  return xs.reduce((a,b)=>a+b,0)/xs.length;
+}
+
+async function loadDashboard(){
+  if (!APP.devices.length) return;
+
+  const promises = APP.devices.map(d =>
+    loadLatest(d.device_id)
+      .then(latest => ({ device: d, latest }))
+      .catch(() => null)
+  );
+
+  const items = (await Promise.all(promises)).filter(Boolean);
+
+  const onlineItems = items.filter(x => x.device.status === "online");
+  const offlineItems = items.filter(x => x.device.status === "offline");
+
+  const cpuOnline = mean(onlineItems.map(x => safeNum(x.latest.cpu,0)));
+  const cpuOffline = mean(offlineItems.map(x => safeNum(x.latest.cpu,0)));
+
+  const ramOnline = mean(onlineItems.map(x => safePct(x.latest.ram_used, x.latest.ram_total)));
+  const ramOffline = mean(offlineItems.map(x => safePct(x.latest.ram_used, x.latest.ram_total)));
+
+  const diskOnline = mean(onlineItems.map(x => safePct(x.latest.disk_used, x.latest.disk_total)));
+  const diskOffline = mean(offlineItems.map(x => safePct(x.latest.disk_used, x.latest.disk_total)));
+
+  upsertChart("avgCpuChart","avgCpuChart", buildBarConfig(["Online","Offline"], [cpuOnline, cpuOffline], "CPU %", 100));
+  upsertChart("avgRamChart","avgRamChart", buildBarConfig(["Online","Offline"], [ramOnline, ramOffline], "RAM %", 100));
+  upsertChart("avgDiskChart","avgDiskChart", buildBarConfig(["Online","Offline"], [diskOnline, diskOffline], "DISK %", 100));
+
+  const topCpu = [...items]
+    .map(x => ({ name: x.device.hostname || x.device.device_id, val: safeNum(x.latest.cpu,0) }))
+    .sort((a,b)=>b.val-a.val)
+    .slice(0,10);
+
+  const topRam = [...items]
+    .map(x => ({ name: x.device.hostname || x.device.device_id, val: safePct(x.latest.ram_used, x.latest.ram_total) }))
+    .sort((a,b)=>b.val-a.val)
+    .slice(0,10);
+
+  upsertChart("topCpuChart","topCpuChart",
+    buildHorizontalBarConfig(topCpu.map(x=>x.name), topCpu.map(x=>x.val), "CPU %", 100)
+  );
+  upsertChart("topRamChart","topRamChart",
+    buildHorizontalBarConfig(topRam.map(x=>x.name), topRam.map(x=>x.val), "RAM %", 100)
+  );
+
+  loadAlerts();
+  document.getElementById("dashAlerts").textContent = APP.alerts.length;
+
+  requestAnimationFrame(()=>forceResizeCharts());
+}
+
+/* =========================
+   ALERTS UI
+========================= */
+function alertMeta(typeRaw){
+  const t = String(typeRaw || "").toUpperCase();
+  if (t.includes("OFFLINE")) return { cls:"alertChip--offline", icon:"⛔", row:"isOffline" };
+  if (t.includes("CPU"))     return { cls:"alertChip--cpu",     icon:"🔥", row:"" };
+  if (t.includes("RAM"))     return { cls:"alertChip--ram",     icon:"🧠", row:"" };
+  if (t.includes("DISK"))    return { cls:"alertChip--disk",    icon:"💾", row:"" };
+  return { cls:"", icon:"⚠️", row:"" };
+}
+
+function renderAlerts(){
+  loadAlerts();
+  const tb = document.getElementById("alertsTbody");
+  tb.innerHTML = "";
+
+  APP.alerts.slice(0, 200).forEach(a=>{
+    const meta = alertMeta(a.type);
+    const tr = document.createElement("tr");
+    if (meta.row) tr.classList.add(meta.row);
+
+    tr.innerHTML = `
+      <td>
+        <span class="alertChip ${meta.cls}">
+          <span class="miniDot"></span>
+          <span class="chipIcon">${meta.icon}</span>
+          ${escapeHtml(a.type)}
+        </span>
+      </td>
+      <td><div class="alertHost">${escapeHtml(a.hostname)}</div></td>
+      <td><div class="alertMsg">${escapeHtml(a.msg)}</div></td>
+      <td><div class="alertTime">${toBogota(a.ts)}</div></td>
+    `;
+    tb.appendChild(tr);
+  });
+
+  if (APP.alerts.length === 0){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="4" class="muted">Sin alertas</td>`;
+    tb.appendChild(tr);
+  }
+}
+
+/* =========================
+   INICIO (HOME)
+========================= */
+function setBarWidth(el, pct){
+  if (!el) return;
+  const v = Math.max(0, Math.min(100, safeNum(pct, 0)));
+  el.style.width = v.toFixed(1) + "%";
+}
+
+function renderRank(containerId, items){
+  const root = document.getElementById(containerId);
+  if (!root) return;
+  root.innerHTML = "";
+
+  if (!items || items.length === 0){
+    const div = document.createElement("div");
+    div.className = "muted";
+    div.textContent = "Sin datos (no hay equipos online con métricas aún).";
+    root.appendChild(div);
+    return;
+  }
+
+  items.slice(0,3).forEach(x=>{
+    const card = document.createElement("div");
+    card.className = "rankItem";
+    card.innerHTML = `
+      <div class="rankTop">
+        <div class="rankName">${escapeHtml(x.name)}</div>
+        <div class="rankVal">${fmtPct(x.val)}</div>
+      </div>
+      <div class="rankBar"><div style="width:${Math.max(0, Math.min(100, x.val)).toFixed(1)}%"></div></div>
+    `;
+    root.appendChild(card);
+  });
+}
+
+async function renderHome(){
+  const homeTZ = document.getElementById("homeTZ");
+  if (homeTZ) homeTZ.textContent = (APP.settings.timezone || "America/Bogota");
+
+  const homeLast = document.getElementById("homeLastSync");
+  if (homeLast) homeLast.textContent = toBogota(new Date().toISOString());
+
+  const total = (APP.devices || []).length;
+  const online = (APP.devices || []).filter(d=>d.status==="online").length;
+  const offline = total - online;
+
+  const homeTotal = document.getElementById("homeTotal");
+  if (homeTotal) homeTotal.textContent = total;
+
+  const homeOnline = document.getElementById("homeOnline");
+  if (homeOnline) homeOnline.textContent = online;
+
+  const homeOffline = document.getElementById("homeOffline");
+  if (homeOffline) homeOffline.textContent = offline;
+
+  loadAlerts();
+
+  // ✅ Se declara UNA sola vez
+  const homeAlerts = document.getElementById("homeAlerts");
+  if (homeAlerts) homeAlerts.textContent = APP.alerts.length;
+
+  const badge = document.getElementById("homeHealthBadge");
+  if (badge){
+    let label = "Estable";
+    let icon = "✅";
+
+    if (offline > 0 || APP.alerts.length > 0){
+      label = "Atención";
+      icon = "⚠️";
+    }
+
+    if (offline >= Math.max(2, Math.ceil(total*0.35))){
+      label = "Crítico";
+      icon = "⛔";
+    }
+
+    badge.innerHTML = `${icon} Salud general: <b style="color:var(--text)">${label}</b>`;
+  }
+
+  const tb = document.getElementById("homeAlertsTbody");
+  if (tb){
+    tb.innerHTML = "";
+
+    const subset = APP.alerts.slice(0, 6);
+
+    subset.forEach(a=>{
+      const meta = alertMeta(a.type);
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>
+          <span class="alertChip ${meta.cls}">
+            <span class="miniDot"></span>
+            <span class="chipIcon">${meta.icon}</span>
+            ${escapeHtml(a.type)}
+          </span>
+        </td>
+        <td><div class="alertHost">${escapeHtml(a.hostname)}</div></td>
+        <td><div class="alertMsg">${escapeHtml(a.msg)}</div></td>
+        <td><div class="alertTime">${toBogota(a.ts)}</div></td>
+      `;
+
+      tb.appendChild(tr);
+    });
+
+    if (subset.length === 0){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="4" class="muted">Sin alertas</td>`;
+      tb.appendChild(tr);
+    }
+  }
+
+  if (!total){
+    const avgCpu = document.getElementById("homeAvgCpu");
+    if (avgCpu) avgCpu.textContent = "-";
+
+    setBarWidth(document.getElementById("homeAvgCpuBar"), 0);
+
+    renderRank("homeTopCpu", []);
+    renderRank("homeTopRam", []);
+    return;
+  }
+
+  const promises = APP.devices.map(d =>
+    loadLatest(d.device_id)
+      .then(latest => ({ device: d, latest }))
+      .catch(() => null)
+  );
+
+  const items = (await Promise.all(promises)).filter(Boolean);
+  items.forEach(x => computeAndPushAlerts(x.device, x.latest));
+
+  // ✅ Actualiza contadores sin redeclarar homeAlerts
+  const kpiAlerts = document.getElementById("kpiAlerts");
+  if (kpiAlerts) kpiAlerts.textContent = APP.alerts.length;
+
+  const dashAlerts = document.getElementById("dashAlerts");
+  if (dashAlerts) dashAlerts.textContent = APP.alerts.length;
+
+  if (homeAlerts) homeAlerts.textContent = APP.alerts.length;
+
+  renderAlerts();
+}
+
+/* =========================
+   DETAIL + CHARTS (Selected)
+========================= */
+async function loadDetailAndCharts(){
+  if (!APP.selectedDeviceId) return;
+
+  const dev = APP.devices.find(d=>d.device_id===APP.selectedDeviceId);
+  if (!dev) return;
+
+  let latest;
+  try{
+    latest = await loadLatest(APP.selectedDeviceId);
+  }catch(e){
+    toast?.("No se pudo cargar el detalle");
+    return;
+  }
+
+  // ✅ HEADER: Hostname + Ubicación + OS
+  const detailHost = document.getElementById("detailHostname");
+  if (detailHost) detailHost.textContent = dev.hostname || dev.device_id || "-";
+
+  const detailLoc = document.getElementById("detailLocation");
+  if (detailLoc){
+    const loc = (dev.location || "").trim();
+    detailLoc.textContent = loc ? `📍 ${loc}` : "📍 Sin ubicación";
+  }
+
+  const detailOs = document.getElementById("detailOS");
+  if (detailOs) detailOs.textContent = dev.os || "-";
+
+  // ✅ Null-safe DOM
+  const cpuPct = document.getElementById("cpuPct");
+  if (cpuPct) cpuPct.textContent = fmtPct(latest.cpu);
+
+  const ramP = safePct(latest.ram_used, latest.ram_total);
+  const ramPctEl = document.getElementById("ramPct");
+  if (ramPctEl) ramPctEl.textContent = fmtPct(ramP);
+
+  const ramText = document.getElementById("ramText");
+  if (ramText) ramText.textContent = `${fmtGB(latest.ram_used)} / ${fmtGB(latest.ram_total)}`;
+
+  const diskP = safePct(latest.disk_used, latest.disk_total);
+  const diskPctEl = document.getElementById("diskPct");
+  if (diskPctEl) diskPctEl.textContent = fmtPct(diskP);
+
+  const diskText = document.getElementById("diskText");
+  if (diskText) diskText.textContent = `${fmtGB(latest.disk_used)} / ${fmtGB(latest.disk_total)}`;
+
+  const ts = latest.ts_bogota || latest.ts || null;
+  const tsText = document.getElementById("tsText");
+  if (tsText) tsText.textContent = ts ? toBogota(ts) : "-";
+
+  const uptimeText = document.getElementById("uptimeText");
+  if (uptimeText) uptimeText.textContent = fmtUptime(latest.uptime_sec);
+
+  const stateText = document.getElementById("stateText");
+  if (stateText) stateText.textContent = (dev.status || "-");
+
+  const last = dev.last_seen_bogota || dev.last_seen || null;
+  const lastSeenText = document.getElementById("lastSeenText");
+  if (lastSeenText) lastSeenText.textContent = last ? toBogota(last) : "-";
+
+  updateDetailStatus(dev.status === "online");
+  renderTopProcs("topCpuTbody", latest.processes_top_cpu || []);
+  renderTopProcs("topRamTbody", latest.processes_top_ram || []);
+
+  try{
+    const metrics = await loadMetrics(APP.selectedDeviceId);
+    renderCharts(metrics, latest);
+  }catch(e){
+    toast?.("No se pudieron cargar las métricas");
+  }
+
+  loadAlerts();
+
+  const kpiAlerts = document.getElementById("kpiAlerts");
+  if (kpiAlerts) kpiAlerts.textContent = APP.alerts.length;
+
+  const dashAlerts = document.getElementById("dashAlerts");
+  if (dashAlerts) dashAlerts.textContent = APP.alerts.length;
+
+  const homeAlerts = document.getElementById("homeAlerts");
+  if (homeAlerts) homeAlerts.textContent = APP.alerts.length;
+
+  requestAnimationFrame(()=>forceResizeCharts());
+}
+
+function renderCharts(metrics, latest){
+  const rows = [...(metrics || [])].reverse();
+
+  const labels = rows.map(r => {
+    const ts = r.ts_bogota || r.ts || null;
+    if (!ts) return "";
+    const d = new Date(ts);
+    const tz = APP.settings.timezone || "America/Bogota";
+    const locale = (APP.settings.lang === "en") ? "en-US" : "es-CO";
+    return d.toLocaleTimeString(locale, { timeZone: tz, hour:"2-digit", minute:"2-digit" });
+  });
+
+  const cpu = rows.map(r => safeNum(r.cpu,0));
+  const ramPct = rows.map(r => safePct(r.ram_used, r.ram_total));
+  const diskPct = rows.map(r => safePct(r.disk_used, r.disk_total));
+
+  upsertChart("cpuLine","cpuLine", buildTaskLineConfig("cpuLine", labels, [{label:"CPU %", data:cpu}], 100));
+  upsertChart("ramLine","ramLine", buildTaskLineConfig("ramLine", labels, [{label:"RAM %", data:ramPct}], 100));
+  upsertChart("diskLine","diskLine", buildTaskLineConfig("diskLine", labels, [{label:"DISK %", data:diskPct}], 100));
+
+  const ramCenter = `${fmtPct(safePct(latest.ram_used, latest.ram_total))}`;
+  const diskCenter = `${fmtPct(safePct(latest.disk_used, latest.disk_total))}`;
+  upsertChart("ramDonut","ramDonut", buildDonutConfig(latest.ram_used, latest.ram_total, ramCenter));
+  upsertChart("diskDonut","diskDonut", buildDonutConfig(latest.disk_used, latest.disk_total, diskCenter));
+}
+
+/* =========================
+   DASHBOARD (REAL)
+========================= */
+function mean(arr){
+  const xs = arr.filter(v => Number.isFinite(v));
+  if (!xs.length) return 0;
+  return xs.reduce((a,b)=>a+b,0)/xs.length;
+}
+
+async function loadDashboard(){
+  if (!APP.devices.length) return;
+
+  const promises = APP.devices.map(d =>
+    loadLatest(d.device_id)
+      .then(latest => ({ device: d, latest }))
+      .catch(() => null)
+  );
+
+  const items = (await Promise.all(promises)).filter(Boolean);
+
+  const onlineItems = items.filter(x => x.device.status === "online");
+  const offlineItems = items.filter(x => x.device.status === "offline");
+
+  const cpuOnline = mean(onlineItems.map(x => safeNum(x.latest.cpu,0)));
+  const cpuOffline = mean(offlineItems.map(x => safeNum(x.latest.cpu,0)));
+
+  const ramOnline = mean(onlineItems.map(x => safePct(x.latest.ram_used, x.latest.ram_total)));
+  const ramOffline = mean(offlineItems.map(x => safePct(x.latest.ram_used, x.latest.ram_total)));
+
+  const diskOnline = mean(onlineItems.map(x => safePct(x.latest.disk_used, x.latest.disk_total)));
+  const diskOffline = mean(offlineItems.map(x => safePct(x.latest.disk_used, x.latest.disk_total)));
+
+  upsertChart("avgCpuChart","avgCpuChart", buildBarConfig(["Online","Offline"], [cpuOnline, cpuOffline], "CPU %", 100));
+  upsertChart("avgRamChart","avgRamChart", buildBarConfig(["Online","Offline"], [ramOnline, ramOffline], "RAM %", 100));
+  upsertChart("avgDiskChart","avgDiskChart", buildBarConfig(["Online","Offline"], [diskOnline, diskOffline], "DISK %", 100));
+
+  const topCpu = [...items]
+    .map(x => ({ name: x.device.hostname || x.device.device_id, val: safeNum(x.latest.cpu,0) }))
+    .sort((a,b)=>b.val-a.val)
+    .slice(0,10);
+
+  const topRam = [...items]
+    .map(x => ({ name: x.device.hostname || x.device.device_id, val: safePct(x.latest.ram_used, x.latest.ram_total) }))
+    .sort((a,b)=>b.val-a.val)
+    .slice(0,10);
+
+  upsertChart("topCpuChart","topCpuChart",
+    buildHorizontalBarConfig(topCpu.map(x=>x.name), topCpu.map(x=>x.val), "CPU %", 100)
+  );
+  upsertChart("topRamChart","topRamChart",
+    buildHorizontalBarConfig(topRam.map(x=>x.name), topRam.map(x=>x.val), "RAM %", 100)
+  );
+
+  loadAlerts();
+  const dashAlerts = document.getElementById("dashAlerts");
+  if (dashAlerts) dashAlerts.textContent = APP.alerts.length;
+
+  requestAnimationFrame(()=>forceResizeCharts());
+}
+
+/* =========================
+   ALERTS UI
+========================= */
+function alertMeta(typeRaw){
+  const t = String(typeRaw || "").toUpperCase();
+  if (t.includes("OFFLINE")) return { cls:"alertChip--offline", icon:"⛔", row:"isOffline" };
+  if (t.includes("CPU"))     return { cls:"alertChip--cpu",     icon:"🔥", row:"" };
+  if (t.includes("RAM"))     return { cls:"alertChip--ram",     icon:"🧠", row:"" };
+  if (t.includes("DISK"))    return { cls:"alertChip--disk",    icon:"💾", row:"" };
+  return { cls:"", icon:"⚠️", row:"" };
+}
+
+function renderAlerts(){
+  loadAlerts();
+  const tb = document.getElementById("alertsTbody");
+  if (!tb) return;
+  tb.innerHTML = "";
+
+  APP.alerts.slice(0, 200).forEach(a=>{
+    const meta = alertMeta(a.type);
+    const tr = document.createElement("tr");
+    if (meta.row) tr.classList.add(meta.row);
+
+    tr.innerHTML = `
+      <td>
+        <span class="alertChip ${meta.cls}">
+          <span class="miniDot"></span>
+          <span class="chipIcon">${meta.icon}</span>
+          ${escapeHtml(a.type)}
+        </span>
+      </td>
+      <td><div class="alertHost">${escapeHtml(a.hostname)}</div></td>
+      <td><div class="alertMsg">${escapeHtml(a.msg)}</div></td>
+      <td><div class="alertTime">${toBogota(a.ts)}</div></td>
+    `;
+    tb.appendChild(tr);
+  });
+
+  if (APP.alerts.length === 0){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="4" class="muted">Sin alertas</td>`;
+    tb.appendChild(tr);
+  }
+}
+
+/* =========================
+   INICIO (HOME)
+========================= */
+function setBarWidth(el, pct){
+  if (!el) return;
+  const v = Math.max(0, Math.min(100, safeNum(pct, 0)));
+  el.style.width = v.toFixed(1) + "%";
+}
+
+function renderRank(containerId, items){
+  const root = document.getElementById(containerId);
+  if (!root) return;
+  root.innerHTML = "";
+
+  if (!items || items.length === 0){
+    const div = document.createElement("div");
+    div.className = "muted";
+    div.textContent = "Sin datos (no hay equipos online con métricas aún).";
+    root.appendChild(div);
+    return;
+  }
+
+  items.slice(0,3).forEach(x=>{
+    const card = document.createElement("div");
+    card.className = "rankItem";
+    card.innerHTML = `
+      <div class="rankTop">
+        <div class="rankName">${escapeHtml(x.name)}</div>
+        <div class="rankVal">${fmtPct(x.val)}</div>
+      </div>
+      <div class="rankBar"><div style="width:${Math.max(0, Math.min(100, x.val)).toFixed(1)}%"></div></div>
+    `;
+    root.appendChild(card);
+  });
+}
+
+async function renderHome(){
+  const homeTZ = document.getElementById("homeTZ");
+  if (homeTZ) homeTZ.textContent = (APP.settings.timezone || "America/Bogota");
+
+  const homeLast = document.getElementById("homeLastSync");
+  if (homeLast) homeLast.textContent = toBogota(new Date().toISOString());
+
+  const total = (APP.devices || []).length;
+  const online = (APP.devices || []).filter(d=>d.status==="online").length;
+  const offline = total - online;
+
+  const homeTotal = document.getElementById("homeTotal"); if (homeTotal) homeTotal.textContent = total;
+  const homeOnline = document.getElementById("homeOnline"); if (homeOnline) homeOnline.textContent = online;
+  const homeOffline = document.getElementById("homeOffline"); if (homeOffline) homeOffline.textContent = offline;
+
+  loadAlerts();
+  const homeAlerts = document.getElementById("homeAlerts"); if (homeAlerts) homeAlerts.textContent = APP.alerts.length;
+
+  const badge = document.getElementById("homeHealthBadge");
+  if (badge){
+    let label = "Estable";
+    let icon = "✅";
+    if (offline > 0 || APP.alerts.length > 0){ label = "Atención"; icon = "⚠️"; }
+    if (offline >= Math.max(2, Math.ceil(total*0.35))){ label = "Crítico"; icon = "⛔"; }
+    badge.innerHTML = `${icon} Salud general: <b style="color:var(--text)">${label}</b>`;
+  }
+
+  const tb = document.getElementById("homeAlertsTbody");
+  if (tb){
+    tb.innerHTML = "";
+    const subset = APP.alerts.slice(0, 6);
+    subset.forEach(a=>{
+      const meta = alertMeta(a.type);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>
+          <span class="alertChip ${meta.cls}">
+            <span class="miniDot"></span>
+            <span class="chipIcon">${meta.icon}</span>
+            ${escapeHtml(a.type)}
+          </span>
+        </td>
+        <td><div class="alertHost">${escapeHtml(a.hostname)}</div></td>
+        <td><div class="alertMsg">${escapeHtml(a.msg)}</div></td>
+        <td><div class="alertTime">${toBogota(a.ts)}</div></td>
+      `;
+      tb.appendChild(tr);
+    });
+    if (subset.length === 0){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="4" class="muted">Sin alertas</td>`;
+      tb.appendChild(tr);
+    }
+  }
+
+  if (!total){
+    const avgCpu = document.getElementById("homeAvgCpu"); if (avgCpu) avgCpu.textContent = "-";
+    setBarWidth(document.getElementById("homeAvgCpuBar"), 0);
+    renderRank("homeTopCpu", []);
+    renderRank("homeTopRam", []);
+    return;
+  }
+
+  const promises = APP.devices.map(d =>
+    loadLatest(d.device_id)
+      .then(latest => ({ device: d, latest }))
+      .catch(() => null)
+  );
+  const items = (await Promise.all(promises)).filter(Boolean);
+  const onlineItems = items.filter(x => x.device.status === "online");
+
+  const avgCpuOnline = mean(onlineItems.map(x => safeNum(x.latest.cpu,0)));
+  const homeAvgCpu = document.getElementById("homeAvgCpu");
+  if (homeAvgCpu) homeAvgCpu.textContent = fmtPct(avgCpuOnline);
+  setBarWidth(document.getElementById("homeAvgCpuBar"), avgCpuOnline);
+
+  const topCpu = [...onlineItems]
+    .map(x => ({ name: x.device.hostname || x.device.device_id, val: safeNum(x.latest.cpu,0) }))
+    .sort((a,b)=>b.val-a.val)
+    .slice(0,3);
+
+  const topRam = [...onlineItems]
+    .map(x => ({ name: x.device.hostname || x.device.device_id, val: safePct(x.latest.ram_used, x.latest.ram_total) }))
+    .sort((a,b)=>b.val-a.val)
+    .slice(0,3);
+
+  renderRank("homeTopCpu", topCpu);
+  renderRank("homeTopRam", topRam);
+}
+
+/* =========================
+   AUTO REFRESH
+========================= */
+function setupAutoRefresh(){
+  clearInterval(window.__autoTimer);
+  window.__autoTimer = setInterval(async ()=>{
+    try{
+      // 🚫 Si estoy editando ubicación, NO refrescar
+      if (APP.locationEdit?.deviceId) return;
+
+      await refreshAll(false);
+    }catch{}
+  }, Math.max(5, APP.settings.refreshSec) * 1000);
+}
+
+async function refreshAll(showToast=true){
+  await loadDevices();
+  await computeAlertsForAllDevices();
+  if (APP.selectedDeviceId) await loadDetailAndCharts();
+
+  const activeTab = document.querySelector(".tab.active")?.dataset?.tab || "home";
+  if (activeTab === "dash") await loadDashboard();
+  if (activeTab === "home") await renderHome();
+
+  if (showToast) toast?.("Actualizado");
+}
+async function refreshAll(showToast=true){
+  // ✅ si estás editando ubicación, NO recargues devices (si no te saca del input)
+  const editing = !!APP.locationEdit?.deviceId;
+  if (!editing) {
+    await loadDevices();
+  }
+
+  await computeAlertsForAllDevices();
+  if (APP.selectedDeviceId) await loadDetailAndCharts();
+
+  const activeTab = document.querySelector(".tab.active")?.dataset?.tab || "home";
+  if (activeTab === "dash") await loadDashboard();
+  if (activeTab === "home") await renderHome();
+
+  if (showToast) toast("Actualizado");
+}
+
+/* =========================
+   EVENTS
+========================= */
+document.querySelectorAll(".tab").forEach(t=>{
+  t.addEventListener("click", ()=>showTab(t.dataset.tab));
+});
+
+document.getElementById("btnRefresh")?.addEventListener("click", ()=>refreshAll(true));
+
+document.getElementById("btnLogout")?.addEventListener("click", async ()=>{
+  try{ await apiFetch("/api/logout", { method:"POST", body:"{}" }); }catch{}
+  clearSession();
+  location.reload();
+});
+
+document.getElementById("btnDelete")?.addEventListener("click", async ()=>{
+  if (!APP.selectedDeviceId) return alert("Selecciona un PC primero.");
+  const dev = APP.devices.find(d=>d.device_id===APP.selectedDeviceId);
+  const name = dev ? (dev.hostname || dev.device_id) : APP.selectedDeviceId;
+
+  const ok = await confirmCenter(`¿Quitar "${name}" y TODAS sus métricas?`, "Quitar PC", "🗑️");
+  if (!ok) return;
+
+  try{
+    await apiFetch(`/api/devices/${encodeURIComponent(APP.selectedDeviceId)}`, { method:"DELETE" });
+    toast?.("PC quitado");
+    APP.selectedDeviceId = null;
+
+    document.getElementById("pcEmptyState")?.classList.remove("hide");
+    document.getElementById("detailCard")?.classList.add("hide");
+    document.getElementById("pcChartsMount")?.classList.add("hide");
+
+    await refreshAll(false);
+  }catch(e){
+    alert("Error al quitar: " + e.message);
+  }
+});
+
+document.getElementById("btnClearAlerts")?.addEventListener("click", async ()=>{
+  const ok = await confirmCenter(
+    "¿Eliminar todas las alertas guardadas en este navegador?",
+    "Limpiar alertas",
+    "🧹"
+  );
+  if (!ok) return;
+
+  APP.alerts = [];
+  saveAlerts();
+  renderAlerts();
+  renderHome().catch(()=>{});
+  toast?.("Alertas limpiadas");
+
+  document.getElementById("kpiAlerts") && (document.getElementById("kpiAlerts").textContent = "0");
+  document.getElementById("dashAlerts") && (document.getElementById("dashAlerts").textContent = "0");
+  const homeAlerts = document.getElementById("homeAlerts"); if (homeAlerts) homeAlerts.textContent = "0";
+});
+
+/* acciones rápidas */
+document.getElementById("homeGoPcs")?.addEventListener("click", ()=>showTab("pcs"));
+document.getElementById("homeGoDash")?.addEventListener("click", ()=>showTab("dash"));
+document.getElementById("homeGoSettings")?.addEventListener("click", ()=>showTab("settings"));
+document.getElementById("homeGoAlerts")?.addEventListener("click", ()=>showTab("alerts"));
+
+document.getElementById("homeClearAlerts")?.addEventListener("click", async ()=>{
+  const ok = await confirmCenter(
+    "¿Eliminar todas las alertas guardadas en este navegador?",
+    "Limpiar alertas",
+    "🧹"
+  );
+  if (!ok) return;
+
+  APP.alerts = [];
+  saveAlerts();
+  renderAlerts();
+  renderHome().catch(()=>{});
+  toast?.("Alertas limpiadas");
+
+  document.getElementById("kpiAlerts") && (document.getElementById("kpiAlerts").textContent = "0");
+  document.getElementById("dashAlerts") && (document.getElementById("dashAlerts").textContent = "0");
+  const homeAlerts = document.getElementById("homeAlerts"); if (homeAlerts) homeAlerts.textContent = "0";
+});
+
+document.getElementById("btnSaveSettings")?.addEventListener("click", ()=>saveSettings());
+document.getElementById("btnSaveGeneral")?.addEventListener("click", ()=>saveSettings());
+
+document.getElementById("setTheme")?.addEventListener("change", (e)=>{
+  APP.settings.theme = e.target.value;
+  applyTheme(e.target.value);
+});
+document.getElementById("setLang")?.addEventListener("change", (e)=>{
+  APP.settings.lang = e.target.value;
+  applyLanguage();
+});
+document.getElementById("setTimezone")?.addEventListener("change", (e)=>{
+  APP.settings.timezone = e.target.value;
+  updateTopTimezoneLabel();
+  refreshChartsTheme();
+  renderHome().catch(()=>{});
+});
+
+/* ✅ Mostrar/Ocultar contraseña */
+document.getElementById("btnTogglePass")?.addEventListener("click", ()=>{
+  const pass = document.getElementById("loginPass");
+  const btn = document.getElementById("btnTogglePass");
+  if (!pass || !btn) return;
+
+  const isPass = pass.type === "password";
+  pass.type = isPass ? "text" : "password";
+  btn.textContent = isPass ? "🙈" : "👁️";
+  pass.focus();
+});
+
+/* Login (enter + botón) */
+async function doLogin(){
+  showLoginError("");
+  const u = document.getElementById("loginUser")?.value || "admin";
+  const p = document.getElementById("loginPass")?.value || "";
+  try{
+    const r = await apiFetch("/api/login", { method:"POST", body: JSON.stringify({ username:u, password:p }) });
+    setSession({ token: r.token, user: u });
+    location.reload();
+  }catch(e){
+    showLoginError(tr("login_error_prefix") + e.message);
+  }
+}
+document.getElementById("btnLogin")?.addEventListener("click", doLogin);
+document.getElementById("loginPass")?.addEventListener("keydown", (e)=>{ if (e.key === "Enter") doLogin(); });
+document.getElementById("loginUser")?.addEventListener("keydown", (e)=>{ if (e.key === "Enter") doLogin(); });
+
+/* Export UI */
+document.getElementById("btnExport")?.addEventListener("click", openExportModal);
+document.getElementById("btnExportInline")?.addEventListener("click", openExportModal);
+
+document.getElementById("segDay")?.addEventListener("click", ()=>setExportMode("day"));
+document.getElementById("segRange")?.addEventListener("click", ()=>setExportMode("range"));
+
+document.getElementById("exportCancel")?.addEventListener("click", closeExportModal);
+document.getElementById("exportBackdrop")?.addEventListener("click", closeExportModal);
+document.getElementById("exportDownload")?.addEventListener("click", downloadExport);
+document.addEventListener("keydown", (e)=>{
+  const modal = document.getElementById("exportModal");
+  if (!modal) return;
+  const modalOpen = !modal.classList.contains("hide");
+  if (modalOpen && e.key === "Escape") closeExportModal();
+});
+
+/* =========================
+   INIT
+========================= */
+(async function init(){
+  setLogoRobust();
+  loadSettings();
+  loadAlerts();
+  renderAlerts();
+
+  mountChartsUnderDetail();
+
+  // resize charts cuando cambia tamaño ventana (evita recorte)
+  window.addEventListener("resize", ()=>requestAnimationFrame(()=>forceResizeCharts()));
+
+  const sess = getSession();
+  if (!sess.token){
+    document.getElementById("loginView")?.classList.remove("hide");
+    document.getElementById("appView")?.classList.add("hide");
+    document.getElementById("loginUser")?.focus();
+    return;
+  }
+
+  document.getElementById("loginView")?.classList.add("hide");
+  document.getElementById("appView")?.classList.remove("hide");
+
+  try{
+    await loadWhoami();
+    await refreshAll(false);
+
+    mountChartsUnderDetail();
+
+    showTab("home");
+    renderHome().catch(()=>{});
+
+    setupAutoRefresh();
+    toast?.("Bienvenido");
+    requestAnimationFrame(()=>forceResizeCharts());
+  }catch(e){
+    clearSession();
+    document.getElementById("loginView")?.classList.remove("hide");
+    document.getElementById("appView")?.classList.add("hide");
+    alert("Sesión inválida. Vuelve a iniciar. ("+e.message+")");
+  }
+})();
+</script>
+</body>
+</html>  
+ 

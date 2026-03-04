@@ -1,0 +1,10 @@
+{
+  "server": "http://PC-DATECSA-USC:8000",
+  "token": "MI_TOKEN_SUPER_SEGURO",
+  "interval": 10,
+  "top_n": 5,
+  "timeout": 5,
+  "verify_tls": true,
+  "disk_path": "",
+  "regen_device_id": true
+}
