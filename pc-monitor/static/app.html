@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SysPulse</title>
 
-  <!-- ✅ FAVICON (ROBUSTO): intenta nombres comunes en /static/ y el /favicon.ico del server -->
   <link rel="icon" href="/favicon.ico?v=6" sizes="any">
   <link rel="shortcut icon" href="/favicon.ico?v=6">
   <link rel="icon" href="/static/favicon.ico?v=6" sizes="any">
@@ -26,7 +25,7 @@
 
   <style>
     :root{
-      --bg:#070b12;
+      --bg:#0b0f17;
       --panel:#0c1422;
       --panel2:#0a111d;
       --text:#eaf2ff;
@@ -127,7 +126,6 @@
     }
     .tab.active{background:rgba(255,255,255,.06); color:var(--text); border:1px solid var(--line)}
 
-    /* ✅ Mantiene el código de charts tab, pero no se muestra la pestaña */
     .tab[data-tab="charts"]{ display:none !important; }
 
     .grid{display:grid; gap:14px;}
@@ -190,7 +188,6 @@
       max-width: 560px;
     }
 
-    /* ✅ LOGIN mejorado (logo + mostrar/ocultar contraseña + error inline) */
     .login{
       max-width:420px; margin:8vh auto; padding:22px;
       background:rgba(255,255,255,.03);
@@ -242,7 +239,47 @@
       line-height: 1.35;
     }
 
-    /* ✅ charts cards: arreglos para “ver completo” */
+    .authTabs{
+      display:flex;
+      gap:8px;
+      margin:16px 0 12px;
+      flex-wrap:wrap;
+    }
+    .authTab{
+      flex:1;
+      min-width:120px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      cursor:pointer;
+    }
+    .authTab.active{
+      background:rgba(59,130,246,.18);
+      border-color:rgba(59,130,246,.35);
+      color:var(--text);
+      font-weight:700;
+    }
+    .authLinks{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:6px;
+      margin:10px 0;
+    }
+    .linkBtn{
+      border:none;
+      background:transparent;
+      color:#8fb8ff;
+      cursor:pointer;
+      padding:0;
+      font-size:13px;
+    }
+    .linkBtn:hover{
+      text-decoration:underline;
+    }
+
     .chartShell{
       position:relative;
       overflow:hidden;
@@ -281,7 +318,6 @@
     }
     body.theme-light .chartWatermark{ color: rgba(15,23,42,.12); }
 
-    /* Ayuda / Info */
     .helpContent h2{margin:0 0 10px; font-size:18px}
     .helpContent p{margin:8px 0}
     .helpContent ol{margin:10px 0 0 18px}
@@ -373,7 +409,6 @@
       font-size: 12.5px;
     }
 
-    /* ✅ ALERTAS PRO + MODAL */
     #tab_alerts table{ border-collapse: separate; border-spacing: 0 10px; }
     #tab_alerts thead th{ border-bottom: 1px solid var(--line); }
     #tab_alerts tbody td{
@@ -474,7 +509,6 @@
     .modalText{margin: 8px 0 0; color: var(--muted); line-height: 1.5; font-size: 13.5px;}
     .modalActions{margin-top: 14px; display:flex; justify-content: flex-end; gap: 10px;}
 
-    /* ✅ Export modal UI */
     .segTabs{
       display:flex; gap:8px; padding:8px;
       border-radius: 999px;
@@ -518,7 +552,6 @@
     }
     body.theme-light .exportHint{background: rgba(15,23,42,.06);}
 
-    /* ✅ INICIO (AGREGADO): look pro sin cambiar tu estilo */
     .homeHero{
       border: 1px solid var(--line);
       border-radius: 18px;
@@ -654,6 +687,244 @@
   margin-top: 2px;
 }
 
+/*  MAPA SYSPULSE */
+.mapCard{
+  margin-top:14px;
+  overflow:hidden;
+}
+.mapTop{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+.mapLegend{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.mapHint{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+#devicesMap{
+  width:100%;
+  height:420px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  overflow:hidden;
+  box-shadow: var(--shadow);
+  background:rgba(255,255,255,.35);
+}
+.mapEmpty{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  color:var(--muted);
+  background:rgba(255,255,255,.04);
+  font-size:13px;
+}
+body.theme-light .mapEmpty{
+  background:rgba(15,23,42,.04);
+}
+.mapPopupTitle{
+  font-weight:900;
+  color:#0f172a;
+  margin-bottom:4px;
+}
+.mapPopupText{
+  color:#334155;
+  font-size:12px;
+  line-height:1.35;
+}
+.pcMarker{
+  width:22px;
+  height:22px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  border:3px solid #ffffff;
+  box-shadow:0 10px 24px rgba(15,23,42,.28);
+}
+.pcMarker.online{
+  background:#22c55e;
+}
+.pcMarker.offline{
+  background:#ef4444;
+}
+.locEditorGrid{
+  display:grid;
+  grid-template-columns: minmax(180px, 1.5fr) minmax(110px, .8fr) minmax(110px, .8fr);
+  gap:8px;
+  align-items:center;
+}
+.locEditorActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.locCoord{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px;
+}
+.geoNote{
+  margin-top:8px;
+  padding:9px 10px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:rgba(59,130,246,.10);
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.4;
+}
+.mapToolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:10px 0 12px;
+}
+.mapSearch{
+  min-width:280px;
+  flex:1;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.mapSearch input{ width:100%; }
+.mapFilters{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.mapFilterBtn{
+  padding:9px 12px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.05);
+  color:var(--muted);
+  cursor:pointer;
+}
+.mapFilterBtn.active{
+  background:rgba(59,130,246,.18);
+  border-color:rgba(59,130,246,.40);
+  color:var(--text);
+  font-weight:800;
+}
+.mapStatsGrid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:10px;
+  margin:10px 0 12px;
+}
+.mapStat{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:10px 12px;
+  background:rgba(255,255,255,.035);
+}
+body.theme-light .mapStat{ background:rgba(15,23,42,.035); }
+.mapStat .label{ color:var(--muted); font-size:12px; }
+.mapStat .value{ margin-top:4px; font-weight:900; font-size:20px; }
+.mapSideList{
+  display:grid;
+  grid-template-columns: 1fr 2.1fr;
+  gap:12px;
+  align-items:stretch;
+}
+.mapPcList{
+  max-height:420px;
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,255,255,.025);
+  padding:8px;
+}
+.mapPcItem{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+  cursor:pointer;
+  margin-bottom:8px;
+  background:rgba(255,255,255,.035);
+}
+.mapPcItem:hover{ filter:brightness(1.06); }
+.mapPcItem.active{
+  border-color:rgba(59,130,246,.55);
+  background:rgba(59,130,246,.13);
+}
+.mapPcTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+}
+.mapPcName{
+  font-weight:900;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.mapPcMeta{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:4px;
+  line-height:1.35;
+}
+.mapStatusMini{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  flex:0 0 auto;
+}
+.mapStatusMini.online{ background:var(--good); box-shadow:0 0 0 4px rgba(34,197,94,.14); }
+.mapStatusMini.offline{ background:var(--bad); box-shadow:0 0 0 4px rgba(239,68,68,.14); }
+.mapCanvasWrap{
+  position:relative;
+  min-height:420px;
+}
+#devicesMap{
+  height:100%;
+  min-height:420px;
+}
+.mapOverlayHint{
+  position:absolute;
+  left:12px;
+  bottom:12px;
+  z-index:3;
+  padding:8px 10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(15,23,42,.68);
+  color:#fff;
+  font-size:12px;
+  backdrop-filter: blur(8px);
+  pointer-events:none;
+}
+body.theme-light .mapOverlayHint{
+  background:rgba(255,255,255,.78);
+  color:#0f172a;
+  border-color:rgba(15,23,42,.14);
+}
+@media (max-width: 980px){
+  .mapSideList{ grid-template-columns:1fr; }
+  .mapPcList{ max-height:260px; }
+  .mapStatsGrid{ grid-template-columns:1fr; }
+}
+
     @media (max-width: 980px){
       .split{grid-template-columns:1fr}
       .mini{grid-template-columns:1fr}
@@ -665,10 +936,500 @@
     @media (max-width: 520px){
       .homeKpiGrid{ grid-template-columns: 1fr; }
     }
-  </style>
+  
+/* DASHBOARD PRO */
+.dashInsightGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
+.dashInsight{border:1px solid var(--line);border-radius:18px;padding:14px;background:radial-gradient(420px 160px at 20% 0%,rgba(59,130,246,.12),transparent 55%),rgba(255,255,255,.03);box-shadow:var(--shadow)}
+body.theme-light .dashInsight{background:radial-gradient(420px 160px at 20% 0%,rgba(59,130,246,.10),transparent 55%),rgba(255,255,255,.72)}
+.dashInsight .label{color:var(--muted);font-size:12px}.dashInsight .value{margin-top:6px;font-size:24px;font-weight:950}.dashInsight .desc{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.35}
+.healthPanel{display:grid;grid-template-columns:.8fr 1.2fr;gap:14px;margin-top:14px}
+.healthScoreBox{border:1px solid var(--line);border-radius:20px;padding:18px;background:radial-gradient(500px 220px at 50% 0%,rgba(16,185,129,.16),transparent 55%),rgba(255,255,255,.03);box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:260px}
+.healthCircle{width:160px;height:160px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--good) 0deg,var(--good) 120deg,rgba(255,255,255,.08) 120deg 360deg);box-shadow:0 18px 40px rgba(0,0,0,.18);position:relative}
+.healthCircle::after{content:"";position:absolute;width:118px;height:118px;border-radius:50%;background:var(--panel);border:1px solid var(--line)}
+.healthCircleValue{position:relative;z-index:2;font-size:30px;font-weight:950}.healthLabel{margin-top:12px;font-weight:900}.healthDesc{color:var(--muted);font-size:12.5px;text-align:center;margin-top:6px;line-height:1.45}
+.healthBars{border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow);background:rgba(255,255,255,.025)}
+.healthBarRow{margin:12px 0}.healthBarTop{display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:800}.healthBarTrack{margin-top:8px;height:13px;border-radius:999px;border:1px solid var(--line);overflow:hidden;background:rgba(0,0,0,.16)}
+body.theme-light .healthBarTrack{background:rgba(15,23,42,.06)}.healthBarFill{width:0%;height:100%;border-radius:999px;background:linear-gradient(90deg,rgba(34,197,94,.95),rgba(59,130,246,.95))}
+.dashExplain{margin-top:14px;border:1px solid var(--line);border-radius:18px;padding:14px;background:rgba(59,130,246,.09)}.dashExplain h3{margin:0 0 8px;font-size:15px}.dashExplain ul{margin:8px 0 0 18px;color:var(--muted);line-height:1.55;font-size:13px}
+.chartGridPro{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.chartShellPro{position:relative;overflow:hidden;border-radius:20px;border:1px solid var(--line);background:radial-gradient(700px 260px at 15% 0%,rgba(59,130,246,.14),transparent 60%),radial-gradient(700px 260px at 85% 10%,rgba(16,185,129,.10),transparent 58%),rgba(255,255,255,.025);box-shadow:var(--shadow);padding:14px;min-height:360px;height:360px}
+.chartShellPro canvas{width:100%!important;height:calc(100% - 42px)!important}.chartShellPro.tall{min-height:430px;height:430px}.chartShellPro.wide{grid-column:1/-1}
+.riskList{display:flex;flex-direction:column;gap:10px;margin-top:10px}.riskItem{border:1px solid var(--line);border-radius:16px;padding:10px 12px;background:rgba(255,255,255,.035)}
+.riskTop{display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:900}.riskMeta{margin-top:4px;color:var(--muted);font-size:12px}.riskTrack{margin-top:8px;height:9px;border-radius:999px;border:1px solid var(--line);overflow:hidden;background:rgba(0,0,0,.14)}.riskFill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,rgba(34,197,94,.90),rgba(245,158,11,.90),rgba(239,68,68,.90))}
+@media(max-width:980px){.dashInsightGrid{grid-template-columns:1fr 1fr}.healthPanel{grid-template-columns:1fr}.chartGridPro{grid-template-columns:1fr}.chartShellPro.wide{grid-column:auto}}@media(max-width:560px){.dashInsightGrid{grid-template-columns:1fr}}
+
+  
+/* ==========================================================
+   MEJORAS FINALES PRESENTACIÓN
+   - Login claro en tema blanco
+   - Selects visualmente más bonitos
+   - Mejor contraste de formularios
+========================================================== */
+body.theme-light .login{
+  background:
+    radial-gradient(650px 260px at 15% 0%, rgba(59,130,246,.14), transparent 60%),
+    radial-gradient(650px 260px at 90% 10%, rgba(16,185,129,.10), transparent 60%),
+    rgba(255,255,255,.86);
+  color:#0f172a;
+  border-color:rgba(15,23,42,.14);
+}
+body.theme-light .login h2,
+body.theme-light .login label,
+body.theme-light .login .field label{
+  color:#0f172a !important;
+}
+body.theme-light .login .muted,
+body.theme-light .login .tiny{
+  color:#334155 !important;
+}
+body.theme-light .login input{
+  background:rgba(255,255,255,.92) !important;
+  color:#0f172a !important;
+  border-color:rgba(15,23,42,.18) !important;
+}
+body.theme-light .login input::placeholder{
+  color:#64748b !important;
+}
+body.theme-light .loginError{
+  color:#991b1b !important;
+  background:rgba(254,226,226,.85) !important;
+  border-color:rgba(239,68,68,.45) !important;
+}
+body.theme-light .authTab{
+  color:#334155;
+  background:rgba(255,255,255,.68);
+}
+body.theme-light .authTab.active{
+  color:#0f172a;
+  background:linear-gradient(135deg, rgba(191,219,254,.95), rgba(219,234,254,.95));
+  border-color:rgba(59,130,246,.45);
+}
+
+/* Selects modernos para Configuración */
+select{
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:
+    linear-gradient(135deg, rgba(59,130,246,.12), rgba(16,185,129,.08)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat,no-repeat;
+  background-position:center,right 14px center;
+  background-size:100% 100%,18px;
+  padding-right:42px !important;
+  cursor:pointer;
+  font-weight:600;
+  transition:.18s ease;
+}
+select:hover{
+  border-color:rgba(59,130,246,.55);
+  box-shadow:0 12px 28px rgba(59,130,246,.12);
+}
+select:focus{
+  border-color:rgba(37,99,235,.72);
+  box-shadow:0 0 0 4px rgba(59,130,246,.16);
+}
+select option{
+  background:#f8fafc;
+  color:#0f172a;
+  padding:12px;
+}
+body.theme-dark select option,
+body.theme-blue select option{
+  background:#0f172a;
+  color:#eaf2ff;
+}
+#tab_settings .field label{
+  font-weight:700;
+}
+#tab_settings select{
+  min-height:50px;
+  border-radius:17px;
+}
+#tab_settings .card{
+  overflow:visible;
+}
+
+/* Más contraste general en modo claro */
+body.theme-light input,
+body.theme-light select{
+  color:#0f172a;
+}
+body.theme-light .toast{
+  color:#0f172a;
+  background:rgba(255,255,255,.92);
+  border-color:rgba(15,23,42,.14);
+}
+
+  
+/* ==========================================================
+   SELECTS PERSONALIZADOS - Configuración
+========================================================== */
+.customSelectWrap{position:relative;width:100%}
+.customSelectNative{position:absolute!important;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}
+.customSelectBtn{
+  width:100%;min-height:54px;border-radius:18px;border:1px solid var(--line);
+  background:radial-gradient(380px 120px at 0% 0%,rgba(59,130,246,.16),transparent 60%),
+             radial-gradient(380px 120px at 100% 0%,rgba(16,185,129,.10),transparent 60%),
+             rgba(255,255,255,.62);
+  color:var(--text);display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:0 16px;cursor:pointer;font-weight:800;box-shadow:0 14px 30px rgba(15,23,42,.08);transition:.18s ease
+}
+body.theme-dark .customSelectBtn,body.theme-blue .customSelectBtn{
+  background:radial-gradient(380px 120px at 0% 0%,rgba(59,130,246,.18),transparent 60%),
+             radial-gradient(380px 120px at 100% 0%,rgba(16,185,129,.14),transparent 60%),
+             rgba(15,23,42,.74)
+}
+.customSelectBtn:hover{border-color:rgba(59,130,246,.55);transform:translateY(-1px);box-shadow:0 18px 38px rgba(59,130,246,.16)}
+.customSelectBtn:focus{outline:none;border-color:rgba(37,99,235,.75);box-shadow:0 0 0 4px rgba(59,130,246,.18),0 18px 38px rgba(59,130,246,.16)}
+.customSelectChevron{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(59,130,246,.14);color:#2563eb;flex:0 0 auto;transition:.18s ease}
+.customSelectWrap.open .customSelectChevron{transform:rotate(180deg);background:rgba(37,99,235,.20)}
+.customSelectMenu{
+  position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:9999;border:1px solid rgba(59,130,246,.28);
+  border-radius:18px;padding:8px;background:rgba(255,255,255,.96);box-shadow:0 24px 60px rgba(15,23,42,.20);
+  backdrop-filter:blur(14px);display:none;max-height:260px;overflow:auto
+}
+body.theme-dark .customSelectMenu,body.theme-blue .customSelectMenu{background:rgba(15,23,42,.96);box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.customSelectWrap.open .customSelectMenu{display:block}
+.customSelectOption{border-radius:14px;padding:12px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;color:var(--text);font-weight:700;transition:.16s ease}
+.customSelectOption:hover{background:rgba(59,130,246,.12)}
+.customSelectOption.selected{background:linear-gradient(135deg,rgba(59,130,246,.22),rgba(16,185,129,.14));color:var(--text)}
+.customSelectOption.selected::after{content:"✓";width:24px;height:24px;display:grid;place-items:center;border-radius:9px;color:#fff;background:#2563eb;font-weight:900}
+#tab_settings .card{overflow:visible}
+
+
+/* ==========================================================
+   AJUSTE FINAL SELECTS + MAPA + SECCIONES INFO/AYUDA
+========================================================== */
+.customSelectWrap select.customSelectNative,
+.customSelectWrap select{
+  position:absolute !important;
+  left:0 !important;
+  top:0 !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  z-index:-1 !important;
+}
+.customSelectWrap{
+  z-index:20;
+}
+.customSelectWrap.open{
+  z-index:99999;
+}
+#tab_settings .field{
+  overflow:visible;
+}
+#tab_settings .grid,
+#tab_settings .card{
+  overflow:visible !important;
+}
+
+/* Mapa más estable y con color */
+.mapSideList{
+  grid-template-columns: 420px minmax(0,1fr) !important;
+}
+.mapCanvasWrap{
+  min-height:520px !important;
+}
+#devicesMap{
+  min-height:520px !important;
+  background:linear-gradient(135deg, #dbeafe, #d1fae5) !important;
+}
+.mapPcList{
+  min-height:520px;
+  max-height:520px;
+}
+.mapToolbar{
+  align-items:center;
+}
+.mapFilterBtn,
+#btnMapFit{
+  min-height:46px;
+}
+.mapOverlayHint{
+  bottom:18px;
+  left:18px;
+}
+@media(max-width:1100px){
+  .mapSideList{grid-template-columns:1fr !important;}
+  .mapPcList{min-height:auto;max-height:280px;}
+  .mapCanvasWrap,#devicesMap{min-height:460px!important;}
+}
+
+/* Información y ayuda sin emojis */
+.infoHeroClean{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+}
+.infoMark{
+  width:8px;
+  min-height:42px;
+  border-radius:999px;
+  background:linear-gradient(180deg, rgba(59,130,246,.85), rgba(16,185,129,.85));
+  flex:0 0 auto;
+  margin-top:6px;
+}
+.cleanBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(59,130,246,.09);
+  color:var(--text);
+  font-weight:700;
+  font-size:13px;
+}
+.cleanBadge::before{
+  content:"";
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.14);
+}
+.infoSectionTitle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.infoSectionTitle::before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-radius:4px;
+  background:linear-gradient(135deg,#2563eb,#10b981);
+}
+.infoList li{
+  margin:9px 0;
+}
+.infoList strong{
+  color:var(--text);
+}
+
+
+/* ==========================================================
+   CORRECCIÓN DEFINITIVA SOBRE TU APP.HTML
+   - Selects personalizados: Zona horaria, Idioma y Tema
+   - Mapa estable y con color
+   - Información/Ayuda actualizadas sin emojis
+========================================================== */
+
+/* Select nativo completamente oculto para evitar la lista azul del navegador */
+.customSelectWrap select,
+.customSelectNative{
+  position:absolute !important;
+  left:-99999px !important;
+  top:auto !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+  z-index:-1 !important;
+}
+
+.customSelectWrap{
+  position:relative !important;
+  width:100% !important;
+  z-index:100 !important;
+}
+.customSelectWrap.open{ z-index:999999 !important; }
+
+.customSelectBtn{
+  width:100%;
+  min-height:56px;
+  border-radius:20px;
+  border:1px solid rgba(59,130,246,.38);
+  background:
+    radial-gradient(460px 135px at 0% 0%, rgba(59,130,246,.18), transparent 62%),
+    radial-gradient(460px 135px at 100% 0%, rgba(16,185,129,.13), transparent 62%),
+    rgba(255,255,255,.78);
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px 0 18px;
+  cursor:pointer;
+  font-weight:900;
+  font-size:16px;
+  box-shadow:0 15px 35px rgba(37,99,235,.12);
+  transition:.18s ease;
+}
+body.theme-dark .customSelectBtn,
+body.theme-blue .customSelectBtn{
+  background:
+    radial-gradient(460px 135px at 0% 0%, rgba(59,130,246,.20), transparent 62%),
+    radial-gradient(460px 135px at 100% 0%, rgba(16,185,129,.16), transparent 62%),
+    rgba(15,23,42,.88);
+}
+.customSelectBtn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(37,99,235,.72);
+  box-shadow:0 20px 45px rgba(37,99,235,.18);
+}
+.customSelectBtn:focus{
+  outline:none;
+  border-color:rgba(37,99,235,.85);
+  box-shadow:0 0 0 4px rgba(59,130,246,.18),0 20px 45px rgba(37,99,235,.18);
+}
+.customSelectChevron{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,rgba(191,219,254,.95),rgba(219,234,254,.95));
+  color:#2563eb;
+  flex:0 0 auto;
+  transition:.18s ease;
+  font-size:18px;
+  font-weight:950;
+}
+.customSelectWrap.open .customSelectChevron{
+  transform:rotate(180deg);
+  color:#fff;
+  background:linear-gradient(135deg,#2563eb,#10b981);
+}
+.customSelectMenu{
+  position:absolute;
+  left:0;
+  right:0;
+  top:calc(100% + 10px);
+  z-index:999999;
+  border:1px solid rgba(59,130,246,.30);
+  border-radius:22px;
+  padding:10px;
+  background:rgba(255,255,255,.98);
+  box-shadow:0 28px 70px rgba(15,23,42,.22);
+  backdrop-filter:blur(14px);
+  display:none;
+  max-height:290px;
+  overflow:auto;
+}
+body.theme-dark .customSelectMenu,
+body.theme-blue .customSelectMenu{
+  background:rgba(15,23,42,.98);
+  box-shadow:0 28px 70px rgba(0,0,0,.45);
+}
+.customSelectWrap.open .customSelectMenu{ display:block; }
+.customSelectOption{
+  border-radius:16px;
+  padding:13px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  cursor:pointer;
+  color:var(--text);
+  font-weight:850;
+  transition:.16s ease;
+  font-size:15px;
+}
+.customSelectOption:hover{ background:rgba(59,130,246,.12); }
+.customSelectOption.selected{
+  background:linear-gradient(135deg,rgba(59,130,246,.22),rgba(16,185,129,.15));
+  color:var(--text);
+}
+.customSelectOption.selected::after{
+  content:"✓";
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  color:#fff;
+  background:linear-gradient(135deg,#2563eb,#10b981);
+  font-weight:950;
+}
+#tab_settings .field,
+#tab_settings .card,
+#tab_settings .grid{
+  overflow:visible !important;
+}
+
+/* Mapa más estable y organizado */
+.mapSideList{
+  grid-template-columns:420px minmax(0,1fr) !important;
+  align-items:stretch !important;
+}
+.mapPcList{
+  min-height:520px !important;
+  max-height:520px !important;
+}
+.mapCanvasWrap,
+#devicesMap{
+  min-height:520px !important;
+}
+#devicesMap{
+  background:linear-gradient(135deg,#dbeafe 0%,#e0f2fe 45%,#d1fae5 100%) !important;
+}
+.mapOverlayHint{
+  bottom:18px !important;
+  left:18px !important;
+  background:rgba(255,255,255,.88) !important;
+  color:#0f172a !important;
+  border-color:rgba(15,23,42,.12) !important;
+}
+body.theme-dark .mapOverlayHint,
+body.theme-blue .mapOverlayHint{
+  background:rgba(15,23,42,.78) !important;
+  color:#eaf2ff !important;
+}
+@media(max-width:1100px){
+  .mapSideList{grid-template-columns:1fr !important;}
+  .mapPcList{min-height:auto !important;max-height:280px !important;}
+  .mapCanvasWrap,#devicesMap{min-height:460px !important;}
+}
+
+/* Información y ayuda profesionales, sin emojis */
+.infoHeroClean{display:flex;align-items:flex-start;gap:14px}
+.infoMark{
+  width:8px;
+  min-height:48px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#2563eb,#10b981);
+  flex:0 0 auto;
+  margin-top:6px;
+}
+.cleanBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(59,130,246,.09);
+  color:var(--text);
+  font-weight:800;
+  font-size:13px;
+}
+.cleanBadge::before{
+  content:"";
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.14);
+}
+.infoSectionTitle{display:flex;align-items:center;gap:10px}
+.infoSectionTitle::before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-radius:4px;
+  background:linear-gradient(135deg,#2563eb,#10b981);
+}
+.infoList li{margin:9px 0;line-height:1.45}
+.infoList strong{color:var(--text)}
+
+</style>
 </head>
 
-<body class="theme-dark">
+<body class="theme-light">
   <div class="wrap">
 
     <!-- LOGIN -->
@@ -679,34 +1440,114 @@
         </div>
         <div>
           <h2>SysPulse</h2>
-          <div class="muted" id="i_login_sub">Inicia sesión para ver el dashboard.</div>
+          <div class="tiny" id="authSubtitle">Accede a la plataforma o crea tu cuenta</div>
         </div>
       </div>
 
-      <div class="field">
-        <label class="muted" id="i_login_user">Usuario</label>
-        <input id="loginUser" placeholder="admin" autocomplete="username" />
+      <div class="authTabs">
+        <button class="authTab active" id="tabAuthLogin" type="button">Iniciar sesión</button>
+        <button class="authTab" id="tabAuthRegister" type="button">Registrarse</button>
+        <button class="authTab" id="tabAuthRecover" type="button">Recuperar</button>
       </div>
 
-      <div class="field">
-        <label class="muted" id="i_login_pass">Contraseña</label>
-        <div class="inputRow">
-          <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" />
-          <button class="iconBtn" id="btnTogglePass" type="button" title="Mostrar/Ocultar contraseña" aria-label="Mostrar/Ocultar contraseña">👁️</button>
+      <div id="authPanelLogin">
+        <div class="field">
+          <label class="muted" id="i_login_user">Usuario o correo</label>
+          <input id="loginUser" placeholder="" autocomplete="username" />
         </div>
-        <div class="tiny" id="passHint">Pulsa el icono para ver/ocultar.</div>
+
+        <div class="field">
+          <label class="muted" id="i_login_pass">Contraseña</label>
+          <div class="inputRow">
+            <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+            <button class="iconBtn" id="btnTogglePass" type="button" title="Mostrar/Ocultar contraseña" aria-label="Mostrar/Ocultar contraseña">⊙</button>
+          </div>
+          <div class="tiny" id="passHint">Pulsa el icono para ver/ocultar.</div>
+        </div>
+
+        <div class="authLinks">
+          <button class="linkBtn" id="goRecoverFromLogin" type="button">¿Olvidaste tu contraseña?</button>
+          <button class="linkBtn" id="goRegisterFromLogin" type="button">¿No tienes cuenta? Regístrate</button>
+        </div>
+
+        <div class="rightSmall">
+          <button class="btn primary" id="btnLogin" type="button"><span class="txt">Entrar</span></button>
+        </div>
       </div>
 
-      <div class="rightSmall">
-        <button class="btn primary" id="btnLogin" type="button"><span class="txt">Entrar</span></button>
+      <div id="authPanelRegister" class="hide">
+        <div class="field">
+          <label class="muted">Nombre de usuario</label>
+          <input id="registerUser" autocomplete="username" />
+        </div>
+        <div class="field">
+          <label class="muted">Correo electrónico</label>
+          <input id="registerEmail" type="email" autocomplete="email" />
+        </div>
+        <div class="field">
+          <label class="muted">Contraseña</label>
+          <input id="registerPass" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
+        </div>
+        <div class="field">
+          <label class="muted">Confirmar contraseña</label>
+          <input id="registerPass2" type="password" placeholder="Repite la contraseña" autocomplete="new-password" />
+        </div>
+        <div class="rightSmall">
+          <button class="btn" id="goLoginFromRegister" type="button"><span class="txt">Volver</span></button>
+          <button class="btn primary" id="btnRegister" type="button"><span class="txt">Crear cuenta</span></button>
+        </div>
+      </div>
+
+      <div id="authPanelVerify" class="hide">
+        <div class="field">
+          <label class="muted">Correo electrónico</label>
+          <input id="verifyEmail" type="email" autocomplete="email" />
+        </div>
+        <div class="field">
+          <label class="muted">Código de verificación</label>
+          <input id="verifyCode" inputmode="numeric" maxlength="6" placeholder="Ej: 123456" />
+        </div>
+        <div class="authLinks">
+          <button class="linkBtn" id="btnResendCode" type="button">Reenviar código</button>
+        </div>
+        <div class="rightSmall">
+          <button class="btn" id="goLoginFromVerify" type="button"><span class="txt">Volver</span></button>
+          <button class="btn primary" id="btnVerifyEmail" type="button"><span class="txt">Verificar</span></button>
+        </div>
+      </div>
+
+      <div id="authPanelRecover" class="hide">
+        <div class="field">
+          <label class="muted">Correo electrónico</label>
+          <input id="recoverEmail" type="email" autocomplete="email" />
+        </div>
+        <div class="rightSmall">
+          <button class="btn" id="goLoginFromRecover" type="button"><span class="txt">Volver</span></button>
+          <button class="btn primary" id="btnSendRecovery" type="button"><span class="txt">Enviar código</span></button>
+        </div>
+      </div>
+
+      <div id="authPanelReset" class="hide">
+        <div class="field">
+          <label class="muted">Correo electrónico</label>
+          <input id="resetEmail" type="email" autocomplete="email" />
+        </div>
+        <div class="field">
+          <label class="muted">Código de recuperación</label>
+          <input id="resetCode" inputmode="numeric" maxlength="6" placeholder="Ej: 123456" />
+        </div>
+        <div class="field">
+          <label class="muted">Nueva contraseña</label>
+          <input id="resetPass" type="password" autocomplete="new-password" />
+        </div>
+        <div class="rightSmall">
+          <button class="btn" id="goRecoverFromReset" type="button"><span class="txt">Volver</span></button>
+          <button class="btn primary" id="btnResetPassword" type="button"><span class="txt">Cambiar contraseña</span></button>
+        </div>
       </div>
 
       <div id="loginError" class="loginError hide"></div>
 
-      <div class="footer-note" id="i_login_tip">Tip: Usuario/clave están en variables de entorno del servidor (DASH_USER/DASH_PASS).</div>
-      <div class="footer-note tiny">
-        ✅ Si solo ves 1–2 PCs, revisa que cada PC tenga su propio <b>device_id.txt</b> (no copies la carpeta completa del agente con ese archivo).
-      </div>
     </div>
 
     <!-- APP -->
@@ -725,10 +1566,10 @@
         <div class="right">
           <div class="pill hide" id="whoamiPill"></div>
 
-          <button class="btn primary" id="btnRefresh"><span class="ico">🔄</span><span class="txt">Actualizar</span></button>
-          <button class="btn" id="btnExport"><span class="ico">📄</span><span class="txt">Exportar</span></button>
-          <button class="btn danger" id="btnDelete"><span class="ico">🗑️</span><span class="txt">Quitar PC</span></button>
-          <button class="btn" id="btnLogout"><span class="ico">🚪</span><span class="txt">Cerrar Sesión</span></button>
+          <button class="btn primary" id="btnRefresh"><span class="ico">↺</span><span class="txt">Actualizar</span></button>
+          <button class="btn" id="btnExport"><span class="ico">⎙</span><span class="txt">Exportar</span></button>
+          <button class="btn danger" id="btnDelete"><span class="ico">⌦</span><span class="txt">Eliminar PC</span></button>
+          <button class="btn" id="btnLogout"><span class="ico">⎘</span><span class="txt">Cerrar Sesión</span></button>
 
           <div class="pill hide" id="selectedPill"></div>
         </div>
@@ -747,7 +1588,7 @@
 
       <div style="height:14px"></div>
 
-      <!-- ✅ INICIO -->
+      <!--  INICIO -->
       <div id="tab_home" class="grid">
         <div class="homeHero">
           <div class="homeHeroTop">
@@ -878,7 +1719,7 @@
               <h2>Detalle</h2>
               <div class="muted">Selecciona un PC de la tabla para ver detalle y gráficas.</div>
             </div>
-            <div class="pill">📌 Tip: haz clic sobre una fila</div>
+            <div class="pill"> Tip: haz clic sobre una fila</div>
           </div>
         </div>
 
@@ -964,53 +1805,101 @@
           </div>
 
           <div style="height:14px"></div>
-          <div class="split">
-            <div class="chartShell">
-              <div class="chartHead">
-                <h3>CPU promedio (%)</h3>
-                <div class="hint">Online vs Offline</div>
+
+          <div class="card mapCard">
+            <div class="mapTop">
+              <div>
+                <h2>Mapa de equipos monitoreados</h2>
+                <div class="mapHint">
+                  Visualiza la ubicación registrada de cada computador usando Google Maps. Para mostrar un PC en el mapa, edita su ubicación en la pestaña <b>PCs</b> y guarda latitud/longitud.
+                </div>
               </div>
-              <canvas id="avgCpuChart"></canvas>
-              <div class="chartWatermark">SysPulse</div>
+              <div class="mapLegend">
+                <div class="kpi"><span class="dot ok"></span> Online</div>
+                <div class="kpi"><span class="dot bad"></span> Offline</div>
+                <div class="kpi">Con coordenadas: <b id="mapCount">0</b></div>
+                <button class="btn primary" id="btnAutoLocateSelected" type="button"><span class="txt">Usar mi ubicación</span></button>
+              </div>
             </div>
-            <div class="chartShell">
-              <div class="chartHead">
-                <h3>RAM promedio (%)</h3>
-                <div class="hint">Online vs Offline</div>
+            <div class="mapStatsGrid">
+              <div class="mapStat">
+                <div class="label">Equipos con ubicación</div>
+                <div class="value" id="mapStatLocated">0</div>
               </div>
-              <canvas id="avgRamChart"></canvas>
-              <div class="chartWatermark">SysPulse</div>
+              <div class="mapStat">
+                <div class="label">Online ubicados</div>
+                <div class="value" id="mapStatOnline">0</div>
+              </div>
+              <div class="mapStat">
+                <div class="label">Offline ubicados</div>
+                <div class="value" id="mapStatOffline">0</div>
+              </div>
+            </div>
+
+            <div class="mapToolbar">
+              <div class="mapSearch">
+                <input id="mapSearchInput" type="search" placeholder="Buscar PC por nombre, ubicación o sistema..." />
+              </div>
+              <div class="mapFilters">
+                <button class="mapFilterBtn active" id="mapFilterAll" type="button">Todos</button>
+                <button class="mapFilterBtn" id="mapFilterOnline" type="button">Online</button>
+                <button class="mapFilterBtn" id="mapFilterOffline" type="button">Offline</button>
+                <button class="btn" id="btnMapFit" type="button">Centrar mapa</button>
+              </div>
+            </div>
+
+            <div class="mapSideList">
+              <div class="mapPcList" id="mapPcList"></div>
+              <div class="mapCanvasWrap">
+                <div id="devicesMap"></div>
+                <div class="mapOverlayHint">Haz clic en un marcador o equipo para ver detalle</div>
+              </div>
+            </div>
+
+            <div id="mapEmpty" class="mapEmpty hide">
+              Aún no hay PCs con coordenadas. Ve a <b>PCs</b>, pulsa <b>Editar</b> en ubicación y agrega latitud/longitud, o selecciona un PC y usa <b>Usar mi ubicación</b>.
             </div>
           </div>
 
-          <div style="height:14px"></div>
-          <div class="chartShell">
-            <div class="chartHead">
-              <h3>Disco promedio (%)</h3>
-              <div class="hint">Online vs Offline</div>
-            </div>
-            <canvas id="avgDiskChart"></canvas>
-            <div class="chartWatermark">SysPulse</div>
+          <div class="dashInsightGrid">
+            <div class="dashInsight"><div class="label">Salud general</div><div class="value" id="dashHealthText">-</div><div class="desc" id="dashHealthDesc">Calculando estado del parque de equipos.</div></div>
+            <div class="dashInsight"><div class="label">CPU promedio online</div><div class="value" id="dashCpuAvgText">-</div><div class="desc">Promedio de consumo actual en equipos conectados.</div></div>
+            <div class="dashInsight"><div class="label">RAM promedio online</div><div class="value" id="dashRamAvgText">-</div><div class="desc">Uso de memoria promedio en equipos activos.</div></div>
+            <div class="dashInsight"><div class="label">Disco promedio online</div><div class="value" id="dashDiskAvgText">-</div><div class="desc">Ocupación de almacenamiento promedio.</div></div>
           </div>
 
-          <div style="height:14px"></div>
-          <div class="split2">
-            <div class="chartShell chartShellTall">
-              <div class="chartHead">
-                <h3>Top 10 CPU (último punto)</h3>
-                <div class="hint">Ranking</div>
-              </div>
-              <canvas id="topCpuChart"></canvas>
-              <div class="chartWatermark">SysPulse</div>
+          <div class="healthPanel">
+            <div class="healthScoreBox">
+              <div class="healthCircle" id="healthCircle"><div class="healthCircleValue" id="healthScore">-</div></div>
+              <div class="healthLabel" id="healthLabel">Estado general</div>
+              <div class="healthDesc" id="healthDescription">El puntaje combina equipos offline y consumo promedio de recursos.</div>
             </div>
-            <div class="chartShell chartShellTall">
-              <div class="chartHead">
-                <h3>Top 10 RAM (último punto)</h3>
-                <div class="hint">Ranking</div>
+            <div class="healthBars">
+              <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap;">
+                <div><h3 style="margin:0;font-size:15px">Lectura rápida del rendimiento</h3><div class="muted">Valores actuales tomando el último punto reportado por cada PC.</div></div>
+                <div class="pill">Mejor: <b style="color:var(--text)">más bajo uso</b></div>
               </div>
-              <canvas id="topRamChart"></canvas>
-              <div class="chartWatermark">SysPulse</div>
+              <div class="healthBarRow"><div class="healthBarTop"><span>CPU</span><span id="healthCpuText">-</span></div><div class="healthBarTrack"><div class="healthBarFill" id="healthCpuBar"></div></div></div>
+              <div class="healthBarRow"><div class="healthBarTop"><span>RAM</span><span id="healthRamText">-</span></div><div class="healthBarTrack"><div class="healthBarFill" id="healthRamBar"></div></div></div>
+              <div class="healthBarRow"><div class="healthBarTop"><span>Disco</span><span id="healthDiskText">-</span></div><div class="healthBarTrack"><div class="healthBarFill" id="healthDiskBar"></div></div></div>
+              <div class="dashExplain"><h3>Resumen automático</h3><ul id="dashExplainList"><li>Esperando datos de los equipos.</li></ul></div>
             </div>
+          </div>
+
+          <div class="chartGridPro">
+            <div class="chartShellPro"><div class="chartHead"><h3>Distribución de estado</h3><div class="hint">Online vs Offline</div></div><canvas id="statusDonutChart"></canvas><div class="chartWatermark">SysPulse</div></div>
+            <div class="chartShellPro"><div class="chartHead"><h3>Comparativo de recursos</h3><div class="hint">Promedios online/offline</div></div><canvas id="resourceCompareChart"></canvas><div class="chartWatermark">SysPulse</div></div>
+            <div class="chartShellPro wide"><div class="chartHead"><h3>Top equipos con mayor riesgo</h3><div class="hint">CPU + RAM + Disco + estado</div></div><canvas id="riskRankingChart"></canvas><div class="chartWatermark">SysPulse</div></div>
+            <div class="chartShellPro tall"><div class="chartHead"><h3>Top CPU actual</h3><div class="hint">Último punto por PC</div></div><canvas id="topCpuChart"></canvas><div class="chartWatermark">SysPulse</div></div>
+            <div class="chartShellPro tall"><div class="chartHead"><h3>Top RAM actual</h3><div class="hint">Último punto por PC</div></div><canvas id="topRamChart"></canvas><div class="chartWatermark">SysPulse</div></div>
+          </div>
+
+          <div class="card" style="margin-top:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+              <div><h2>Equipos que requieren atención</h2><div class="muted">Ranking calculado por consumo y estado. Úsalo para priorizar revisión.</div></div>
+              <div class="pill">Top: <b style="color:var(--text)">5</b></div>
+            </div>
+            <div class="riskList" id="riskList"></div>
           </div>
 
           <div class="footer-note">
@@ -1162,8 +2051,8 @@
               <div class="field">
                 <label class="muted">Modo de visualización:</label>
                 <select id="setTheme">
-                  <option value="dark">Oscuro</option>
                   <option value="light">Blanco</option>
+                  <option value="dark">Oscuro</option>
                   <option value="blue">Azul</option>
                 </select>
               </div>
@@ -1173,9 +2062,6 @@
                 <button class="btn primary" id="btnSaveGeneral" type="button"><span class="txt">Guardar</span></button>
               </div>
 
-              <div class="footer-note">
-                Nota: guardado en <b>localStorage</b>. Si abres en otro PC, vuelve a ajustar.
-              </div>
             </div>
           </div>
 
@@ -1217,9 +2103,6 @@
                 <button class="btn primary" id="btnSaveSettings" type="button"><span class="txt">Guardar</span></button>
               </div>
 
-              <div class="footer-note">
-                Nota: guardado en <b>localStorage</b>. Si abres en otro PC, vuelve a ajustar.
-              </div>
             </div>
           </div>
         </div>
@@ -1227,237 +2110,163 @@
 
       <!-- Info -->
       <div id="tab_info" class="grid hide">
-        <div class="card docContent">
-          <div class="docHero">
-            <h2>ℹ️ Información – SysPulse</h2>
-            <div class="subtitle">
-              SysPulse es una plataforma de monitoreo en tiempo real diseñada para supervisar el estado y rendimiento de múltiples dispositivos dentro de una red.
-              Su objetivo es brindar visibilidad centralizada del consumo de recursos, detectar fallas a tiempo y facilitar la toma de decisiones.
-            </div>
-
-            <div class="badges">
-              <div class="badge">✅ CPU</div>
-              <div class="badge">✅ RAM</div>
-              <div class="badge">✅ Disco</div>
-              <div class="badge">✅ Online / Offline</div>
-              <div class="badge">✅ Alertas</div>
-              <div class="badge">✅ Gráficas</div>
-            </div>
-          </div>
-
-          <div class="docGrid">
-            <div class="docSection">
-              <h3>🔎 ¿Qué monitorea SysPulse?</h3>
-              <ul class="docList">
-                <li>Uso de <b>CPU</b></li>
-                <li>Consumo de <b>Memoria RAM</b></li>
-                <li>Uso de <b>Disco</b></li>
-                <li>Estado del dispositivo: <b>Online / Offline</b></li>
-                <li>Tiempo de actividad: <b>Uptime</b></li>
-                <li><b>Procesos</b> que más consumen recursos</li>
-                <li><b>Historial</b> de métricas y comportamiento</li>
-                <li><b>Alertas</b> por umbrales configurables</li>
-              </ul>
-              <div class="mutedLine">Las métricas se actualizan automáticamente según el intervalo configurado.</div>
-            </div>
-
-            <div class="docSection">
-              <h3>📊 Secciones principales</h3>
-              <ul class="docList">
-                <li><b>Inicio:</b> vista general + acciones rápidas.</li>
-                <li><b>PCs:</b> lista de equipos y acceso al detalle.</li>
-                <li><b>Dashboard:</b> promedios y rankings de consumo.</li>
-                <li><b>Gráficas:</b> histórico del equipo seleccionado.</li>
-                <li><b>Alertas:</b> eventos por umbrales u offline.</li>
-                <li><b>Configuración:</b> umbrales, auto-refresh, idioma, tema, zona horaria.</li>
-              </ul>
+        <div class="card">
+          <div class="infoHeroClean">
+            <div class="infoMark"></div>
+            <div>
+              <h2>Información – SysPulse</h2>
+              <p class="muted">
+                SysPulse es una plataforma web de monitoreo en tiempo real diseñada para supervisar computadores dentro de una red.
+                Centraliza métricas de rendimiento, estado de conexión, ubicación, alertas, gráficas, exportaciones y análisis para facilitar la toma de decisiones.
+              </p>
+              <div class="chips">
+                <span class="cleanBadge">CPU</span>
+                <span class="cleanBadge">RAM</span>
+                <span class="cleanBadge">Disco</span>
+                <span class="cleanBadge">Mapa de equipos</span>
+                <span class="cleanBadge">Dashboard Pro</span>
+                <span class="cleanBadge">Alertas</span>
+                <span class="cleanBadge">PDF y Excel</span>
+                <span class="cleanBadge">Español / Inglés</span>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div class="docGrid">
-            <div class="docSection">
-              <h3>⚙️ ¿Cómo funciona internamente?</h3>
-              <ol class="docList">
-                <li>Cada dispositivo ejecuta un <b>agente de monitoreo</b>.</li>
-                <li>El agente envía métricas periódicamente al <b>servidor</b>.</li>
-                <li>El servidor almacena y expone los datos por <b>API</b>.</li>
-                <li>El panel web consulta y muestra el estado en tiempo real.</li>
-                <li>Se comparan umbrales y se generan <b>alertas</b> automáticamente.</li>
-              </ol>
-              <div class="mutedLine">Las configuraciones y alertas se guardan en el navegador usando <b>localStorage</b>.</div>
-            </div>
-
-            <div class="docSection">
-              <h3>🚀 Ventajas</h3>
-              <ul class="docList">
-                <li>Interfaz moderna y responsiva.</li>
-                <li>Monitoreo en tiempo real con métricas clave.</li>
-                <li>Alertas configurables y visualización clara.</li>
-                <li>Soporte para múltiples equipos.</li>
-                <li>Personalización: tema, idioma y zona horaria.</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="callout">
-            <b>🎯 Objetivo principal</b>
-            <div class="mutedLine" style="margin-top:6px;">
-              SysPulse busca ofrecer una herramienta ligera y eficiente para la supervisión continua de infraestructura,
-              ayudando a prevenir fallos, optimizar recursos y mejorar la estabilidad operativa.
-            </div>
-
-            <div style="height:10px"></div>
-            <b>🛡 Recomendaciones de uso</b>
-            <ul class="docList">
-              <li>Mantén los agentes activos en los equipos monitoreados.</li>
-              <li>Ajusta umbrales de acuerdo con la capacidad real de los equipos.</li>
-              <li>Usa navegadores actualizados (Chrome, Edge, Firefox).</li>
-              <li>Evita abrir múltiples pestañas del mismo panel.</li>
-              <li>Verifica conectividad estable con el servidor.</li>
+        <div class="grid two" style="margin-top:14px;">
+          <div class="card">
+            <h2 class="infoSectionTitle">Qué monitorea SysPulse</h2>
+            <ul class="infoList">
+              <li>Uso actual y promedio de <strong>CPU</strong>.</li>
+              <li>Consumo de <strong>memoria RAM</strong>.</li>
+              <li>Ocupación de <strong>disco</strong>.</li>
+              <li>Estado del dispositivo: <strong>online</strong> u <strong>offline</strong>.</li>
+              <li>Tiempo de actividad o <strong>uptime</strong>.</li>
+              <li>Procesos con mayor consumo de CPU y RAM.</li>
+              <li>Ubicación registrada o aproximada de cada computador.</li>
+              <li>Historial de métricas para análisis y reportes.</li>
             </ul>
+          </div>
+
+          <div class="card">
+            <h2 class="infoSectionTitle">Módulos principales</h2>
+            <ul class="infoList">
+              <li><strong>Inicio:</strong> vista general y accesos rápidos.</li>
+              <li><strong>PCs:</strong> administración y detalle de equipos monitoreados.</li>
+              <li><strong>Dashboard:</strong> mapa, salud general, rankings y gráficas.</li>
+              <li><strong>Alertas:</strong> eventos por umbrales o desconexión.</li>
+              <li><strong>Configuración:</strong> tema, idioma, zona horaria, umbrales y auto-refresh.</li>
+              <li><strong>Exportación:</strong> informes PDF y Excel con interpretación automática.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h2 class="infoSectionTitle">Funciones agregadas</h2>
+            <ul class="infoList">
+              <li>Registro de usuarios con correo electrónico y confirmación.</li>
+              <li>Recuperación de contraseña por correo.</li>
+              <li>Tema blanco predeterminado para presentación.</li>
+              <li>Mapa con Google Maps y marcadores por estado.</li>
+              <li>Dashboard Pro con ranking de riesgo.</li>
+              <li>Reportes claros en PDF y Excel con explicación de resultados.</li>
+              <li>Interfaz bilingüe español e inglés.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h2 class="infoSectionTitle">Cómo funciona internamente</h2>
+            <ol class="infoList">
+              <li>Cada computador ejecuta un <strong>agente de monitoreo</strong>.</li>
+              <li>El agente recolecta métricas del sistema.</li>
+              <li>El agente envía datos periódicamente al servidor.</li>
+              <li>El servidor almacena y expone la información por API.</li>
+              <li>El panel web consulta los datos y actualiza la interfaz.</li>
+              <li>El usuario puede consultar, filtrar, exportar y analizar resultados.</li>
+            </ol>
           </div>
         </div>
       </div>
 
       <!-- Help -->
       <div id="tab_help" class="grid hide">
-        <div class="card helpContent helpWrap">
-          <h2>Ayuda y Soporte – SysPulse</h2>
-          <p class="helpIntro">
-            Si la aplicación SysPulse presenta fallos o comportamientos inesperados, sigue estas recomendaciones antes de contactar al administrador.
+        <div class="card">
+          <h2>Ayuda – Guía rápida de uso</h2>
+          <p class="muted">
+            Esta guía resume cómo operar SysPulse y cómo validar cada función principal del aplicativo.
           </p>
+        </div>
 
-          <div class="helpCards">
-            <div class="helpCard">
-              <div class="helpHead">
-                <div><h3 class="helpTitle">Actualiza la página</h3></div>
-                <div class="stepBadge">1</div>
-              </div>
-              <div class="helpBody">
-                <p>Presiona el botón <b>Actualizar</b> o recarga el navegador (F5 o Ctrl + R).</p>
-                <p>En muchos casos, esto soluciona errores temporales de conexión o carga de datos.</p>
-              </div>
-              <div class="helpHint">Tip: si la red está lenta, espera 5–10s y vuelve a intentar.</div>
-            </div>
+        <div class="grid two" style="margin-top:14px;">
+          <div class="card">
+            <h2 class="infoSectionTitle">Monitoreo de equipos</h2>
+            <ul class="infoList">
+              <li>Instala y ejecuta el agente en cada computador.</li>
+              <li>Verifica que el token del agente coincida con el token del servidor.</li>
+              <li>Cuando el agente reporta correctamente, el equipo aparece en la pestaña <strong>PCs</strong>.</li>
+              <li>El estado online/offline depende del último reporte recibido.</li>
+            </ul>
+          </div>
 
-            <div class="helpCard">
-              <div class="helpHead">
-                <div><h3 class="helpTitle">Cierra sesión y vuelve a ingresar</h3></div>
-                <div class="stepBadge">2</div>
-              </div>
-              <div class="helpBody">
-                <p>Si notas que no cargan los dispositivos o aparece un error de autenticación:</p>
-                <ol>
-                  <li>Haz clic en <b>Cerrar Sesión</b>.</li>
-                  <li>Ingresa nuevamente con tu usuario y contraseña.</li>
-                </ol>
-                <p>Esto reinicia tu sesión y puede corregir problemas de token expirado.</p>
-              </div>
-            </div>
+          <div class="card">
+            <h2 class="infoSectionTitle">Uso del mapa</h2>
+            <ul class="infoList">
+              <li>El mapa muestra equipos con coordenadas guardadas.</li>
+              <li>Los marcadores verdes indican equipos online.</li>
+              <li>Los marcadores rojos indican equipos offline.</li>
+              <li>El buscador permite filtrar por nombre, ubicación o sistema operativo.</li>
+              <li>El botón <strong>Centrar mapa</strong> reorganiza la vista.</li>
+            </ul>
+          </div>
 
-            <div class="helpCard">
-              <div class="helpHead">
-                <div><h3 class="helpTitle">Verifica conexión con el servidor</h3></div>
-                <div class="stepBadge">3</div>
-              </div>
-              <div class="helpBody">
-                <p>Confirma que:</p>
-                <ul>
-                  <li>El servidor esté encendido.</li>
-                  <li>Tengas conexión a la red.</li>
-                  <li>La URL del servidor sea accesible desde tu navegador.</li>
-                </ul>
-                <p>Si el servidor está caído, los dispositivos aparecerán como <b>offline</b>.</p>
-              </div>
-            </div>
+          <div class="card">
+            <h2 class="infoSectionTitle">Dashboard Pro</h2>
+            <ul class="infoList">
+              <li>La salud general combina desconexión y uso de recursos.</li>
+              <li>Los promedios se calculan con el último punto reportado por cada PC.</li>
+              <li>El ranking de riesgo ayuda a priorizar equipos para revisión.</li>
+              <li>Las gráficas permiten comparar CPU, RAM, disco y estado.</li>
+            </ul>
+          </div>
 
-            <div class="helpCard">
-              <div class="helpHead">
-                <div><h3 class="helpTitle">Problemas visuales o de configuración</h3></div>
-                <div class="stepBadge">4</div>
-              </div>
-              <div class="helpBody">
-                <p>Si el tema, idioma o configuraciones no se aplican correctamente:</p>
-                <ul>
-                  <li>Ve a <b>Configuración</b>.</li>
-                  <li>Guarda nuevamente los ajustes.</li>
-                  <li>Recarga la página.</li>
-                </ul>
-                <p>Recuerda que las configuraciones se guardan en el navegador (<b>localStorage</b>).</p>
-              </div>
-            </div>
+          <div class="card">
+            <h2 class="infoSectionTitle">Exportación de informes</h2>
+            <ul class="infoList">
+              <li>Selecciona un equipo y pulsa <strong>Exportar</strong>.</li>
+              <li>Escoge PDF o Excel y define el rango de fechas.</li>
+              <li>El informe incluye resumen, métricas, procesos, gráficas e interpretación.</li>
+              <li>La interpretación explica picos de CPU, uso de RAM y ocupación de disco.</li>
+            </ul>
+          </div>
 
-            <div class="helpCard">
-              <div class="helpHead">
-                <div><h3 class="helpTitle">No aparecen métricas o gráficas</h3></div>
-                <div class="stepBadge">5</div>
-              </div>
-              <div class="helpBody">
-                <p>Puede deberse a:</p>
-                <ul>
-                  <li>El agente del PC no está enviando datos.</li>
-                  <li>El dispositivo está offline.</li>
-                  <li>No hay suficientes puntos históricos almacenados.</li>
-                </ul>
-                <p>Verifica que el equipo esté activo y reportando.</p>
-              </div>
-            </div>
+          <div class="card">
+            <h2 class="infoSectionTitle">Configuración</h2>
+            <ul class="infoList">
+              <li>Cambia tema, idioma y zona horaria desde configuración.</li>
+              <li>Ajusta umbrales de CPU, RAM, disco y tiempo offline.</li>
+              <li>El tema blanco es el predeterminado.</li>
+              <li>El idioma puede cambiarse entre español e inglés.</li>
+            </ul>
+          </div>
 
-            <div class="helpCard">
-              <div class="helpHead">
-                <div><h3 class="helpTitle">Alertas excesivas</h3></div>
-                <div class="stepBadge">6</div>
-              </div>
-              <div class="helpBody">
-                <p>Si recibes muchas alertas:</p>
-                <ul>
-                  <li>Ajusta los umbrales de CPU, RAM y Disco en <b>Configuración</b>.</li>
-                  <li>Aumenta el tiempo de detección de offline si es necesario.</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="helpCard">
-              <div class="helpHead">
-                <div><h3 class="helpTitle">Soporte técnico</h3></div>
-                <div class="stepBadge">7</div>
-              </div>
-              <div class="helpBody">
-                <p>Si el problema persiste:</p>
-                <ul>
-                  <li>Toma una captura de pantalla del error.</li>
-                  <li>Anota el dispositivo afectado.</li>
-                  <li>Indica la hora aproximada del fallo.</li>
-                  <li>Contacta al administrador del sistema.</li>
-                </ul>
-              </div>
-              <div class="helpHint">Incluye el nombre del PC y la pestaña donde ocurrió (PCs/Dashboard/Gráficas/Alertas).</div>
-            </div>
-
-            <div class="helpCard">
-              <div class="helpHead">
-                <div><h3 class="helpTitle">Recomendación general</h3></div>
-                <div class="stepBadge">★</div>
-              </div>
-              <div class="helpBody">
-                <p>Para mejor rendimiento, utiliza:</p>
-                <ul>
-                  <li>Navegadores actualizados (Chrome, Edge, Firefox).</li>
-                  <li>Conexión estable a la red.</li>
-                  <li>Evita múltiples pestañas abiertas del mismo panel.</li>
-                </ul>
-              </div>
-            </div>
-          </div><!-- helpCards -->
+          <div class="card">
+            <h2 class="infoSectionTitle">Solución de problemas</h2>
+            <ul class="infoList">
+              <li><strong>No aparece un equipo:</strong> revisa agente, token y conexión.</li>
+              <li><strong>No aparece en el mapa:</strong> valida que tenga coordenadas.</li>
+              <li><strong>El informe sale sin datos:</strong> verifica que haya métricas en el rango seleccionado.</li>
+              <li><strong>No ves cambios:</strong> reinicia servidor y recarga con Ctrl + F5.</li>
+            </ul>
+          </div>
         </div>
       </div>
 
-    </div><!-- appView -->
+
+
+    </div>
   </div>
 
   <div id="toast" class="toast hide"></div>
 
-  <!-- ✅ MODAL DE CONFIRMACIÓN CENTRADO (Sí / No) -->
   <div id="confirmModal" class="modal hide" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modalBackdrop" id="confirmBackdrop"></div>
     <div class="modalCard">
@@ -1473,7 +2282,6 @@
     </div>
   </div>
 
-  <!-- ✅ MODAL EXPORTAR (Día único / Rango + PDF / Excel) -->
   <div id="exportModal" class="modal hide" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modalBackdrop" id="exportBackdrop"></div>
     <div class="modalCard">
@@ -1486,7 +2294,7 @@
       </div>
 
       <div class="segTabs" style="margin-top:12px">
-        <div class="seg active" id="segDay">✅ Día único</div>
+        <div class="seg active" id="segDay"> Día único</div>
         <div class="seg" id="segRange">📅 Rango</div>
       </div>
 
@@ -1535,6 +2343,12 @@
 
 <script>
 /* =========================
+   GOOGLE MAPS
+   Reemplaza esta clave por tu API Key real de Google Maps JavaScript API.
+========================= */
+const GOOGLE_MAPS_API_KEY = "AIzaSyAh43KvI8-iDdXmyS87zi9lCnN33dLgEZQ";
+
+/* =========================
    STATE
 ========================= */
 const APP = {
@@ -1543,9 +2357,13 @@ const APP = {
   devices: [],
   alerts: [],
   charts: {},
+  map: null,
+  mapMarkers: [],
+  mapMarkersById: {},
+  mapFilter: "all",
+  mapSearch: "",
 
-  // ✅ SOLO UNA VEZ
-  locationEdit: { deviceId: null, draft: "" },
+  locationEdit: { deviceId: null, draft: "", lat: "", lng: "" },
 
   settings: {
     cpuHigh: 90,
@@ -1558,22 +2376,291 @@ const APP = {
     adminEmail2: "joan.aguirre00@usc.edu.co",
     timezone: "America/Bogota",
     lang: "es",
-    theme: "dark"
+    theme: "light"
   },
   exportMode: "day"
 };
 
-/* i18n básico */
+
+
+/* ==========================================================
+   SELECTS PERSONALIZADOS - Configuración
+========================================================== */
+
+
+function enhanceSettingsSelects(){
+  const ids = ["setTimezone","setLang","setTheme"];
+
+  ids.forEach(id=>{
+    const select = document.getElementById(id);
+    if(!select) return;
+
+    let wrap = select.closest(".customSelectWrap");
+
+    if(!wrap){
+      select.classList.add("customSelectNative");
+
+      wrap = document.createElement("div");
+      wrap.className = "customSelectWrap";
+      select.parentNode.insertBefore(wrap, select);
+      wrap.appendChild(select);
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "customSelectBtn";
+      btn.innerHTML = '<span class="customSelectLabel"></span><span class="customSelectChevron">⌄</span>';
+
+      const menu = document.createElement("div");
+      menu.className = "customSelectMenu";
+
+      wrap.appendChild(btn);
+      wrap.appendChild(menu);
+
+      btn.addEventListener("click", (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+
+        document.querySelectorAll(".customSelectWrap.open").forEach(x=>{
+          if(x !== wrap) x.classList.remove("open");
+        });
+
+        wrap.classList.toggle("open");
+        refreshCustomSelect(wrap);
+      });
+
+      select.addEventListener("change", ()=>{
+        refreshCustomSelect(wrap);
+      });
+    }
+
+    select.dataset.customReady = "1";
+    select.classList.add("customSelectNative");
+    refreshCustomSelect(wrap);
+  });
+
+  if(!window.__customSelectGlobalClose){
+    window.__customSelectGlobalClose = true;
+    document.addEventListener("click", (e)=>{
+      if(!e.target.closest(".customSelectWrap")){
+        document.querySelectorAll(".customSelectWrap.open").forEach(x=>x.classList.remove("open"));
+      }
+    });
+  }
+}
+
+function refreshCustomSelect(wrap){
+  if(!wrap) return;
+
+  const select = wrap.querySelector("select");
+  const label = wrap.querySelector(".customSelectLabel");
+  const menu = wrap.querySelector(".customSelectMenu");
+
+  if(!select || !label || !menu) return;
+
+  const selected = select.options[select.selectedIndex];
+  label.textContent = selected ? selected.textContent : "";
+
+  menu.innerHTML = "";
+
+  Array.from(select.options).forEach(opt=>{
+    const item = document.createElement("div");
+    item.className = "customSelectOption" + (opt.value === select.value ? " selected" : "");
+    item.textContent = opt.textContent;
+
+    item.addEventListener("click", (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+
+      select.value = opt.value;
+      select.dispatchEvent(new Event("change", { bubbles:true }));
+
+      wrap.classList.remove("open");
+      refreshCustomSelect(wrap);
+
+      setTimeout(()=>autoTranslatePage(), 80);
+    });
+
+    menu.appendChild(item);
+  });
+}
+
+
+/* ==========================================================
+   TRADUCCIÓN GLOBAL ES / EN
+   Traduce textos estáticos y dinámicos generados por JS.
+========================================================== */
+const ES_TO_EN_FULL = {
+  "Accede a la plataforma o crea tu cuenta": "Access the platform or create your account",
+  "Iniciar sesión": "Sign in",
+  "Registrarse": "Register",
+  "Recuperar": "Recover",
+  "Nombre de usuario": "Username",
+  "Usuario o correo": "Username or email",
+  "Correo electrónico": "Email",
+  "Contraseña": "Password",
+  "Confirmar contraseña": "Confirm password",
+  "Mínimo 6 caracteres": "Minimum 6 characters",
+  "Repite la contraseña": "Repeat password",
+  "Volver": "Back",
+  "Crear cuenta": "Create account",
+  "Entrar": "Sign in",
+  "Cerrar Sesión": "Log out",
+  "Actualizar": "Refresh",
+  "Exportar": "Export",
+  "Eliminar PC": "Delete PC",
+  "Inicio": "Home",
+  "PCs": "PCs",
+  "Dashboard": "Dashboard",
+  "Alertas": "Alerts",
+  "Configuración": "Settings",
+  "Información SysPulse": "SysPulse Information",
+  "Ayuda": "Help",
+  "Dashboard general": "General dashboard",
+  "Promedios reales por estado (último punto por PC).": "Real averages by status (latest point per PC).",
+  "Mapa de equipos monitoreados": "Monitored devices map",
+  "Visualiza la ubicación registrada de cada computador usando Google Maps. Para mostrar un PC en el mapa, edita su ubicación en la pestaña PCs y guarda latitud/longitud.": "View each computer's registered location using Google Maps. To show a PC on the map, edit its location in the PCs tab and save latitude/longitude.",
+  "Con coordenadas:": "With coordinates:",
+  "Usar mi ubicación": "Use my location",
+  "Equipos con ubicación": "Devices with location",
+  "Online ubicados": "Online located",
+  "Offline ubicados": "Offline located",
+  "Buscar PC por nombre, ubicación o sistema...": "Search PC by name, location, or system...",
+  "Todos": "All",
+  "Centrar mapa": "Center map",
+  "Haz clic en un marcador o equipo para ver detalle": "Click a marker or device to see details",
+  "Salud general": "Overall health",
+  "CPU promedio online": "Average online CPU",
+  "RAM promedio online": "Average online RAM",
+  "Disco promedio online": "Average online disk",
+  "Calculando estado del parque de equipos.": "Calculating device fleet status.",
+  "Promedio de consumo actual en equipos conectados.": "Average current usage on connected devices.",
+  "Uso de memoria promedio en equipos activos.": "Average memory usage on active devices.",
+  "Ocupación de almacenamiento promedio.": "Average storage usage.",
+  "Estado general": "Overall status",
+  "El puntaje combina equipos offline y consumo promedio de recursos.": "The score combines offline devices and average resource usage.",
+  "Lectura rápida del rendimiento": "Quick performance reading",
+  "Valores actuales tomando el último punto reportado por cada PC.": "Current values using the latest point reported by each PC.",
+  "Mejor:": "Best:",
+  "más bajo uso": "lower usage",
+  "Resumen automático": "Automatic summary",
+  "Esperando datos de los equipos.": "Waiting for device data.",
+  "Distribución de estado": "Status distribution",
+  "Online vs Offline": "Online vs Offline",
+  "Comparativo de recursos": "Resource comparison",
+  "Promedios online/offline": "Online/offline averages",
+  "Top equipos con mayor riesgo": "Top highest-risk devices",
+  "CPU + RAM + Disco + estado": "CPU + RAM + Disk + status",
+  "Top CPU actual": "Current top CPU",
+  "Top RAM actual": "Current top RAM",
+  "Último punto por PC": "Latest point per PC",
+  "Equipos que requieren atención": "Devices requiring attention",
+  "Ranking calculado por consumo y estado. Úsalo para priorizar revisión.": "Ranking calculated by usage and status. Use it to prioritize review.",
+  "General": "General",
+  "Correo electrónico del administrador1:": "Administrator email 1:",
+  "Correo electrónico del administrador2:": "Administrator email 2:",
+  "Zona horaria:": "Time zone:",
+  "Idioma Predeterminado:": "Default language:",
+  "Tema": "Theme",
+  "Modo de visualización:": "Display mode:",
+  "Blanco": "Light",
+  "Oscuro": "Dark",
+  "Azul": "Blue",
+  "Guardar": "Save",
+  "Umbrales de alerta": "Alert thresholds",
+  "CPU alta (%)": "High CPU (%)",
+  "RAM alta (%)": "High RAM (%)",
+  "Disco alto (%)": "High disk (%)",
+  "Offline si no reporta (segundos)": "Offline if no report (seconds)",
+  "Auto Refresh": "Auto Refresh",
+  "Actualizar cada (seg)": "Refresh every (sec)",
+  "Puntos en gráficas": "Chart points",
+  "Métricas (muestra)": "Metrics (sample)",
+  "Hora (Bogotá)": "Time (Bogotá)",
+  "Procesos": "Processes",
+  "Top procesos": "Top processes",
+  "Sin datos": "No data",
+  "Sesión expirada o inválida. Inicia sesión de nuevo.": "Session expired or invalid. Please sign in again.",
+  "Configuración guardada": "Settings saved",
+  "No hay equipos que coincidan con el filtro.": "No devices match the filter.",
+  "Sin ubicación": "No location",
+  "Estado:": "Status:",
+  "Ubicación:": "Location:",
+  "Coordenadas:": "Coordinates:"
+};
+
+function normalizeI18nText(txt){
+  return String(txt || "").replace(/\s+/g, " ").trim();
+}
+
+function translateTextValue(txt, lang){
+  const original = normalizeI18nText(txt);
+  if (!original) return txt;
+  if (lang === "en"){
+    return ES_TO_EN_FULL[original] || txt;
+  }
+  return txt;
+}
+
+function autoTranslatePage(){
+  const lang = APP?.settings?.lang || "es";
+  const root = document.body;
+  if (!root) return;
+
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node){
+      const parent = node.parentElement;
+      if (!parent) return NodeFilter.FILTER_REJECT;
+      const tag = parent.tagName;
+      if (["SCRIPT","STYLE","TEXTAREA","CODE","PRE"].includes(tag)) return NodeFilter.FILTER_REJECT;
+      if (!normalizeI18nText(node.nodeValue)) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+
+  nodes.forEach(node=>{
+    if (!node.__originalText) node.__originalText = node.nodeValue;
+    if (lang === "es"){
+      node.nodeValue = node.__originalText;
+    }else{
+      const translated = translateTextValue(node.__originalText, lang);
+      node.nodeValue = translated;
+    }
+  });
+
+  document.querySelectorAll("input[placeholder], textarea[placeholder]").forEach(el=>{
+    if (!el.dataset.originalPlaceholder) el.dataset.originalPlaceholder = el.getAttribute("placeholder") || "";
+    el.setAttribute("placeholder", lang === "es" ? el.dataset.originalPlaceholder : translateTextValue(el.dataset.originalPlaceholder, lang));
+  });
+
+  document.querySelectorAll("option").forEach(el=>{
+    if (!el.dataset.originalText) el.dataset.originalText = el.textContent || "";
+    el.textContent = lang === "es" ? el.dataset.originalText : translateTextValue(el.dataset.originalText, lang);
+  });
+}
+
+let __i18nObserver = null;
+function startI18nObserver(){
+  if (__i18nObserver) return;
+  __i18nObserver = new MutationObserver(()=>{
+    clearTimeout(window.__i18nApplyTimer);
+    window.__i18nApplyTimer = setTimeout(()=>autoTranslatePage(), 60);
+  });
+  __i18nObserver.observe(document.body, { childList:true, subtree:true });
+}
+
 const I18N = {
   es: {
-    login_sub: "Inicia sesión para ver el dashboard.",
-    login_user: "Usuario",
+    login_sub: "Accede a la plataforma o crea tu cuenta",
+    login_tip: "Pulsa el icono para ver/ocultar.",
+    login_user: "Usuario o correo",
     login_pass: "Contraseña",
     login_btn: "Entrar",
-    login_tip: "Tip: Usuario/clave están en variables de entorno del servidor (DASH_USER/DASH_PASS).",
     btn_logout: "Cerrar Sesión",
     btn_refresh: "Actualizar",
-    btn_delete: "Quitar PC",
+    btn_delete: "Eliminar PC",
     btn_clear_alerts: "Limpiar",
     tab_home: "Inicio",
     tab_pcs: "PCs",
@@ -1645,7 +2732,6 @@ function setLogoRobust(){
   attachFallback(document.getElementById("loginLogoImg"));
 }
 
-/* ======= THEME + i18n ======= */
 function applyTheme(theme){
   const b = document.body;
   b.classList.remove("theme-dark","theme-light","theme-blue");
@@ -1682,6 +2768,9 @@ function applyLanguage(){
   updateTopTimezoneLabel();
   refreshChartsTheme();
   renderHome().catch(()=>{});
+  enhanceSettingsSelects();
+  autoTranslatePage();
+  startI18nObserver();
 }
 
 function updateTopTimezoneLabel(){
@@ -1709,7 +2798,6 @@ function showLoginError(msg){
   box.classList.remove("hide");
 }
 
-/* ✅ Manejo central de sesión inválida */
 function onSessionInvalid(message){
   clearSession();
   document.getElementById("loginView").classList.remove("hide");
@@ -1826,7 +2914,6 @@ function getTodayISOInTZ(tz){
   }
 }
 
-/* ✅ Export FIX: el server.py que pegaste usa start/end (NO from/to/mode/tz) */
 async function downloadExport(){
   if (!APP.selectedDeviceId) return;
 
@@ -1975,7 +3062,6 @@ async function apiFetch(path, options = {}){
   try{ data = JSON.parse(txt); } catch { data = txt; }
 
   if (res.status === 401 || res.status === 403){
-    // ✅ si la API dice no autorizado, volvemos al login sin romper UI
     onSessionInvalid("Sesión expirada o inválida. Inicia sesión de nuevo.");
     throw new Error("Sesión inválida");
   }
@@ -1986,10 +3072,17 @@ async function apiFetch(path, options = {}){
   }
   return data;
 }
-async function saveDeviceLocation(deviceId, location){
+async function saveDeviceLocation(deviceId, location, latitude=null, longitude=null){
+  const body = { location };
+  if (latitude !== null && latitude !== "" && Number.isFinite(Number(latitude))) body.latitude = Number(latitude);
+  else body.latitude = null;
+
+  if (longitude !== null && longitude !== "" && Number.isFinite(Number(longitude))) body.longitude = Number(longitude);
+  else body.longitude = null;
+
   return await apiFetch(`/api/devices/${encodeURIComponent(deviceId)}/location`, {
     method: "PATCH",
-    body: JSON.stringify({ location })
+    body: JSON.stringify(body)
   });
 }
 
@@ -2003,24 +3096,56 @@ function startEditLocation(deviceId, current){
 function cancelEditLocation(){
   APP.locationEdit.deviceId = null;
   APP.locationEdit.draft = "";
+  APP.locationEdit.lat = "";
+  APP.locationEdit.lng = "";
+  APP.locationEdit.saving = false;
   renderDevices();
 }
 
 async function commitEditLocation(deviceId){
-  try{
-    const loc = (APP.locationEdit.draft || "").trim();
-    await saveDeviceLocation(deviceId, loc);
+  if (APP.locationEdit.saving) return;
 
-    // actualiza en memoria para que se vea inmediato sin esperar refresh
-    const d = (APP.devices || []).find(x => x.device_id === deviceId);
-    if (d) d.location = loc;
+  const locEl = document.getElementById(`locInput_${deviceId}`);
+  const latEl = document.getElementById(`latInput_${deviceId}`);
+  const lngEl = document.getElementById(`lngInput_${deviceId}`);
+
+  const value = (locEl ? locEl.value : APP.locationEdit.draft || "").trim();
+  const latRaw = (latEl ? latEl.value : APP.locationEdit.lat || "").trim();
+  const lngRaw = (lngEl ? lngEl.value : APP.locationEdit.lng || "").trim();
+
+  if ((latRaw && !Number.isFinite(Number(latRaw))) || (lngRaw && !Number.isFinite(Number(lngRaw)))){
+    alert("Latitud y longitud deben ser números válidos.");
+    return;
+  }
+
+  APP.locationEdit.saving = true;
+
+  try{
+    const updated = await saveDeviceLocation(deviceId, value, latRaw, lngRaw);
+
+    const idx = (APP.devices || []).findIndex(x => x.device_id === deviceId);
+    if (idx >= 0){
+      APP.devices[idx] = {
+        ...APP.devices[idx],
+        location: updated.location,
+        latitude: updated.latitude,
+        longitude: updated.longitude
+      };
+    }
 
     APP.locationEdit.deviceId = null;
     APP.locationEdit.draft = "";
+    APP.locationEdit.lat = "";
+    APP.locationEdit.lng = "";
+    APP.locationEdit.saving = false;
+
     renderDevices();
-    toast("Ubicación guardada");
+    renderDevicesMap();
+    toast("Ubicación y coordenadas guardadas");
   }catch(e){
-    alert("No se pudo guardar la ubicación: " + e.message);
+    APP.locationEdit.saving = false;
+    alert("Error al guardar ubicación: " + (e.message || e));
+    renderDevices();
   }
 }
 
@@ -2028,7 +3153,11 @@ async function commitEditLocation(deviceId){
    SETTINGS + ALERTS
 ========================= */
 function loadSettings(){
-  const s = JSON.parse(localStorage.getItem("pcmon_settings_v1") || "{}");
+  const savedRaw = localStorage.getItem("pcmon_settings_v1");
+  const s = JSON.parse(savedRaw || "{}");
+  // Tema predeterminado del aplicativo: Blanco.
+  // Si no hay configuración guardada, inicia en blanco.
+  if (!savedRaw || !s.theme) s.theme = "light";
   APP.settings = { ...APP.settings, ...s };
 
   document.getElementById("setCpuHigh").value = APP.settings.cpuHigh;
@@ -2042,9 +3171,9 @@ function loadSettings(){
   const a2 = document.getElementById("setAdminEmail2"); if (a2) a2.value = APP.settings.adminEmail2 || "";
   const tz = document.getElementById("setTimezone"); if (tz) tz.value = APP.settings.timezone || "America/Bogota";
   const lg = document.getElementById("setLang"); if (lg) lg.value = APP.settings.lang || "es";
-  const th = document.getElementById("setTheme"); if (th) th.value = APP.settings.theme || "dark";
+  const th = document.getElementById("setTheme"); if (th) th.value = APP.settings.theme || "light";
 
-  applyTheme(APP.settings.theme || "dark");
+  applyTheme(APP.settings.theme || "light");
   applyLanguage();
 }
 function saveSettings(){
@@ -2059,7 +3188,7 @@ function saveSettings(){
   const a2 = document.getElementById("setAdminEmail2"); if (a2) APP.settings.adminEmail2 = a2.value || "";
   const tz = document.getElementById("setTimezone"); if (tz) APP.settings.timezone = tz.value || "America/Bogota";
   const lg = document.getElementById("setLang"); if (lg) APP.settings.lang = lg.value || "es";
-  const th = document.getElementById("setTheme"); if (th) APP.settings.theme = th.value || "dark";
+  const th = document.getElementById("setTheme"); if (th) APP.settings.theme = th.value || "light";
 
   localStorage.setItem("pcmon_settings_v1", JSON.stringify(APP.settings));
   applyTheme(APP.settings.theme);
@@ -2112,10 +3241,11 @@ function showTab(name){
   Object.values(map).forEach(id => document.getElementById(id).classList.add("hide"));
   document.getElementById(map[name]).classList.remove("hide");
 
-  if (name === "dash") loadDashboard().catch(()=>{});
+  if (name === "dash") { loadDashboard().catch(()=>{}); setTimeout(()=>renderDevicesMap(), 120); }
   if (name === "alerts") renderAlerts();
   if (name === "home") renderHome().catch(()=>{});
 
+  enhanceSettingsSelects();
   requestAnimationFrame(()=>{ forceResizeCharts(); });
 }
 
@@ -2153,62 +3283,76 @@ function renderTopProcs(tbodyId, items){
     tb.appendChild(tr);
   }
 }
-function startEditLocation(deviceId, currentLocation){
+function startEditLocation(deviceId, currentValue, currentLat="", currentLng=""){
   APP.locationEdit.deviceId = deviceId;
-  APP.locationEdit.draft = String(currentLocation || "");
+  APP.locationEdit.draft = String(currentValue || "");
+  APP.locationEdit.lat = (currentLat ?? "") === null ? "" : String(currentLat ?? "");
+  APP.locationEdit.lng = (currentLng ?? "") === null ? "" : String(currentLng ?? "");
   APP.locationEdit.saving = false;
 
   renderDevices();
 
-  // enfocar input (después del render)
-  setTimeout(()=>{
-    const input = document.getElementById(`locInput_${deviceId}`);
-    if (input){
-      input.focus();
-      input.selectionStart = input.selectionEnd = input.value.length;
+  requestAnimationFrame(()=>{
+    const el = document.getElementById(`locInput_${deviceId}`);
+    if (el){
+      el.focus();
+      el.setSelectionRange(el.value.length, el.value.length);
     }
-  }, 0);
+  });
 }
 
 function cancelEditLocation(){
   APP.locationEdit.deviceId = null;
   APP.locationEdit.draft = "";
+  APP.locationEdit.lat = "";
+  APP.locationEdit.lng = "";
   APP.locationEdit.saving = false;
   renderDevices();
 }
 
 async function commitEditLocation(deviceId){
-  // evita doble click / doble envío
   if (APP.locationEdit.saving) return;
 
-  const input = document.getElementById(`locInput_${deviceId}`);
-  const value = (input ? input.value : APP.locationEdit.draft || "").trim();
+  const locEl = document.getElementById(`locInput_${deviceId}`);
+  const latEl = document.getElementById(`latInput_${deviceId}`);
+  const lngEl = document.getElementById(`lngInput_${deviceId}`);
+
+  const value = (locEl ? locEl.value : APP.locationEdit.draft || "").trim();
+  const latRaw = (latEl ? latEl.value : APP.locationEdit.lat || "").trim();
+  const lngRaw = (lngEl ? lngEl.value : APP.locationEdit.lng || "").trim();
+
+  if ((latRaw && !Number.isFinite(Number(latRaw))) || (lngRaw && !Number.isFinite(Number(lngRaw)))){
+    alert("Latitud y longitud deben ser números válidos.");
+    return;
+  }
 
   APP.locationEdit.saving = true;
 
   try{
-    // ✅ PATCH al endpoint del server
-    const updated = await apiFetch(`/api/devices/${encodeURIComponent(deviceId)}/location`, {
-      method: "POST",
-      body: JSON.stringify({ location: value })
-    });
+    const updated = await saveDeviceLocation(deviceId, value, latRaw, lngRaw);
 
-    // ✅ actualiza en memoria sin recargar toda la lista (evita que “salte”)
     const idx = (APP.devices || []).findIndex(x => x.device_id === deviceId);
     if (idx >= 0){
-      APP.devices[idx] = { ...APP.devices[idx], location: updated.location };
+      APP.devices[idx] = {
+        ...APP.devices[idx],
+        location: updated.location,
+        latitude: updated.latitude,
+        longitude: updated.longitude
+      };
     }
 
-    toast("Ubicación guardada");
     APP.locationEdit.deviceId = null;
     APP.locationEdit.draft = "";
+    APP.locationEdit.lat = "";
+    APP.locationEdit.lng = "";
     APP.locationEdit.saving = false;
 
     renderDevices();
+    renderDevicesMap();
+    toast("Ubicación y coordenadas guardadas");
   }catch(e){
     APP.locationEdit.saving = false;
-    alert("Error al guardar ubicación: " + e.message);
-    // mantenemos el modo edición para que no pierdas lo escrito
+    alert("Error al guardar ubicación: " + (e.message || e));
     renderDevices();
   }
 }
@@ -2241,26 +3385,54 @@ function renderDevices(){
         <div class="tiny">${escapeHtml(d.device_id || "")}</div>
       </td>
 
-      <!-- ✅ UBICACIÓN (modo ver / modo editar) -->
+      <!--  UBICACIÓN (modo ver / modo editar) -->
       <td>
         ${
           isEditing
           ? `
-            <div style="display:flex; gap:10px; align-items:center;">
-              <input
-                id="locInput_${d.device_id}"
-                type="text"
-                value="${escapeHtml(APP.locationEdit.draft || "")}"
-                placeholder="Ej: Piso 2 / Bodega / Oficina"
-                style="min-width:260px;"
-              />
-              <button class="btn" id="locSave_${d.device_id}">Guardar</button>
-              <button class="btn" id="locCancel_${d.device_id}">Cancelar</button>
+            <div>
+              <div class="locEditorGrid">
+                <input
+                  id="locInput_${d.device_id}"
+                  type="text"
+                  value="${escapeHtml(APP.locationEdit.draft || "")}"
+                  placeholder="Ej: Piso 2 / Bodega / Oficina"
+                />
+                <input
+                  id="latInput_${d.device_id}"
+                  type="number"
+                  step="any"
+                  value="${escapeHtml(APP.locationEdit.lat || "")}"
+                  placeholder="Latitud"
+                />
+                <input
+                  id="lngInput_${d.device_id}"
+                  type="number"
+                  step="any"
+                  value="${escapeHtml(APP.locationEdit.lng || "")}"
+                  placeholder="Longitud"
+                />
+              </div>
+              <div class="locEditorActions">
+                <button class="btn primary" id="locGeo_${d.device_id}">Usar mi ubicación</button>
+                <button class="btn" id="locSave_${d.device_id}">Guardar</button>
+                <button class="btn" id="locCancel_${d.device_id}">Cancelar</button>
+              </div>
+              <div class="geoNote">
+                Esta opción usa la ubicación del navegador y la guarda como coordenadas del PC seleccionado.
+              </div>
             </div>
           `
           : `
-            <div style="display:flex; gap:10px; align-items:center;">
-              <div>${escapeHtml(locText)}</div>
+            <div style="display:flex; gap:10px; align-items:flex-start; justify-content:space-between;">
+              <div>
+                <div>${escapeHtml(locText)}</div>
+                <div class="locCoord">${
+                  Number.isFinite(Number(d.latitude)) && Number.isFinite(Number(d.longitude))
+                    ? `📍 ${Number(d.latitude).toFixed(5)}, ${Number(d.longitude).toFixed(5)}`
+                    : "Sin coordenadas"
+                }</div>
+              </div>
               <button class="btn" id="locEdit_${d.device_id}">Editar</button>
             </div>
           `
@@ -2271,7 +3443,7 @@ function renderDevices(){
       <td>${last ? toBogota(last) : "-"}</td>
     `;
 
-    // ✅ click en fila: seleccionar PC (pero NO cuando se esté editando ubicación)
+    //  click en fila: seleccionar PC (pero NO cuando se esté editando ubicación)
     tr.addEventListener("click", async ()=>{
       if (APP.locationEdit?.deviceId) return; // si estás editando, no dejes que se cambie selección
 
@@ -2292,30 +3464,59 @@ function renderDevices(){
 
     tb.appendChild(tr);
 
-    // ✅ listeners de botones/inputs (después de insertar el HTML)
+    //  listeners de botones/inputs (después de insertar el HTML)
     if (isEditing){
       const input = document.getElementById(`locInput_${d.device_id}`);
+      const latInput = document.getElementById(`latInput_${d.device_id}`);
+      const lngInput = document.getElementById(`lngInput_${d.device_id}`);
+      const btnGeo = document.getElementById(`locGeo_${d.device_id}`);
       const btnSave = document.getElementById(`locSave_${d.device_id}`);
       const btnCancel = document.getElementById(`locCancel_${d.device_id}`);
 
-      // evita que click dentro del input dispare el click de la fila
-      input.addEventListener("click", (e)=>e.stopPropagation());
+      // evita que click dentro de los inputs dispare el click de la fila
+      [input, latInput, lngInput, btnGeo, btnSave, btnCancel].forEach(el=>{
+        if (el) el.addEventListener("click", (e)=>e.stopPropagation());
+      });
+
+      if (btnGeo){
+        btnGeo.addEventListener("click", async (e)=>{
+          e.stopPropagation();
+          try{
+            btnGeo.disabled = true;
+            btnGeo.textContent = "Obteniendo...";
+            const pos = await getBrowserPosition();
+            latInput.value = String(pos.latitude);
+            lngInput.value = String(pos.longitude);
+            APP.locationEdit.lat = latInput.value;
+            APP.locationEdit.lng = lngInput.value;
+            toast(`Coordenadas detectadas. Precisión aproximada: ${Math.round(pos.accuracy || 0)} m`);
+          }catch(err){
+            alert(err.message || err);
+          }finally{
+            btnGeo.disabled = false;
+            btnGeo.textContent = "Usar mi ubicación";
+          }
+        });
+      }
+
       btnSave.addEventListener("click", (e)=>{ e.stopPropagation(); commitEditLocation(d.device_id); });
       btnCancel.addEventListener("click", (e)=>{ e.stopPropagation(); cancelEditLocation(); });
 
-      input.addEventListener("input", (e)=>{
-        APP.locationEdit.draft = e.target.value; // mantiene el texto aunque refresque
-      });
+      input.addEventListener("input", (e)=>{ APP.locationEdit.draft = e.target.value; });
+      latInput.addEventListener("input", (e)=>{ APP.locationEdit.lat = e.target.value; });
+      lngInput.addEventListener("input", (e)=>{ APP.locationEdit.lng = e.target.value; });
 
-      input.addEventListener("keydown", (e)=>{
-        if (e.key === "Enter"){ e.preventDefault(); commitEditLocation(d.device_id); }
-        if (e.key === "Escape"){ e.preventDefault(); cancelEditLocation(); }
+      [input, latInput, lngInput].forEach(el=>{
+        el.addEventListener("keydown", (e)=>{
+          if (e.key === "Enter"){ e.preventDefault(); commitEditLocation(d.device_id); }
+          if (e.key === "Escape"){ e.preventDefault(); cancelEditLocation(); }
+        });
       });
     }else{
       const btnEdit = document.getElementById(`locEdit_${d.device_id}`);
       btnEdit.addEventListener("click", (e)=>{
         e.stopPropagation();
-        startEditLocation(d.device_id, d.location || "");
+        startEditLocation(d.device_id, d.location || "", d.latitude ?? "", d.longitude ?? "");
       });
     }
   });
@@ -2610,6 +3811,392 @@ function mountChartsUnderDetail(){
 }
 
 /* =========================
+   GEOLOCALIZACIÓN AUTOMÁTICA
+========================= */
+function getBrowserPosition(){
+  return new Promise((resolve, reject)=>{
+    if (!navigator.geolocation){
+      reject(new Error("Tu navegador no soporta geolocalización."));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos)=>{
+        resolve({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          accuracy: pos.coords.accuracy
+        });
+      },
+      (err)=>{
+        let msg = "No se pudo obtener la ubicación.";
+        if (err.code === 1) msg = "Permiso de ubicación denegado. Actívalo en el navegador.";
+        if (err.code === 2) msg = "Ubicación no disponible en este momento.";
+        if (err.code === 3) msg = "La solicitud de ubicación tardó demasiado.";
+        reject(new Error(msg));
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 12000,
+        maximumAge: 60000
+      }
+    );
+  });
+}
+
+async function applyBrowserLocationToDevice(deviceId, locationName){
+  const pos = await getBrowserPosition();
+  const label = (locationName || "").trim() || `Ubicación automática (${new Date().toLocaleDateString("es-CO")})`;
+
+  const updated = await saveDeviceLocation(deviceId, label, pos.latitude, pos.longitude);
+
+  const idx = (APP.devices || []).findIndex(x => x.device_id === deviceId);
+  if (idx >= 0){
+    APP.devices[idx] = {
+      ...APP.devices[idx],
+      location: updated.location,
+      latitude: updated.latitude,
+      longitude: updated.longitude
+    };
+  }
+
+  return { updated, pos };
+}
+
+async function autoLocateSelectedDevice(){
+  if (!APP.selectedDeviceId){
+    alert("Selecciona primero un PC en la pestaña PCs o desde el mapa.");
+    return;
+  }
+
+  const dev = (APP.devices || []).find(x => x.device_id === APP.selectedDeviceId);
+  const name = dev?.location || dev?.hostname || "Ubicación automática";
+
+  try{
+    toast("Solicitando ubicación del navegador...");
+    const { pos } = await applyBrowserLocationToDevice(APP.selectedDeviceId, name);
+    renderDevices();
+    await renderDevicesMap();
+    toast(`Ubicación guardada. Precisión aproximada: ${Math.round(pos.accuracy || 0)} m`);
+  }catch(e){
+    alert(e.message || e);
+  }
+}
+
+/* =========================
+   MAPA DE DISPOSITIVOS - GOOGLE MAPS
+========================= */
+function deviceHasCoords(d){
+  return Number.isFinite(Number(d.latitude)) && Number.isFinite(Number(d.longitude));
+}
+
+function ensureGoogleMapsApi(){
+  return new Promise((resolve, reject)=>{
+    if (window.google && window.google.maps){
+      resolve(window.google.maps);
+      return;
+    }
+
+    if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === "TU_API_KEY_DE_GOOGLE_MAPS"){
+      reject(new Error("Falta configurar GOOGLE_MAPS_API_KEY en app.html"));
+      return;
+    }
+
+    if (window.__googleMapsLoading){
+      window.__googleMapsLoading.then(resolve).catch(reject);
+      return;
+    }
+
+    window.__googleMapsLoading = new Promise((res, rej)=>{
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}`;
+      script.async = true;
+      script.defer = true;
+      script.onload = ()=>res(window.google.maps);
+      script.onerror = ()=>rej(new Error("No se pudo cargar Google Maps"));
+      document.head.appendChild(script);
+    });
+
+    window.__googleMapsLoading.then(resolve).catch(reject);
+  });
+}
+
+function makeGoogleMarkerIcon(status){
+  const color = status === "online" ? "#22c55e" : "#ef4444";
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
+      <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+        <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.30"/>
+      </filter>
+      <circle cx="22" cy="22" r="14" fill="${color}" stroke="#ffffff" stroke-width="4" filter="url(#shadow)"/>
+      <circle cx="22" cy="22" r="5" fill="#ffffff"/>
+    </svg>`;
+  return {
+    url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg),
+    scaledSize: new google.maps.Size(44, 44),
+    anchor: new google.maps.Point(22, 22)
+  };
+}
+
+async function ensureDevicesMap(){
+  const el = document.getElementById("devicesMap");
+  if (!el) return null;
+
+  try{
+    await ensureGoogleMapsApi();
+  }catch(e){
+    const mapEmpty = document.getElementById("mapEmpty");
+    if (mapEmpty){
+      mapEmpty.classList.remove("hide");
+      mapEmpty.innerHTML = `
+        No se pudo cargar Google Maps. Edita <b>app.html</b> y reemplaza
+        <b>TU_API_KEY_DE_GOOGLE_MAPS</b> por tu API Key real.
+      `;
+    }
+    return null;
+  }
+
+  if (!APP.map){
+    APP.map = new google.maps.Map(el, {
+      center: { lat: 4.5709, lng: -74.2973 },
+      zoom: 6,
+      mapTypeId: "roadmap",
+      streetViewControl: false,
+      fullscreenControl: true,
+      mapTypeControl: false,
+      gestureHandling: "greedy",
+      styles: [
+        { elementType: "geometry", stylers: [{ color: "#f5f7fb" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#334155" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+        { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#cbd5e1" }] },
+        { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#eef6f8" }] },
+        { featureType: "poi", stylers: [{ visibility: "off" }] },
+        { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+        { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#dbe3ee" }] },
+        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#d9e8ff" }] },
+        { featureType: "transit", stylers: [{ visibility: "off" }] },
+        { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9e8f3" }] }
+      ]
+    });
+
+    APP.mapInfoWindow = new google.maps.InfoWindow();
+  applySysPulseMapOptions();
+  }
+
+  setTimeout(()=>google.maps.event.trigger(APP.map, "resize"), 100);
+  return APP.map;
+}
+
+
+function getSysPulseMapStyle(){
+  return [
+    { elementType:"geometry", stylers:[{color:"#eaf7ff"}] },
+    { elementType:"labels.text.fill", stylers:[{color:"#334155"}] },
+    { elementType:"labels.text.stroke", stylers:[{color:"#ffffff"}] },
+    { featureType:"administrative", elementType:"geometry.stroke", stylers:[{color:"#93c5fd"}] },
+    { featureType:"landscape.natural", elementType:"geometry", stylers:[{color:"#dcfce7"}] },
+    { featureType:"poi", elementType:"geometry", stylers:[{color:"#dbeafe"}] },
+    { featureType:"poi", elementType:"labels.text.fill", stylers:[{color:"#475569"}] },
+    { featureType:"road", elementType:"geometry", stylers:[{color:"#ffffff"}] },
+    { featureType:"road", elementType:"geometry.stroke", stylers:[{color:"#bfdbfe"}] },
+    { featureType:"road", elementType:"labels.text.fill", stylers:[{color:"#475569"}] },
+    { featureType:"transit", elementType:"geometry", stylers:[{color:"#c7d2fe"}] },
+    { featureType:"water", elementType:"geometry", stylers:[{color:"#bae6fd"}] },
+    { featureType:"water", elementType:"labels.text.fill", stylers:[{color:"#0369a1"}] }
+  ];
+}
+
+function applySysPulseMapOptions(){
+  if (!APP.map || !window.google || !google.maps) return;
+  APP.map.setOptions({
+    styles: getSysPulseMapStyle(),
+    backgroundColor: "#eaf7ff",
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: true,
+    zoomControl: true,
+    gestureHandling: "greedy",
+    minZoom: 3,
+    maxZoom: 19
+  });
+}
+
+function getFilteredMapDevices(){
+  const q = String(APP.mapSearch || "").trim().toLowerCase();
+  return (APP.devices || [])
+    .filter(deviceHasCoords)
+    .filter(d=>{
+      if (APP.mapFilter === "online" && d.status !== "online") return false;
+      if (APP.mapFilter === "offline" && d.status !== "offline") return false;
+      if (!q) return true;
+      const hay = `${d.hostname || ""} ${d.device_id || ""} ${d.location || ""} ${d.os || ""}`.toLowerCase();
+      return hay.includes(q);
+    });
+}
+
+function renderMapPcList(devices){
+  const root = document.getElementById("mapPcList");
+  if (!root) return;
+  root.innerHTML = "";
+
+  if (!devices.length){
+    root.innerHTML = `<div class="muted" style="padding:12px;">No hay equipos que coincidan con el filtro.</div>`;
+    return;
+  }
+
+  devices.forEach(d=>{
+    const item = document.createElement("div");
+    item.className = "mapPcItem" + (APP.selectedDeviceId === d.device_id ? " active" : "");
+    item.innerHTML = `
+      <div class="mapPcTop">
+        <div class="mapPcName">${escapeHtml(d.hostname || d.device_id || "PC")}</div>
+        <span class="mapStatusMini ${d.status === "online" ? "online" : "offline"}"></span>
+      </div>
+      <div class="mapPcMeta">
+        ${escapeHtml(d.location || "Sin ubicación")}<br>
+        ${Number(d.latitude).toFixed(5)}, ${Number(d.longitude).toFixed(5)}
+      </div>
+    `;
+    item.addEventListener("click", async ()=>{
+      setSelected(d.device_id);
+      focusMapDevice(d.device_id, true);
+      try{
+        document.getElementById("pcEmptyState")?.classList.add("hide");
+        document.getElementById("detailCard")?.classList.remove("hide");
+        document.getElementById("pcChartsMount")?.classList.remove("hide");
+        await loadDetailAndCharts();
+      }catch{}
+      renderMapPcList(devices);
+    });
+    root.appendChild(item);
+  });
+}
+
+function updateMapFilterButtons(){
+  const ids = { all: "mapFilterAll", online: "mapFilterOnline", offline: "mapFilterOffline" };
+  Object.entries(ids).forEach(([key, id])=>{
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle("active", APP.mapFilter === key);
+  });
+}
+
+function focusMapDevice(deviceId, openPopup=false){
+  if (!APP.map || !APP.mapMarkersById) return;
+  const marker = APP.mapMarkersById[deviceId];
+  if (!marker) return;
+  const pos = marker.getPosition();
+  APP.map.panTo(pos);
+  APP.map.setZoom(Math.max(APP.map.getZoom() || 6, 15));
+  if (openPopup && APP.mapInfoWindow && marker.__content){
+    APP.mapInfoWindow.setContent(marker.__content);
+    APP.mapInfoWindow.open(APP.map, marker);
+  }
+}
+
+async function renderDevicesMap(){
+  const map = await ensureDevicesMap();
+  const mapCount = document.getElementById("mapCount");
+  const mapEmpty = document.getElementById("mapEmpty");
+  const statLocated = document.getElementById("mapStatLocated");
+  const statOnline = document.getElementById("mapStatOnline");
+  const statOffline = document.getElementById("mapStatOffline");
+  if (!map) return;
+
+  (APP.mapMarkers || []).forEach(m => {
+    try{ m.setMap(null); }catch{}
+  });
+  APP.mapMarkers = [];
+  APP.mapMarkersById = {};
+
+  const allLocated = (APP.devices || []).filter(deviceHasCoords);
+  const devicesWithCoords = getFilteredMapDevices ? getFilteredMapDevices() : allLocated;
+  const locatedOnline = allLocated.filter(d=>d.status === "online").length;
+  const locatedOffline = allLocated.filter(d=>d.status !== "online").length;
+
+  if (mapCount) mapCount.textContent = allLocated.length;
+  if (statLocated) statLocated.textContent = allLocated.length;
+  if (statOnline) statOnline.textContent = locatedOnline;
+  if (statOffline) statOffline.textContent = locatedOffline;
+
+  if (typeof updateMapFilterButtons === "function") updateMapFilterButtons();
+  if (typeof renderMapPcList === "function") renderMapPcList(devicesWithCoords);
+
+  if (mapEmpty){
+    mapEmpty.classList.toggle("hide", allLocated.length > 0);
+  }
+
+  const bounds = new google.maps.LatLngBounds();
+
+  devicesWithCoords.forEach(d=>{
+    const lat = Number(d.latitude);
+    const lng = Number(d.longitude);
+    const position = { lat, lng };
+
+    const marker = new google.maps.Marker({
+      position,
+      map,
+      title: d.hostname || d.device_id || "PC",
+      icon: makeGoogleMarkerIcon(d.status),
+      optimized: true,
+      zIndex: d.status === "online" ? 2 : 1
+    });
+
+    const content = `
+      <div style="min-width:230px;font-family:Arial,sans-serif;">
+        <div style="font-weight:900;color:#0f172a;font-size:15px;margin-bottom:6px;">
+          ${escapeHtml(d.hostname || d.device_id || "PC")}
+        </div>
+        <div style="color:#334155;font-size:12px;line-height:1.5;">
+          <b>Estado:</b> ${escapeHtml(d.status || "-")}<br>
+          <b>Ubicación:</b> ${escapeHtml(d.location || "Sin ubicación")}<br>
+          <b>OS:</b> ${escapeHtml(d.os || "-")}<br>
+          <b>Coordenadas:</b> ${lat.toFixed(5)}, ${lng.toFixed(5)}
+        </div>
+      </div>
+    `;
+    marker.__content = content;
+
+    marker.addListener("click", ()=>{
+      APP.mapInfoWindow.setContent(content);
+      APP.mapInfoWindow.open(map, marker);
+      setSelected(d.device_id);
+      if (typeof renderMapPcList === "function") renderMapPcList(devicesWithCoords);
+    });
+
+    APP.mapMarkers.push(marker);
+    APP.mapMarkersById[d.device_id] = marker;
+    bounds.extend(position);
+  });
+
+  if (devicesWithCoords.length === 1){
+    map.setCenter(bounds.getCenter());
+    map.setZoom(16);
+  }else if (devicesWithCoords.length > 1){
+    const latVals = devicesWithCoords.map(d=>Number(d.latitude)).filter(Number.isFinite);
+    const lngVals = devicesWithCoords.map(d=>Number(d.longitude)).filter(Number.isFinite);
+    const latSpread = Math.max(...latVals) - Math.min(...latVals);
+    const lngSpread = Math.max(...lngVals) - Math.min(...lngVals);
+
+    map.fitBounds(bounds, 90);
+
+    // Si los PCs están muy cerca, Google puede abrir demasiado el mapa.
+    // Limitamos el zoom para mantener una vista organizada.
+    google.maps.event.addListenerOnce(map, "idle", ()=>{
+      if (latSpread < 0.02 && lngSpread < 0.02 && map.getZoom() < 14) map.setZoom(15);
+      if (map.getZoom() > 17) map.setZoom(17);
+    });
+  }else{
+    map.setCenter({ lat: 4.5709, lng: -74.2973 });
+    map.setZoom(6);
+  }
+
+  applySysPulseMapOptions();
+  setTimeout(()=>google.maps.event.trigger(map, "resize"), 300);
+}
+
+
+/* =========================
    LOAD DATA
 ========================= */
 async function loadWhoami(){
@@ -2626,6 +4213,7 @@ async function loadWhoami(){
 async function loadDevices(){
   APP.devices = await apiFetch("/api/devices");
   renderDevices();
+  renderDevicesMap();
 
   if (!APP.selectedDeviceId){
     document.getElementById("pcEmptyState").classList.remove("hide");
@@ -2635,12 +4223,15 @@ async function loadDevices(){
 }
 
 
-function startEditLocation(deviceId, currentValue){
+function startEditLocation(deviceId, currentValue, currentLat="", currentLng=""){
   APP.locationEdit.deviceId = deviceId;
-  APP.locationEdit.draft = (currentValue ?? "");
+  APP.locationEdit.draft = String(currentValue || "");
+  APP.locationEdit.lat = (currentLat ?? "") === null ? "" : String(currentLat ?? "");
+  APP.locationEdit.lng = (currentLng ?? "") === null ? "" : String(currentLng ?? "");
+  APP.locationEdit.saving = false;
+
   renderDevices();
 
-  // enfocar input luego de render
   requestAnimationFrame(()=>{
     const el = document.getElementById(`locInput_${deviceId}`);
     if (el){
@@ -2653,25 +4244,56 @@ function startEditLocation(deviceId, currentValue){
 function cancelEditLocation(){
   APP.locationEdit.deviceId = null;
   APP.locationEdit.draft = "";
+  APP.locationEdit.lat = "";
+  APP.locationEdit.lng = "";
+  APP.locationEdit.saving = false;
   renderDevices();
 }
 
 async function commitEditLocation(deviceId){
-  const val = (APP.locationEdit.draft || "").trim();
+  if (APP.locationEdit.saving) return;
+
+  const locEl = document.getElementById(`locInput_${deviceId}`);
+  const latEl = document.getElementById(`latInput_${deviceId}`);
+  const lngEl = document.getElementById(`lngInput_${deviceId}`);
+
+  const value = (locEl ? locEl.value : APP.locationEdit.draft || "").trim();
+  const latRaw = (latEl ? latEl.value : APP.locationEdit.lat || "").trim();
+  const lngRaw = (lngEl ? lngEl.value : APP.locationEdit.lng || "").trim();
+
+  if ((latRaw && !Number.isFinite(Number(latRaw))) || (lngRaw && !Number.isFinite(Number(lngRaw)))){
+    alert("Latitud y longitud deben ser números válidos.");
+    return;
+  }
+
+  APP.locationEdit.saving = true;
 
   try{
-    await saveDeviceLocation(deviceId, val);
+    const updated = await saveDeviceLocation(deviceId, value, latRaw, lngRaw);
 
-    // actualiza en memoria para que se vea al instante sin esperar refresh
-    const d = (APP.devices || []).find(x => x.device_id === deviceId);
-    if (d) d.location = val;
+    const idx = (APP.devices || []).findIndex(x => x.device_id === deviceId);
+    if (idx >= 0){
+      APP.devices[idx] = {
+        ...APP.devices[idx],
+        location: updated.location,
+        latitude: updated.latitude,
+        longitude: updated.longitude
+      };
+    }
 
     APP.locationEdit.deviceId = null;
     APP.locationEdit.draft = "";
+    APP.locationEdit.lat = "";
+    APP.locationEdit.lng = "";
+    APP.locationEdit.saving = false;
+
     renderDevices();
-    toast("Ubicación guardada");
+    renderDevicesMap();
+    toast("Ubicación y coordenadas guardadas");
   }catch(e){
-    alert("No se pudo guardar la ubicación: " + (e.message || e));
+    APP.locationEdit.saving = false;
+    alert("Error al guardar ubicación: " + (e.message || e));
+    renderDevices();
   }
 }
 async function loadLatest(deviceId){
@@ -2756,6 +4378,60 @@ function renderCharts(metrics, latest){
   upsertChart("diskDonut","diskDonut", buildDonutConfig(latest.disk_used, latest.disk_total, diskCenter));
 }
 
+
+function buildStatusDonutConfig(online, offline){
+  const c = chartColors();
+  const total = online + offline;
+  return {type:"doughnut",data:{labels:["Online","Offline"],datasets:[{data:[online,offline],borderWidth:0,backgroundColor:["rgba(34,197,94,.92)","rgba(239,68,68,.82)"],hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"68%",animation:false,plugins:{legend:{labels:{color:c.legend}},donutCenterText:{text:total ? `${online}/${total}` : "0/0"}}},plugins:[donutCenterText]};
+}
+function buildResourceCompareConfig(labels, onlineVals, offlineVals){
+  const c = chartColors();
+  return {type:"bar",data:{labels,datasets:[{label:"Online",data:onlineVals,borderRadius:12,borderSkipped:false,backgroundColor:"rgba(59,130,246,.82)"},{label:"Offline",data:offlineVals,borderRadius:12,borderSkipped:false,backgroundColor:"rgba(148,163,184,.72)"}]},options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{labels:{color:c.legend}},tooltip:{enabled:true}},scales:{x:{ticks:{color:c.tick},grid:{color:c.gridSoft}},y:{suggestedMin:0,suggestedMax:100,ticks:{color:c.tick},grid:{color:c.grid}}}}};
+}
+function buildRiskRankingConfig(items){
+  const c = chartColors();
+  return {type:"bar",data:{labels:items.map(x=>x.name),datasets:[{label:"Riesgo %",data:items.map(x=>x.risk),borderRadius:14,borderSkipped:false,backgroundColor:function(context){const chart=context.chart;const {ctx,chartArea}=chart;if(!chartArea)return"rgba(239,68,68,.75)";const g=ctx.createLinearGradient(chartArea.left,0,chartArea.right,0);g.addColorStop(0,"rgba(34,197,94,.78)");g.addColorStop(.55,"rgba(245,158,11,.78)");g.addColorStop(1,"rgba(239,68,68,.88)");return g;}}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{labels:{color:c.legend}},tooltip:{enabled:true}},scales:{x:{suggestedMin:0,suggestedMax:100,ticks:{color:c.tick},grid:{color:c.grid}},y:{ticks:{color:c.tick},grid:{color:c.gridSoft}}}}};
+}
+function setText(id,value){const el=document.getElementById(id);if(el)el.textContent=value;}
+function setWidth(id,value){const el=document.getElementById(id);if(el)el.style.width=`${Math.max(0,Math.min(100,value)).toFixed(1)}%`;}
+function renderRiskList(items){
+  const root=document.getElementById("riskList"); if(!root)return; root.innerHTML="";
+  if(!items.length){root.innerHTML=`<div class="muted">No hay datos suficientes para calcular riesgo.</div>`;return;}
+  items.slice(0,5).forEach(x=>{const div=document.createElement("div");div.className="riskItem";div.innerHTML=`<div class="riskTop"><span>${escapeHtml(x.name)}</span><span>${x.risk.toFixed(1)}%</span></div><div class="riskMeta">CPU ${x.cpu.toFixed(1)}% • RAM ${x.ram.toFixed(1)}% • Disco ${x.disk.toFixed(1)}% • ${escapeHtml(x.status)}</div><div class="riskTrack"><div class="riskFill" style="width:${Math.max(0,Math.min(100,x.risk)).toFixed(1)}%"></div></div>`;root.appendChild(div);});
+}
+
+
+async function loadDashboardSummary(){
+  return await apiFetch("/api/dashboard/summary");
+}
+
+function chartDataFromSummaryItems(items, field){
+  return (items || []).map(x => ({
+    name: x.hostname || x.device_id || "PC",
+    val: safeNum(x[field], 0)
+  }));
+}
+
+function applyDashboardSummaryToDevices(summary){
+  if (!summary || !Array.isArray(summary.devices)) return;
+  const byId = new Map(summary.devices.map(d => [d.device_id, d]));
+  APP.devices = (APP.devices || []).map(d => {
+    const x = byId.get(d.device_id);
+    if (!x) return d;
+    return {
+      ...d,
+      status: x.status,
+      location: x.location,
+      latitude: x.latitude,
+      longitude: x.longitude,
+      last_seen: x.last_seen,
+      last_seen_bogota: x.last_seen_bogota,
+      os: x.os || d.os
+    };
+  });
+}
+
+
 /* =========================
    DASHBOARD (REAL)
 ========================= */
@@ -2766,54 +4442,123 @@ function mean(arr){
 }
 
 async function loadDashboard(){
-  if (!APP.devices.length) return;
+  let summary = null;
 
-  const promises = APP.devices.map(d =>
-    loadLatest(d.device_id)
-      .then(latest => ({ device: d, latest }))
-      .catch(() => null)
+  try{
+    summary = await loadDashboardSummary();
+    applyDashboardSummaryToDevices(summary);
+  }catch(e){
+    console.warn("No se pudo cargar /api/dashboard/summary:", e);
+    toast("No se pudo cargar el resumen del dashboard. Revisa que el server.py tenga /api/dashboard/summary.");
+    return;
+  }
+
+  const onlineCount = safeNum(summary.online, 0);
+  const offlineCount = safeNum(summary.offline, 0);
+  const totalCount = safeNum(summary.total_devices, onlineCount + offlineCount);
+
+  const cpuOnline = safeNum(summary.avg_cpu_online, 0);
+  const ramOnline = safeNum(summary.avg_ram_online, 0);
+  const diskOnline = safeNum(summary.avg_disk_online, 0);
+
+  const metricDevices = (summary.devices || []).filter(x => x.has_metrics);
+  const offlineMetricDevices = metricDevices.filter(x => x.status !== "online");
+
+  const cpuOffline = offlineMetricDevices.length ? mean(offlineMetricDevices.map(x => safeNum(x.cpu, 0))) : 0;
+  const ramOffline = offlineMetricDevices.length ? mean(offlineMetricDevices.map(x => safeNum(x.ram_pct, 0))) : 0;
+  const diskOffline = offlineMetricDevices.length ? mean(offlineMetricDevices.map(x => safeNum(x.disk_pct, 0))) : 0;
+
+  const healthScore = safeNum(summary.health_score, 0);
+  const healthLabel = summary.health_label || "Sin datos";
+  const healthDesc = summary.health_description || "Esperando datos de los equipos.";
+
+  let healthColor = "var(--good)";
+  if (healthScore < 75) healthColor = "var(--warn)";
+  if (healthScore < 50) healthColor = "var(--bad)";
+
+  setText("dashOnline", onlineCount);
+  setText("dashOffline", offlineCount);
+  setText("dashHealthText", healthLabel);
+  setText("dashHealthDesc", healthDesc);
+  setText("dashCpuAvgText", fmtPct(cpuOnline));
+  setText("dashRamAvgText", fmtPct(ramOnline));
+  setText("dashDiskAvgText", fmtPct(diskOnline));
+  setText("healthScore", `${healthScore.toFixed(0)}`);
+  setText("healthLabel", healthLabel);
+  setText("healthDescription", healthDesc);
+
+  const circle = document.getElementById("healthCircle");
+  if (circle){
+    const deg = Math.max(0, Math.min(360, healthScore * 3.6));
+    circle.style.background = `conic-gradient(${healthColor} 0deg, ${healthColor} ${deg}deg, rgba(255,255,255,.10) ${deg}deg 360deg)`;
+  }
+
+  setText("healthCpuText", fmtPct(cpuOnline));
+  setText("healthRamText", fmtPct(ramOnline));
+  setText("healthDiskText", fmtPct(diskOnline));
+  setWidth("healthCpuBar", cpuOnline);
+  setWidth("healthRamBar", ramOnline);
+  setWidth("healthDiskBar", diskOnline);
+
+  const riskItems = (summary.top_risk || []).map(x => ({
+    name: x.hostname || x.device_id || "PC",
+    status: x.status || "-",
+    cpu: safeNum(x.cpu, 0),
+    ram: safeNum(x.ram_pct, 0),
+    disk: safeNum(x.disk_pct, 0),
+    risk: safeNum(x.risk, 0)
+  }));
+
+  renderRiskList(riskItems);
+
+  const explain = document.getElementById("dashExplainList");
+  if (explain){
+    const maxRisk = riskItems[0];
+    const notes = [];
+    notes.push(`<li>Hay <b style="color:var(--text)">${onlineCount}</b> equipo(s) online y <b style="color:var(--text)">${offlineCount}</b> offline.</li>`);
+    notes.push(`<li>Equipos con métricas: <b style="color:var(--text)">${safeNum(summary.with_metrics, 0)}</b> de <b style="color:var(--text)">${totalCount}</b>.</li>`);
+    notes.push(`<li>Promedios online: CPU <b style="color:var(--text)">${fmtPct(cpuOnline)}</b>, RAM <b style="color:var(--text)">${fmtPct(ramOnline)}</b>, Disco <b style="color:var(--text)">${fmtPct(diskOnline)}</b>.</li>`);
+    if (maxRisk){
+      notes.push(`<li>Equipo con mayor riesgo actual: <b style="color:var(--text)">${escapeHtml(maxRisk.name)}</b> con ${maxRisk.risk.toFixed(1)}%.</li>`);
+    }
+    notes.push(offlineCount > 0 ? `<li>Prioridad: revisar conectividad/agente de equipos offline.</li>` : `<li>No se detectan equipos offline en este momento.</li>`);
+    explain.innerHTML = notes.join("");
+  }
+
+  upsertChart("statusDonutChart", "statusDonutChart", buildStatusDonutConfig(onlineCount, offlineCount));
+
+  upsertChart("resourceCompareChart", "resourceCompareChart",
+    buildResourceCompareConfig(
+      ["CPU", "RAM", "Disco"],
+      [cpuOnline, ramOnline, diskOnline],
+      [cpuOffline, ramOffline, diskOffline]
+    )
   );
 
-  const items = (await Promise.all(promises)).filter(Boolean);
-
-  const onlineItems = items.filter(x => x.device.status === "online");
-  const offlineItems = items.filter(x => x.device.status === "offline");
-
-  const cpuOnline = mean(onlineItems.map(x => safeNum(x.latest.cpu,0)));
-  const cpuOffline = mean(offlineItems.map(x => safeNum(x.latest.cpu,0)));
-
-  const ramOnline = mean(onlineItems.map(x => safePct(x.latest.ram_used, x.latest.ram_total)));
-  const ramOffline = mean(offlineItems.map(x => safePct(x.latest.ram_used, x.latest.ram_total)));
-
-  const diskOnline = mean(onlineItems.map(x => safePct(x.latest.disk_used, x.latest.disk_total)));
-  const diskOffline = mean(offlineItems.map(x => safePct(x.latest.disk_used, x.latest.disk_total)));
-
-  upsertChart("avgCpuChart","avgCpuChart", buildBarConfig(["Online","Offline"], [cpuOnline, cpuOffline], "CPU %", 100));
-  upsertChart("avgRamChart","avgRamChart", buildBarConfig(["Online","Offline"], [ramOnline, ramOffline], "RAM %", 100));
-  upsertChart("avgDiskChart","avgDiskChart", buildBarConfig(["Online","Offline"], [diskOnline, diskOffline], "DISK %", 100));
-
-  const topCpu = [...items]
-    .map(x => ({ name: x.device.hostname || x.device.device_id, val: safeNum(x.latest.cpu,0) }))
-    .sort((a,b)=>b.val-a.val)
-    .slice(0,10);
-
-  const topRam = [...items]
-    .map(x => ({ name: x.device.hostname || x.device.device_id, val: safePct(x.latest.ram_used, x.latest.ram_total) }))
-    .sort((a,b)=>b.val-a.val)
-    .slice(0,10);
-
-  upsertChart("topCpuChart","topCpuChart",
-    buildHorizontalBarConfig(topCpu.map(x=>x.name), topCpu.map(x=>x.val), "CPU %", 100)
+  upsertChart("riskRankingChart", "riskRankingChart",
+    buildRiskRankingConfig(riskItems.slice(0, 10))
   );
-  upsertChart("topRamChart","topRamChart",
-    buildHorizontalBarConfig(topRam.map(x=>x.name), topRam.map(x=>x.val), "RAM %", 100)
+
+  const topCpu = chartDataFromSummaryItems(summary.top_cpu, "cpu").slice(0, 10);
+  const topRam = chartDataFromSummaryItems(summary.top_ram, "ram_pct").slice(0, 10);
+
+  upsertChart("topCpuChart", "topCpuChart",
+    buildHorizontalBarConfig(topCpu.map(x => x.name), topCpu.map(x => x.val), "CPU %", 100)
   );
+  upsertChart("topRamChart", "topRamChart",
+    buildHorizontalBarConfig(topRam.map(x => x.name), topRam.map(x => x.val), "RAM %", 100)
+  );
+
+  await renderDevicesMap();
+  renderDevices();
 
   loadAlerts();
-  document.getElementById("dashAlerts").textContent = APP.alerts.length;
+  const dashAlerts = document.getElementById("dashAlerts");
+  if (dashAlerts) dashAlerts.textContent = APP.alerts.length;
 
-  requestAnimationFrame(()=>forceResizeCharts());
+  requestAnimationFrame(() => forceResizeCharts());
 }
+
 
 /* =========================
    ALERTS UI
@@ -2917,14 +4662,14 @@ async function renderHome(){
 
   loadAlerts();
 
-  // ✅ Se declara UNA sola vez
+  //  Se declara UNA sola vez
   const homeAlerts = document.getElementById("homeAlerts");
   if (homeAlerts) homeAlerts.textContent = APP.alerts.length;
 
   const badge = document.getElementById("homeHealthBadge");
   if (badge){
     let label = "Estable";
-    let icon = "✅";
+    let icon = "";
 
     if (offline > 0 || APP.alerts.length > 0){
       label = "Atención";
@@ -2992,7 +4737,7 @@ async function renderHome(){
   const items = (await Promise.all(promises)).filter(Boolean);
   items.forEach(x => computeAndPushAlerts(x.device, x.latest));
 
-  // ✅ Actualiza contadores sin redeclarar homeAlerts
+  //  Actualiza contadores sin redeclarar homeAlerts
   const kpiAlerts = document.getElementById("kpiAlerts");
   if (kpiAlerts) kpiAlerts.textContent = APP.alerts.length;
 
@@ -3021,7 +4766,7 @@ async function loadDetailAndCharts(){
     return;
   }
 
-  // ✅ HEADER: Hostname + Ubicación + OS
+  //  HEADER: Hostname + Ubicación + OS
   const detailHost = document.getElementById("detailHostname");
   if (detailHost) detailHost.textContent = dev.hostname || dev.device_id || "-";
 
@@ -3029,12 +4774,13 @@ async function loadDetailAndCharts(){
   if (detailLoc){
     const loc = (dev.location || "").trim();
     detailLoc.textContent = loc ? `📍 ${loc}` : "📍 Sin ubicación";
+    if (Number.isFinite(Number(dev.latitude)) && Number.isFinite(Number(dev.longitude))) detailLoc.textContent += ` • ${Number(dev.latitude).toFixed(5)}, ${Number(dev.longitude).toFixed(5)}`;
   }
 
   const detailOs = document.getElementById("detailOS");
   if (detailOs) detailOs.textContent = dev.os || "-";
 
-  // ✅ Null-safe DOM
+  //  Null-safe DOM
   const cpuPct = document.getElementById("cpuPct");
   if (cpuPct) cpuPct.textContent = fmtPct(latest.cpu);
 
@@ -3116,6 +4862,60 @@ function renderCharts(metrics, latest){
   upsertChart("ramDonut","ramDonut", buildDonutConfig(latest.ram_used, latest.ram_total, ramCenter));
   upsertChart("diskDonut","diskDonut", buildDonutConfig(latest.disk_used, latest.disk_total, diskCenter));
 }
+
+
+function buildStatusDonutConfig(online, offline){
+  const c = chartColors();
+  const total = online + offline;
+  return {type:"doughnut",data:{labels:["Online","Offline"],datasets:[{data:[online,offline],borderWidth:0,backgroundColor:["rgba(34,197,94,.92)","rgba(239,68,68,.82)"],hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"68%",animation:false,plugins:{legend:{labels:{color:c.legend}},donutCenterText:{text:total ? `${online}/${total}` : "0/0"}}},plugins:[donutCenterText]};
+}
+function buildResourceCompareConfig(labels, onlineVals, offlineVals){
+  const c = chartColors();
+  return {type:"bar",data:{labels,datasets:[{label:"Online",data:onlineVals,borderRadius:12,borderSkipped:false,backgroundColor:"rgba(59,130,246,.82)"},{label:"Offline",data:offlineVals,borderRadius:12,borderSkipped:false,backgroundColor:"rgba(148,163,184,.72)"}]},options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{labels:{color:c.legend}},tooltip:{enabled:true}},scales:{x:{ticks:{color:c.tick},grid:{color:c.gridSoft}},y:{suggestedMin:0,suggestedMax:100,ticks:{color:c.tick},grid:{color:c.grid}}}}};
+}
+function buildRiskRankingConfig(items){
+  const c = chartColors();
+  return {type:"bar",data:{labels:items.map(x=>x.name),datasets:[{label:"Riesgo %",data:items.map(x=>x.risk),borderRadius:14,borderSkipped:false,backgroundColor:function(context){const chart=context.chart;const {ctx,chartArea}=chart;if(!chartArea)return"rgba(239,68,68,.75)";const g=ctx.createLinearGradient(chartArea.left,0,chartArea.right,0);g.addColorStop(0,"rgba(34,197,94,.78)");g.addColorStop(.55,"rgba(245,158,11,.78)");g.addColorStop(1,"rgba(239,68,68,.88)");return g;}}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{labels:{color:c.legend}},tooltip:{enabled:true}},scales:{x:{suggestedMin:0,suggestedMax:100,ticks:{color:c.tick},grid:{color:c.grid}},y:{ticks:{color:c.tick},grid:{color:c.gridSoft}}}}};
+}
+function setText(id,value){const el=document.getElementById(id);if(el)el.textContent=value;}
+function setWidth(id,value){const el=document.getElementById(id);if(el)el.style.width=`${Math.max(0,Math.min(100,value)).toFixed(1)}%`;}
+function renderRiskList(items){
+  const root=document.getElementById("riskList"); if(!root)return; root.innerHTML="";
+  if(!items.length){root.innerHTML=`<div class="muted">No hay datos suficientes para calcular riesgo.</div>`;return;}
+  items.slice(0,5).forEach(x=>{const div=document.createElement("div");div.className="riskItem";div.innerHTML=`<div class="riskTop"><span>${escapeHtml(x.name)}</span><span>${x.risk.toFixed(1)}%</span></div><div class="riskMeta">CPU ${x.cpu.toFixed(1)}% • RAM ${x.ram.toFixed(1)}% • Disco ${x.disk.toFixed(1)}% • ${escapeHtml(x.status)}</div><div class="riskTrack"><div class="riskFill" style="width:${Math.max(0,Math.min(100,x.risk)).toFixed(1)}%"></div></div>`;root.appendChild(div);});
+}
+
+
+async function loadDashboardSummary(){
+  return await apiFetch("/api/dashboard/summary");
+}
+
+function chartDataFromSummaryItems(items, field){
+  return (items || []).map(x => ({
+    name: x.hostname || x.device_id || "PC",
+    val: safeNum(x[field], 0)
+  }));
+}
+
+function applyDashboardSummaryToDevices(summary){
+  if (!summary || !Array.isArray(summary.devices)) return;
+  const byId = new Map(summary.devices.map(d => [d.device_id, d]));
+  APP.devices = (APP.devices || []).map(d => {
+    const x = byId.get(d.device_id);
+    if (!x) return d;
+    return {
+      ...d,
+      status: x.status,
+      location: x.location,
+      latitude: x.latitude,
+      longitude: x.longitude,
+      last_seen: x.last_seen,
+      last_seen_bogota: x.last_seen_bogota,
+      os: x.os || d.os
+    };
+  });
+}
+
 
 /* =========================
    DASHBOARD (REAL)
@@ -3279,7 +5079,7 @@ async function renderHome(){
   const badge = document.getElementById("homeHealthBadge");
   if (badge){
     let label = "Estable";
-    let icon = "✅";
+    let icon = "";
     if (offline > 0 || APP.alerts.length > 0){ label = "Atención"; icon = "⚠️"; }
     if (offline >= Math.max(2, Math.ceil(total*0.35))){ label = "Crítico"; icon = "⛔"; }
     badge.innerHTML = `${icon} Salud general: <b style="color:var(--text)">${label}</b>`;
@@ -3375,7 +5175,7 @@ async function refreshAll(showToast=true){
   if (showToast) toast?.("Actualizado");
 }
 async function refreshAll(showToast=true){
-  // ✅ si estás editando ubicación, NO recargues devices (si no te saca del input)
+  //  si estás editando ubicación, NO recargues devices (si no te saca del input)
   const editing = !!APP.locationEdit?.deviceId;
   if (!editing) {
     await loadDevices();
@@ -3399,6 +5199,25 @@ document.querySelectorAll(".tab").forEach(t=>{
 });
 
 document.getElementById("btnRefresh")?.addEventListener("click", ()=>refreshAll(true));
+  const btnAutoLocateSelected = document.getElementById("btnAutoLocateSelected");
+  if (btnAutoLocateSelected) btnAutoLocateSelected.addEventListener("click", autoLocateSelectedDevice);
+  const mapSearchInput = document.getElementById("mapSearchInput");
+  if (mapSearchInput) mapSearchInput.addEventListener("input", (e)=>{
+    APP.mapSearch = e.target.value || "";
+    renderDevicesMap();
+  });
+
+  const mapFilterAll = document.getElementById("mapFilterAll");
+  if (mapFilterAll) mapFilterAll.addEventListener("click", ()=>{ APP.mapFilter = "all"; renderDevicesMap(); });
+
+  const mapFilterOnline = document.getElementById("mapFilterOnline");
+  if (mapFilterOnline) mapFilterOnline.addEventListener("click", ()=>{ APP.mapFilter = "online"; renderDevicesMap(); });
+
+  const mapFilterOffline = document.getElementById("mapFilterOffline");
+  if (mapFilterOffline) mapFilterOffline.addEventListener("click", ()=>{ APP.mapFilter = "offline"; renderDevicesMap(); });
+
+  const btnMapFit = document.getElementById("btnMapFit");
+  if (btnMapFit) btnMapFit.addEventListener("click", ()=>renderDevicesMap());
 
 document.getElementById("btnLogout")?.addEventListener("click", async ()=>{
   try{ await apiFetch("/api/logout", { method:"POST", body:"{}" }); }catch{}
@@ -3411,12 +5230,12 @@ document.getElementById("btnDelete")?.addEventListener("click", async ()=>{
   const dev = APP.devices.find(d=>d.device_id===APP.selectedDeviceId);
   const name = dev ? (dev.hostname || dev.device_id) : APP.selectedDeviceId;
 
-  const ok = await confirmCenter(`¿Quitar "${name}" y TODAS sus métricas?`, "Quitar PC", "🗑️");
+  const ok = await confirmCenter(`¿Eliminar "${name}" y TODAS sus métricas?`, "Eliminar PC", "🗑️");
   if (!ok) return;
 
   try{
     await apiFetch(`/api/devices/${encodeURIComponent(APP.selectedDeviceId)}`, { method:"DELETE" });
-    toast?.("PC quitado");
+    toast?.("PC eliminado");
     APP.selectedDeviceId = null;
 
     document.getElementById("pcEmptyState")?.classList.remove("hide");
@@ -3491,7 +5310,7 @@ document.getElementById("setTimezone")?.addEventListener("change", (e)=>{
   renderHome().catch(()=>{});
 });
 
-/* ✅ Mostrar/Ocultar contraseña */
+/*  Mostrar/Ocultar contraseña */
 document.getElementById("btnTogglePass")?.addEventListener("click", ()=>{
   const pass = document.getElementById("loginPass");
   const btn = document.getElementById("btnTogglePass");
@@ -3499,26 +5318,160 @@ document.getElementById("btnTogglePass")?.addEventListener("click", ()=>{
 
   const isPass = pass.type === "password";
   pass.type = isPass ? "text" : "password";
-  btn.textContent = isPass ? "🙈" : "👁️";
+  btn.textContent = isPass ? "⊘" : "⊙";
   pass.focus();
 });
 
-/* Login (enter + botón) */
+/* Auth */
+function showAuthPanel(name){
+  const panels = ["Login", "Register", "Verify", "Recover", "Reset"];
+  panels.forEach(x=>document.getElementById("authPanel" + x)?.classList.add("hide"));
+  document.getElementById("authPanel" + name)?.classList.remove("hide");
+
+  document.getElementById("tabAuthLogin")?.classList.toggle("active", name === "Login");
+  document.getElementById("tabAuthRegister")?.classList.toggle("active", name === "Register");
+  document.getElementById("tabAuthRecover")?.classList.toggle("active", name === "Recover");
+  showLoginError("");
+}
+
+function getVal(id){
+  return (document.getElementById(id)?.value || "").trim();
+}
+
 async function doLogin(){
   showLoginError("");
-  const u = document.getElementById("loginUser")?.value || "admin";
+  const u = getVal("loginUser");
   const p = document.getElementById("loginPass")?.value || "";
+  if (!u || !p){
+    showLoginError("Ingresa tu usuario o correo y tu contraseña.");
+    return;
+  }
   try{
     const r = await apiFetch("/api/login", { method:"POST", body: JSON.stringify({ username:u, password:p }) });
-    setSession({ token: r.token, user: u });
+    setSession({ token: r.token, user: r.user, email: r.email || "" });
     location.reload();
   }catch(e){
     showLoginError(tr("login_error_prefix") + e.message);
   }
 }
+
+async function doRegister(){
+  showLoginError("");
+  const username = getVal("registerUser");
+  const email = getVal("registerEmail").toLowerCase();
+  const password = document.getElementById("registerPass")?.value || "";
+  const password2 = document.getElementById("registerPass2")?.value || "";
+  if (!username || !email || !password || !password2){
+    showLoginError("Completa todos los campos del registro.");
+    return;
+  }
+  if (password !== password2){
+    showLoginError("Las contraseñas no coinciden.");
+    return;
+  }
+  try{
+    const r = await apiFetch("/api/register", { method:"POST", body: JSON.stringify({ username, email, password }) });
+    document.getElementById("verifyEmail").value = email;
+    showAuthPanel("Verify");
+    toast(r.message || "Registro exitoso. Revisa tu correo.");
+  }catch(e){
+    showLoginError("Registro falló: " + e.message);
+  }
+}
+
+async function doVerifyEmail(){
+  showLoginError("");
+  const email = getVal("verifyEmail").toLowerCase();
+  const code = getVal("verifyCode");
+  if (!email || !code){
+    showLoginError("Ingresa el correo y el código de verificación.");
+    return;
+  }
+  try{
+    const r = await apiFetch("/api/verify-email", { method:"POST", body: JSON.stringify({ email, code }) });
+    toast(r.message || "Correo verificado correctamente");
+    showAuthPanel("Login");
+    document.getElementById("loginUser").value = email;
+  }catch(e){
+    showLoginError("Verificación falló: " + e.message);
+  }
+}
+
+async function doResendCode(){
+  showLoginError("");
+  const email = getVal("verifyEmail").toLowerCase();
+  if (!email){
+    showLoginError("Ingresa primero tu correo.");
+    return;
+  }
+  try{
+    const r = await apiFetch("/api/resend-verification", { method:"POST", body: JSON.stringify({ email }) });
+    toast(r.message || "Código reenviado");
+  }catch(e){
+    showLoginError("No se pudo reenviar el código: " + e.message);
+  }
+}
+
+async function doForgotPassword(){
+  showLoginError("");
+  const email = getVal("recoverEmail").toLowerCase();
+  if (!email){
+    showLoginError("Ingresa tu correo electrónico.");
+    return;
+  }
+  try{
+    const r = await apiFetch("/api/forgot-password", { method:"POST", body: JSON.stringify({ email }) });
+    document.getElementById("resetEmail").value = email;
+    showAuthPanel("Reset");
+    toast(r.message || "Si el correo existe, se enviará un código.");
+  }catch(e){
+    showLoginError("No se pudo iniciar la recuperación: " + e.message);
+  }
+}
+
+async function doResetPassword(){
+  showLoginError("");
+  const email = getVal("resetEmail").toLowerCase();
+  const code = getVal("resetCode");
+  const new_password = document.getElementById("resetPass")?.value || "";
+  if (!email || !code || !new_password){
+    showLoginError("Completa correo, código y nueva contraseña.");
+    return;
+  }
+  try{
+    const r = await apiFetch("/api/reset-password", { method:"POST", body: JSON.stringify({ email, code, new_password }) });
+    toast(r.message || "Contraseña actualizada");
+    showAuthPanel("Login");
+    document.getElementById("loginUser").value = email;
+  }catch(e){
+    showLoginError("No se pudo cambiar la contraseña: " + e.message);
+  }
+}
+
 document.getElementById("btnLogin")?.addEventListener("click", doLogin);
+document.getElementById("btnRegister")?.addEventListener("click", doRegister);
+document.getElementById("btnVerifyEmail")?.addEventListener("click", doVerifyEmail);
+document.getElementById("btnResendCode")?.addEventListener("click", doResendCode);
+document.getElementById("btnSendRecovery")?.addEventListener("click", doForgotPassword);
+document.getElementById("btnResetPassword")?.addEventListener("click", doResetPassword);
+
+document.getElementById("tabAuthLogin")?.addEventListener("click", ()=>showAuthPanel("Login"));
+document.getElementById("tabAuthRegister")?.addEventListener("click", ()=>showAuthPanel("Register"));
+document.getElementById("tabAuthRecover")?.addEventListener("click", ()=>showAuthPanel("Recover"));
+
+document.getElementById("goRegisterFromLogin")?.addEventListener("click", ()=>showAuthPanel("Register"));
+document.getElementById("goRecoverFromLogin")?.addEventListener("click", ()=>showAuthPanel("Recover"));
+document.getElementById("goLoginFromRegister")?.addEventListener("click", ()=>showAuthPanel("Login"));
+document.getElementById("goLoginFromVerify")?.addEventListener("click", ()=>showAuthPanel("Login"));
+document.getElementById("goLoginFromRecover")?.addEventListener("click", ()=>showAuthPanel("Login"));
+document.getElementById("goRecoverFromReset")?.addEventListener("click", ()=>showAuthPanel("Recover"));
+
 document.getElementById("loginPass")?.addEventListener("keydown", (e)=>{ if (e.key === "Enter") doLogin(); });
 document.getElementById("loginUser")?.addEventListener("keydown", (e)=>{ if (e.key === "Enter") doLogin(); });
+document.getElementById("registerPass2")?.addEventListener("keydown", (e)=>{ if (e.key === "Enter") doRegister(); });
+document.getElementById("verifyCode")?.addEventListener("keydown", (e)=>{ if (e.key === "Enter") doVerifyEmail(); });
+document.getElementById("recoverEmail")?.addEventListener("keydown", (e)=>{ if (e.key === "Enter") doForgotPassword(); });
+document.getElementById("resetPass")?.addEventListener("keydown", (e)=>{ if (e.key === "Enter") doResetPassword(); });
 
 /* Export UI */
 document.getElementById("btnExport")?.addEventListener("click", openExportModal);
@@ -3555,6 +5508,7 @@ document.addEventListener("keydown", (e)=>{
   if (!sess.token){
     document.getElementById("loginView")?.classList.remove("hide");
     document.getElementById("appView")?.classList.add("hide");
+    showAuthPanel("Login");
     document.getElementById("loginUser")?.focus();
     return;
   }

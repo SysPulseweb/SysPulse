@@ -1,18 +1,3 @@
-# server.py
-# PC Monitor Server (FastAPI + SQLite) - PRO + EXPORT PDF/XLSX + USERS AUTH
-# ✅ Mejoras incluidas:
-# 1) Autenticación real por usuario (SQLite + PBKDF2) + sesiones Bearer.
-# 2) “Solo veo 2 PCs” -> protección contra COLISIÓN de device_id (típico cuando copiaste la carpeta del agente con device_id.txt).
-#    - Si varios PCs reportan con el MISMO device_id, el servidor ahora lo detecta y devuelve error claro (409) para que lo soluciones.
-# 3) Favicon/Logo robusto:
-#    - Sirve /favicon.ico y también /static/Favicon.ico (con mayúsculas).
-#    - Sirve /static/Logotipo.png (y fallback si el nombre cambia).
-#
-# Además:
-# - /static montado correctamente
-# - Export compatible con tu app.html: acepta from/to/mode/tz además de start/end.
-# - No crashea si faltan librerías de export: devuelve error amigable en export endpoints.
-
 import os
 import json
 import time
@@ -22,6 +7,9 @@ import io
 import tempfile
 import hashlib
 import hmac
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Dict, Any, Tuple
 
@@ -43,12 +31,11 @@ from sqlalchemy import (
     Text,
     Index,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship, Session
 
-# -----------------------------
-# Optional export libs (DON'T crash if missing)
-# -----------------------------
+
 EXPORT_LIBS_OK = True
 EXPORT_LIBS_ERR = ""
 
@@ -71,7 +58,7 @@ except Exception as e:
     EXPORT_LIBS_OK = False
     EXPORT_LIBS_ERR = str(e)
 
-# Timezone (Bogotá)
+# Zona horaria (Bogotá)
 try:
     from zoneinfo import ZoneInfo  # py>=3.9
 except Exception:
@@ -80,7 +67,7 @@ except Exception:
 BOGOTA_TZ = os.getenv("APP_TZ", "America/Bogota")
 
 # -----------------------------
-# Config
+# Configuración
 # -----------------------------
 DB_URL = os.getenv("DB_URL", "sqlite:///./monitor.db")
 
@@ -108,6 +95,19 @@ PWD_ITER = int(os.getenv("PWD_ITER", "150000"))
 STATIC_DIR = os.getenv("STATIC_DIR", "static")
 
 # -----------------------------
+# Email / SMTP
+# -----------------------------
+SMTP_HOST = os.getenv("SMTP_HOST", "")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USER = os.getenv("SMTP_USER", "")
+SMTP_PASS = os.getenv("SMTP_PASS", "")
+SMTP_FROM = os.getenv("SMTP_FROM", SMTP_USER or "")
+SMTP_USE_TLS = os.getenv("SMTP_USE_TLS", "1") == "1"
+
+VERIFY_CODE_TTL_MIN = int(os.getenv("VERIFY_CODE_TTL_MIN", "10"))
+RESET_CODE_TTL_MIN = int(os.getenv("RESET_CODE_TTL_MIN", "10"))
+
+# -----------------------------
 # DB setup
 # -----------------------------
 engine = create_engine(DB_URL, connect_args={"check_same_thread": False})
@@ -125,7 +125,6 @@ def bogota_tz():
     try:
         return ZoneInfo(BOGOTA_TZ)
     except Exception:
-        # Fallback fixed UTC-5
         return None
 
 
@@ -177,6 +176,56 @@ def verify_password(password: str, stored: str) -> bool:
         return False
 
 
+def generate_6digit_code() -> str:
+    return f"{secrets.randbelow(1000000):06d}"
+
+
+def send_email_code(to_email: str, subject: str, title: str, code: str, ttl_min: int):
+    if not SMTP_HOST or not SMTP_USER or not SMTP_PASS or not SMTP_FROM:
+        raise RuntimeError(
+            "SMTP no configurado. Define SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS y SMTP_FROM."
+        )
+
+    html = f"""
+    <html>
+      <body style="font-family: Arial, sans-serif; background:#0b0f17; color:#eaf2ff; padding:24px;">
+        <div style="max-width:560px; margin:auto; background:#111827; border:1px solid #1f2a3a; border-radius:16px; padding:24px;">
+          <h2 style="margin-top:0;">{title}</h2>
+          <p>Tu código es:</p>
+          <div style="font-size:32px; font-weight:bold; letter-spacing:6px; margin:20px 0; color:#7dd3fc;">
+            {code}
+          </div>
+          <p>Este código vence en {ttl_min} minutos.</p>
+          <p>Si tú no hiciste esta solicitud, puedes ignorar este correo.</p>
+          <hr style="border:none; border-top:1px solid #1f2a3a; margin:24px 0;">
+          <small>SysPulse</small>
+        </div>
+      </body>
+    </html>
+    """
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"] = SMTP_FROM
+    msg["To"] = to_email
+    msg.attach(MIMEText(html, "html", "utf-8"))
+
+    with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20) as server:
+        if SMTP_USE_TLS:
+            server.starttls()
+        server.login(SMTP_USER, SMTP_PASS)
+        server.sendmail(SMTP_FROM, [to_email], msg.as_string())
+
+
+def is_code_valid(stored_code: Optional[str], expires_at: Optional[datetime], incoming_code: str) -> bool:
+    if not stored_code or not expires_at or not incoming_code:
+        return False
+    exp = expires_at if expires_at.tzinfo else expires_at.replace(tzinfo=timezone.utc)
+    if now_utc_aware() > exp:
+        return False
+    return secrets.compare_digest((stored_code or "").strip(), (incoming_code or "").strip())
+
+
 # -----------------------------
 # Models
 # -----------------------------
@@ -184,11 +233,23 @@ class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String, nullable=False, unique=True, index=True)
+    email = Column(String, nullable=True, unique=True, index=True)
     password_hash = Column(String, nullable=False)
     role = Column(String, default="user")  # "admin" or "user"
+
+    email_verified = Column(Integer, default=0)  # 0 = no, 1 = sí
+    verify_code = Column(String, nullable=True)
+    verify_code_expires_at = Column(DateTime(timezone=True), nullable=True)
+
+    reset_code = Column(String, nullable=True)
+    reset_code_expires_at = Column(DateTime(timezone=True), nullable=True)
+
     created_at = Column(DateTime(timezone=True), default=now_utc_aware)
 
-    __table_args__ = (UniqueConstraint("username", name="uq_users_username"),)
+    __table_args__ = (
+        UniqueConstraint("username", name="uq_users_username"),
+        UniqueConstraint("email", name="uq_users_email"),
+    )
 
 
 class Device(Base):
@@ -202,7 +263,12 @@ class Device(Base):
     # ✅ NUEVO
     location = Column(String, default="", nullable=False)
 
+    # ✅ NUEVO MAPA: coordenadas manuales del equipo
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
+
     metrics = relationship("Metric", back_populates="device", cascade="all, delete-orphan")
+
 
 class Metric(Base):
     __tablename__ = "metrics"
@@ -229,6 +295,70 @@ Index("ix_metrics_device_ts", Metric.device_id, Metric.ts)
 Base.metadata.create_all(bind=engine)
 
 
+def ensure_user_auth_columns():
+    db = SessionLocal()
+    try:
+        rows = db.execute(text("PRAGMA table_info(users)")).fetchall()
+        existing = {r[1] for r in rows}
+
+        alters = []
+        if "email" not in existing:
+            alters.append("ALTER TABLE users ADD COLUMN email VARCHAR")
+        if "email_verified" not in existing:
+            alters.append("ALTER TABLE users ADD COLUMN email_verified INTEGER DEFAULT 0")
+        if "verify_code" not in existing:
+            alters.append("ALTER TABLE users ADD COLUMN verify_code VARCHAR")
+        if "verify_code_expires_at" not in existing:
+            alters.append("ALTER TABLE users ADD COLUMN verify_code_expires_at DATETIME")
+        if "reset_code" not in existing:
+            alters.append("ALTER TABLE users ADD COLUMN reset_code VARCHAR")
+        if "reset_code_expires_at" not in existing:
+            alters.append("ALTER TABLE users ADD COLUMN reset_code_expires_at DATETIME")
+
+        for sql in alters:
+            db.execute(text(sql))
+
+        db.commit()
+    except Exception as e:
+        print("[auth] ensure_user_auth_columns error:", e)
+        db.rollback()
+    finally:
+        db.close()
+
+
+ensure_user_auth_columns()
+
+
+def ensure_device_map_columns():
+    """
+    Agrega columnas de mapa a la tabla devices si la base SQLite ya existía.
+    Esto permite guardar latitud y longitud sin borrar datos anteriores.
+    """
+    db = SessionLocal()
+    try:
+        rows = db.execute(text("PRAGMA table_info(devices)")).fetchall()
+        existing = {r[1] for r in rows}
+
+        alters = []
+        if "latitude" not in existing:
+            alters.append("ALTER TABLE devices ADD COLUMN latitude FLOAT")
+        if "longitude" not in existing:
+            alters.append("ALTER TABLE devices ADD COLUMN longitude FLOAT")
+
+        for sql in alters:
+            db.execute(text(sql))
+
+        db.commit()
+    except Exception as e:
+        print("[devices] ensure_device_map_columns error:", e)
+        db.rollback()
+    finally:
+        db.close()
+
+
+ensure_device_map_columns()
+
+
 def get_db() -> Session:
     db = SessionLocal()
     try:
@@ -243,7 +373,14 @@ def seed_admin_user():
     try:
         u = db.query(User).filter(User.username == DASH_USER).first()
         if u is None:
-            u = User(username=DASH_USER, password_hash=hash_password(DASH_PASS), role="admin", created_at=now_utc_aware())
+            u = User(
+                username=DASH_USER,
+                email=None,
+                password_hash=hash_password(DASH_PASS),
+                role="admin",
+                email_verified=1,
+                created_at=now_utc_aware(),
+            )
             db.add(u)
             db.commit()
             print(f"[auth] admin user created: {DASH_USER}")
@@ -264,7 +401,6 @@ app = FastAPI(title="PC Monitor Server")
 
 # Static dashboard
 if os.path.isdir(STATIC_DIR):
-    # html=True helps if you ever want to serve static index; not required but harmless
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
@@ -281,14 +417,19 @@ def _first_existing(paths: List[str]) -> Optional[str]:
 
 @app.get("/")
 def root():
-    # tu archivo puede llamarse app.html o app.htm, soportamos ambos
     p = _first_existing([_static_path("app.html"), _static_path("app.htm")])
     if p:
-        return FileResponse(p)
+        return FileResponse(
+            p,
+            headers={
+                "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+                "Pragma": "no-cache",
+                "Expires": "0",
+            }
+        )
     return {"status": "ok", "hint": f"Create {STATIC_DIR}/app.html for the dashboard UI"}
 
 
-# ✅ favicon robusto: soporta mayúsculas/minúsculas y varias rutas
 @app.get("/favicon.ico")
 def favicon_root():
     p = _first_existing([
@@ -299,11 +440,9 @@ def favicon_root():
     ])
     if not p:
         return Response(status_code=404)
-    # Content-Type automático por FileResponse
     return FileResponse(p)
 
 
-# (Opcional) por si alguien llama /Favicon.ico directamente
 @app.get("/Favicon.ico")
 def favicon_caps():
     p = _first_existing([_static_path("Favicon.ico"), _static_path("favicon.ico")])
@@ -377,25 +516,41 @@ class LoginIn(BaseModel):
 
 @app.post("/api/login")
 def login(payload: LoginIn, db: Session = Depends(get_db)):
-    username = (payload.username or "").strip()
+    login_value = (payload.username or "").strip()
     password = payload.password or ""
-    if not username or not password:
-        raise HTTPException(status_code=400, detail="Missing username/password")
 
-    u = db.query(User).filter(User.username == username).first()
+    if not login_value or not password:
+        raise HTTPException(status_code=400, detail="Missing username/email or password")
+
+    u = (
+        db.query(User)
+        .filter((User.username == login_value) | (User.email == login_value))
+        .first()
+    )
+
     if u is None or not verify_password(password, u.password_hash):
         raise HTTPException(status_code=401, detail="Bad credentials")
+
+    if (u.role or "user") != "admin" and int(u.email_verified or 0) != 1:
+        raise HTTPException(status_code=403, detail="Debes verificar tu correo antes de iniciar sesión")
 
     token = secrets.token_urlsafe(32)
     created = now_utc_aware()
     exp = created + timedelta(minutes=SESSION_TTL_MIN)
     SESSION_TOKENS[token] = {
-        "user": username,
+        "user": u.username,
+        "email": u.email,
         "role": u.role or "user",
         "created": created.isoformat(),
         "exp": exp.isoformat(),
     }
-    return {"token": token, "user": username, "role": u.role or "user", "exp": exp.isoformat()}
+    return {
+        "token": token,
+        "user": u.username,
+        "email": u.email,
+        "role": u.role or "user",
+        "exp": exp.isoformat(),
+    }
 
 
 @app.post("/api/logout")
@@ -409,6 +564,7 @@ def logout(_sess: Dict[str, Any] = Depends(require_dashboard_auth), creds: HTTPA
 def whoami(sess: Dict[str, Any] = Depends(require_dashboard_auth)):
     return {
         "user": sess.get("user", "admin"),
+        "email": sess.get("email"),
         "role": sess.get("role", "user"),
         "created": sess.get("created"),
         "exp": sess.get("exp"),
@@ -435,6 +591,27 @@ class CreateUserIn(BaseModel):
     role: Optional[str] = "user"
 
 
+class RegisterIn(BaseModel):
+    username: str
+    email: str
+    password: str
+
+
+class VerifyEmailIn(BaseModel):
+    email: str
+    code: str
+
+
+class ForgotPasswordIn(BaseModel):
+    email: str
+
+
+class ResetPasswordIn(BaseModel):
+    email: str
+    code: str
+    new_password: str
+
+
 @app.post("/api/users", dependencies=[Depends(require_admin)])
 def create_user(payload: CreateUserIn, db: Session = Depends(get_db)):
     username = (payload.username or "").strip()
@@ -450,6 +627,179 @@ def create_user(payload: CreateUserIn, db: Session = Depends(get_db)):
     db.add(u)
     db.commit()
     return {"status": "ok", "username": username, "role": role}
+
+
+@app.post("/api/register")
+def register(payload: RegisterIn, db: Session = Depends(get_db)):
+    username = (payload.username or "").strip()
+    email = (payload.email or "").strip().lower()
+    password = payload.password or ""
+
+    if not username or not email or not password:
+        raise HTTPException(status_code=400, detail="username, email and password are required")
+
+    if "@" not in email:
+        raise HTTPException(status_code=400, detail="Correo inválido")
+
+    if len(password) < 6:
+        raise HTTPException(status_code=400, detail="La contraseña debe tener al menos 6 caracteres")
+
+    if db.query(User).filter(User.username == username).first():
+        raise HTTPException(status_code=409, detail="El nombre de usuario ya existe")
+
+    if db.query(User).filter(User.email == email).first():
+        raise HTTPException(status_code=409, detail="El correo ya está registrado")
+
+    code = generate_6digit_code()
+    expires = now_utc_aware() + timedelta(minutes=VERIFY_CODE_TTL_MIN)
+
+    u = User(
+        username=username,
+        email=email,
+        password_hash=hash_password(password),
+        role="user",
+        email_verified=0,
+        verify_code=code,
+        verify_code_expires_at=expires,
+        created_at=now_utc_aware(),
+    )
+    db.add(u)
+    db.commit()
+
+    try:
+        send_email_code(
+            to_email=email,
+            subject="SysPulse - Código de verificación",
+            title="Verifica tu cuenta",
+            code=code,
+            ttl_min=VERIFY_CODE_TTL_MIN,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"No se pudo enviar el correo: {str(e)}")
+
+    return {
+        "status": "ok",
+        "message": "Usuario registrado. Revisa tu correo para verificar la cuenta.",
+        "email": email,
+    }
+
+
+@app.post("/api/verify-email")
+def verify_email(payload: VerifyEmailIn, db: Session = Depends(get_db)):
+    email = (payload.email or "").strip().lower()
+    code = (payload.code or "").strip()
+
+    if not email or not code:
+        raise HTTPException(status_code=400, detail="email and code are required")
+
+    u = db.query(User).filter(User.email == email).first()
+    if not u:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    if int(u.email_verified or 0) == 1:
+        return {"status": "ok", "message": "El correo ya estaba verificado"}
+
+    if not is_code_valid(u.verify_code, u.verify_code_expires_at, code):
+        raise HTTPException(status_code=400, detail="Código inválido o vencido")
+
+    u.email_verified = 1
+    u.verify_code = None
+    u.verify_code_expires_at = None
+    db.commit()
+
+    return {"status": "ok", "message": "Correo verificado correctamente"}
+
+
+@app.post("/api/resend-verification")
+def resend_verification(payload: ForgotPasswordIn, db: Session = Depends(get_db)):
+    email = (payload.email or "").strip().lower()
+    if not email:
+        raise HTTPException(status_code=400, detail="email is required")
+
+    u = db.query(User).filter(User.email == email).first()
+    if not u:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    if int(u.email_verified or 0) == 1:
+        return {"status": "ok", "message": "El correo ya está verificado"}
+
+    code = generate_6digit_code()
+    expires = now_utc_aware() + timedelta(minutes=VERIFY_CODE_TTL_MIN)
+
+    u.verify_code = code
+    u.verify_code_expires_at = expires
+    db.commit()
+
+    try:
+        send_email_code(
+            to_email=email,
+            subject="SysPulse - Nuevo código de verificación",
+            title="Nuevo código de verificación",
+            code=code,
+            ttl_min=VERIFY_CODE_TTL_MIN,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"No se pudo enviar el correo: {str(e)}")
+
+    return {"status": "ok", "message": "Se envió un nuevo código de verificación"}
+
+
+@app.post("/api/forgot-password")
+def forgot_password(payload: ForgotPasswordIn, db: Session = Depends(get_db)):
+    email = (payload.email or "").strip().lower()
+    if not email:
+        raise HTTPException(status_code=400, detail="email is required")
+
+    u = db.query(User).filter(User.email == email).first()
+    if not u:
+        return {"status": "ok", "message": "Si el correo existe, se enviará un código de recuperación"}
+
+    code = generate_6digit_code()
+    expires = now_utc_aware() + timedelta(minutes=RESET_CODE_TTL_MIN)
+
+    u.reset_code = code
+    u.reset_code_expires_at = expires
+    db.commit()
+
+    try:
+        send_email_code(
+            to_email=email,
+            subject="SysPulse - Recuperación de contraseña",
+            title="Recupera tu contraseña",
+            code=code,
+            ttl_min=RESET_CODE_TTL_MIN,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"No se pudo enviar el correo: {str(e)}")
+
+    return {"status": "ok", "message": "Si el correo existe, se enviará un código de recuperación"}
+
+
+@app.post("/api/reset-password")
+def reset_password(payload: ResetPasswordIn, db: Session = Depends(get_db)):
+    email = (payload.email or "").strip().lower()
+    code = (payload.code or "").strip()
+    new_password = payload.new_password or ""
+
+    if not email or not code or not new_password:
+        raise HTTPException(status_code=400, detail="email, code and new_password are required")
+
+    if len(new_password) < 6:
+        raise HTTPException(status_code=400, detail="La nueva contraseña debe tener al menos 6 caracteres")
+
+    u = db.query(User).filter(User.email == email).first()
+    if not u:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    if not is_code_valid(u.reset_code, u.reset_code_expires_at, code):
+        raise HTTPException(status_code=400, detail="Código inválido o vencido")
+
+    u.password_hash = hash_password(new_password)
+    u.reset_code = None
+    u.reset_code_expires_at = None
+    db.commit()
+
+    return {"status": "ok", "message": "Contraseña actualizada correctamente"}
 
 
 # -----------------------------
@@ -474,13 +824,13 @@ class ReportPayload(BaseModel):
     uptime_sec: float
     ip: Optional[str] = None
 
+    # ✅ Opcional: si en el futuro el agente envía ubicación, el server puede recibirla
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
     processes_top_cpu: Optional[List[ProcItem]] = None
     processes_top_ram: Optional[List[ProcItem]] = None
 
-
-from pydantic import BaseModel
-from typing import Optional
-from datetime import datetime
 
 class DeviceOut(BaseModel):
     device_id: str
@@ -489,11 +839,15 @@ class DeviceOut(BaseModel):
     last_seen: Optional[datetime]
     last_seen_bogota: Optional[datetime]
     status: str
-    # ✅ NUEVO
     location: str = ""
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
 
 class LocationIn(BaseModel):
     location: str = ""
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 
 class MetricOut(BaseModel):
@@ -522,6 +876,49 @@ class LatestOut(BaseModel):
     processes_top_ram: List[dict]
 
 
+class DashboardDeviceSummary(BaseModel):
+    device_id: str
+    hostname: str
+    os: Optional[str] = ""
+    status: str
+    location: str = ""
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    last_seen: Optional[datetime] = None
+    last_seen_bogota: Optional[datetime] = None
+    has_metrics: bool = False
+    cpu: float = 0.0
+    ram_pct: float = 0.0
+    disk_pct: float = 0.0
+    uptime_sec: float = 0.0
+    risk: float = 0.0
+
+
+class DashboardSummaryOut(BaseModel):
+    status: str
+    generated_at: datetime
+    generated_at_bogota: datetime
+    total_devices: int
+    online: int
+    offline: int
+    with_metrics: int
+    with_coordinates: int
+    avg_cpu_online: float
+    avg_ram_online: float
+    avg_disk_online: float
+    avg_cpu_all: float
+    avg_ram_all: float
+    avg_disk_all: float
+    health_score: float
+    health_label: str
+    health_description: str
+    top_risk: List[DashboardDeviceSummary]
+    top_cpu: List[DashboardDeviceSummary]
+    top_ram: List[DashboardDeviceSummary]
+    top_disk: List[DashboardDeviceSummary]
+    devices: List[DashboardDeviceSummary]
+
+
 # -----------------------------
 # ✅ Fix “solo veo 2 PCs”
 # -----------------------------
@@ -548,7 +945,6 @@ def _device_id_collision_guard(dev: Device, payload: ReportPayload) -> None:
     if existing_host == incoming_host:
         return
 
-    # si el device_id está "activo" (reportó hace poco), y cambió el hostname => colisión casi seguro
     if dev.last_seen:
         base = dev.last_seen if dev.last_seen.tzinfo else dev.last_seen.replace(tzinfo=timezone.utc)
         delta = (now_utc_aware() - base).total_seconds()
@@ -576,7 +972,6 @@ def report(payload: ReportPayload, x_agent_token: str = Header(default=""), db: 
 
     dev = db.query(Device).filter(Device.device_id == payload.device_id).first()
 
-    # ✅ detecta colisión de device_id (causa #1 de “solo veo 2 PCs”)
     if dev is not None:
         _device_id_collision_guard(dev, payload)
 
@@ -587,6 +982,8 @@ def report(payload: ReportPayload, x_agent_token: str = Header(default=""), db: 
             os=payload.os,
             token=x_agent_token,
             last_seen=now_utc_aware(),
+            latitude=payload.latitude,
+            longitude=payload.longitude,
         )
         db.add(dev)
         db.commit()
@@ -597,6 +994,13 @@ def report(payload: ReportPayload, x_agent_token: str = Header(default=""), db: 
         dev.hostname = payload.hostname
         dev.os = payload.os
         dev.last_seen = now_utc_aware()
+
+        # ✅ Si el agente envía coordenadas, actualiza el mapa automáticamente
+        if payload.latitude is not None:
+            dev.latitude = payload.latitude
+        if payload.longitude is not None:
+            dev.longitude = payload.longitude
+
         db.commit()
 
     processes_payload = {
@@ -622,8 +1026,80 @@ def report(payload: ReportPayload, x_agent_token: str = Header(default=""), db: 
 
 
 # -----------------------------
-# Dashboard endpoints (protected)
+# Dashboard summary helpers
 # -----------------------------
+def _device_status(dev: Device, now: Optional[datetime] = None) -> str:
+    now = now or now_utc_aware()
+    if dev.last_seen is None:
+        return "offline"
+    base = dev.last_seen if dev.last_seen.tzinfo else dev.last_seen.replace(tzinfo=timezone.utc)
+    delta = (now - base).total_seconds()
+    return "online" if delta <= OFFLINE_AFTER_SECONDS_DEFAULT else "offline"
+
+
+def _avg(values: List[float]) -> float:
+    values = [float(v or 0) for v in values]
+    return sum(values) / len(values) if values else 0.0
+
+
+def _latest_metric_for_device(db: Session, device_id: str) -> Optional[Metric]:
+    return (
+        db.query(Metric)
+        .filter(Metric.device_id == device_id)
+        .order_by(Metric.ts.desc())
+        .first()
+    )
+
+
+def _risk_score(status: str, cpu_v: float, ram_v: float, disk_v: float) -> float:
+    status_penalty = 0.0 if status == "online" else 25.0
+    risk = (float(cpu_v or 0) * 0.30) + (float(ram_v or 0) * 0.35) + (float(disk_v or 0) * 0.20) + status_penalty
+    return max(0.0, min(100.0, risk))
+
+
+def _health_from_summary(online_count: int, offline_count: int, cpu_online: float, ram_online: float, disk_online: float) -> Tuple[float, str, str]:
+    total = online_count + offline_count
+    offline_penalty = (offline_count / total) * 35.0 if total else 0.0
+    usage_penalty = (cpu_online * 0.20) + (ram_online * 0.25) + (disk_online * 0.15)
+    score = max(0.0, min(100.0, 100.0 - offline_penalty - usage_penalty))
+
+    if score < 50:
+        return score, "Crítico", "Se recomienda revisar equipos offline y recursos saturados."
+    if score < 75:
+        return score, "Atención", "Hay consumo alto o equipos offline que conviene revisar."
+    return score, "Estable", "El parque de equipos se encuentra en buen estado general."
+
+
+def _build_dashboard_device_summary(dev: Device, latest_metric: Optional[Metric], now: datetime) -> DashboardDeviceSummary:
+    status = _device_status(dev, now)
+    has_metrics = latest_metric is not None
+
+    cpu_v = float(latest_metric.cpu or 0) if latest_metric else 0.0
+    ram_v = pct(latest_metric.ram_used or 0, latest_metric.ram_total or 0) if latest_metric else 0.0
+    disk_v = pct(latest_metric.disk_used or 0, latest_metric.disk_total or 0) if latest_metric else 0.0
+    uptime_v = float(latest_metric.uptime_sec or 0) if latest_metric else 0.0
+    risk_v = _risk_score(status, cpu_v, ram_v, disk_v) if has_metrics else (25.0 if status == "offline" else 0.0)
+
+    return DashboardDeviceSummary(
+        device_id=dev.device_id,
+        hostname=dev.hostname or dev.device_id,
+        os=dev.os or "",
+        status=status,
+        location=dev.location or "",
+        latitude=dev.latitude,
+        longitude=dev.longitude,
+        last_seen=dev.last_seen,
+        last_seen_bogota=to_bogota(dev.last_seen),
+        has_metrics=has_metrics,
+        cpu=cpu_v,
+        ram_pct=ram_v,
+        disk_pct=disk_v,
+        uptime_sec=uptime_v,
+        risk=risk_v,
+    )
+
+
+# Dashboard
 @app.get("/api/devices", response_model=List[DeviceOut])
 def list_devices(_sess: Dict[str, Any] = Depends(require_dashboard_auth), db: Session = Depends(get_db)):
     rows = db.query(Device).order_by(Device.last_seen.desc()).all()
@@ -646,19 +1122,17 @@ def list_devices(_sess: Dict[str, Any] = Depends(require_dashboard_auth), db: Se
                 last_seen=r.last_seen,
                 last_seen_bogota=to_bogota(r.last_seen),
                 status=status,
-                location=(r.location or ""),  # ✅ NUEVO
+                location=(r.location or ""),
+                latitude=r.latitude,
+                longitude=r.longitude,
             )
-    )
+        )
     return out
 
-from pydantic import BaseModel
-from fastapi import Body
 
-class LocationIn(BaseModel):
-    location: str = ""
-
-# ✅ Acepta PATCH, PUT y POST (así no falla por método)
 @app.patch("/api/devices/{device_id}/location")
+@app.put("/api/devices/{device_id}/location")
+@app.post("/api/devices/{device_id}/location")
 def update_location(
     device_id: str,
     body: LocationIn,
@@ -670,10 +1144,21 @@ def update_location(
         raise HTTPException(status_code=404, detail="Device not found")
 
     dev.location = (body.location or "").strip()
+    dev.latitude = body.latitude
+    dev.longitude = body.longitude
+
     db.commit()
     db.refresh(dev)
 
-    return {"status": "ok", "device_id": dev.device_id, "location": dev.location}
+    return {
+        "status": "ok",
+        "device_id": dev.device_id,
+        "location": dev.location,
+        "latitude": dev.latitude,
+        "longitude": dev.longitude,
+    }
+
+
 @app.get("/api/devices/{device_id}/latest", response_model=LatestOut)
 def latest(device_id: str, _sess: Dict[str, Any] = Depends(require_dashboard_auth), db: Session = Depends(get_db)):
     m = (
@@ -774,6 +1259,76 @@ def cleanup_duplicates(_sess: Dict[str, Any] = Depends(require_dashboard_auth), 
     return {"status": "ok", "deleted_duplicates": deleted, "kept": list(keep_ids)}
 
 
+
+@app.get("/api/dashboard/summary", response_model=DashboardSummaryOut)
+def dashboard_summary(_sess: Dict[str, Any] = Depends(require_dashboard_auth), db: Session = Depends(get_db)):
+    """
+    Resumen consolidado para el Dashboard.
+    Evita que el navegador tenga que pedir /latest por cada equipo y entrega datos listos para gráficas.
+    """
+    now = now_utc_aware()
+    devices = db.query(Device).order_by(Device.last_seen.desc()).all()
+
+    summaries: List[DashboardDeviceSummary] = []
+    for dev in devices:
+        latest_metric = _latest_metric_for_device(db, dev.device_id)
+        summaries.append(_build_dashboard_device_summary(dev, latest_metric, now))
+
+    online_items = [x for x in summaries if x.status == "online"]
+    offline_items = [x for x in summaries if x.status != "online"]
+    metric_items = [x for x in summaries if x.has_metrics]
+    online_metric_items = [x for x in online_items if x.has_metrics]
+
+    online_count = len(online_items)
+    offline_count = len(offline_items)
+
+    avg_cpu_online = _avg([x.cpu for x in online_metric_items])
+    avg_ram_online = _avg([x.ram_pct for x in online_metric_items])
+    avg_disk_online = _avg([x.disk_pct for x in online_metric_items])
+
+    avg_cpu_all = _avg([x.cpu for x in metric_items])
+    avg_ram_all = _avg([x.ram_pct for x in metric_items])
+    avg_disk_all = _avg([x.disk_pct for x in metric_items])
+
+    health_score, health_label, health_description = _health_from_summary(
+        online_count,
+        offline_count,
+        avg_cpu_online,
+        avg_ram_online,
+        avg_disk_online,
+    )
+
+    top_risk = sorted(metric_items, key=lambda x: x.risk, reverse=True)[:10]
+    top_cpu = sorted(metric_items, key=lambda x: x.cpu, reverse=True)[:10]
+    top_ram = sorted(metric_items, key=lambda x: x.ram_pct, reverse=True)[:10]
+    top_disk = sorted(metric_items, key=lambda x: x.disk_pct, reverse=True)[:10]
+
+    return DashboardSummaryOut(
+        status="ok",
+        generated_at=now,
+        generated_at_bogota=to_bogota(now) or now,
+        total_devices=len(summaries),
+        online=online_count,
+        offline=offline_count,
+        with_metrics=len(metric_items),
+        with_coordinates=len([x for x in summaries if x.latitude is not None and x.longitude is not None]),
+        avg_cpu_online=avg_cpu_online,
+        avg_ram_online=avg_ram_online,
+        avg_disk_online=avg_disk_online,
+        avg_cpu_all=avg_cpu_all,
+        avg_ram_all=avg_ram_all,
+        avg_disk_all=avg_disk_all,
+        health_score=health_score,
+        health_label=health_label,
+        health_description=health_description,
+        top_risk=top_risk,
+        top_cpu=top_cpu,
+        top_ram=top_ram,
+        top_disk=top_disk,
+        devices=summaries,
+    )
+
+
 # ==========================================================
 # ✅ EXPORT HELPERS (PDF/XLSX)
 # ==========================================================
@@ -864,9 +1419,10 @@ def render_taskmgr_line_chart(title: str, xs: List[datetime], ys: List[float], y
     fig = plt.figure(figsize=(fig_w, fig_h), dpi=140)
     ax = fig.add_subplot(111)
 
-    bg = "#0b0f17"
-    grid = "#1f2a3a"
-    text = "#cfe2ff"
+    # Reportes en tema claro para PDF/Excel
+    bg = "#ffffff"
+    grid = "#dbeafe"
+    text_color = "#0f172a"
 
     fig.patch.set_facecolor(bg)
     ax.set_facecolor(bg)
@@ -878,10 +1434,10 @@ def render_taskmgr_line_chart(title: str, xs: List[datetime], ys: List[float], y
     ax.fill_between(xs, ys, [0] * len(ys), alpha=0.18)
 
     ax.set_ylim(0, y_max)
-    ax.set_title(title, color=text, fontsize=11, fontweight="bold", loc="left")
-    ax.tick_params(colors="#8aa0bf", labelsize=8)
+    ax.set_title(title, color=text_color, fontsize=11, fontweight="bold", loc="left")
+    ax.tick_params(colors="#475569", labelsize=8)
     for spine in ax.spines.values():
-        spine.set_color("#233046")
+        spine.set_color("#cbd5e1")
 
     if xs:
         step = max(1, len(xs) // 8)
@@ -895,7 +1451,7 @@ def render_taskmgr_line_chart(title: str, xs: List[datetime], ys: List[float], y
                 labels.append(d.strftime("%H:%M"))
         ax.set_xticklabels(labels, rotation=0, ha="center")
 
-    ax.set_ylabel("%", color="#8aa0bf", fontsize=8)
+    ax.set_ylabel("%", color="#475569", fontsize=8)
 
     buf = io.BytesIO()
     plt.tight_layout()
@@ -923,6 +1479,77 @@ def build_summary(rows: List[Metric]) -> Dict[str, float]:
     }
 
 
+
+def build_report_interpretation(summary: Dict[str, float], rows: List[Metric], device: Optional[Device] = None) -> List[str]:
+    """Genera una explicación ejecutiva del comportamiento del equipo en el rango exportado."""
+    if not rows:
+        return [
+            "No se encontraron métricas en el rango seleccionado, por lo tanto no es posible generar una interpretación técnica."
+        ]
+
+    cpu_avg = float(summary.get("cpu_avg", 0) or 0)
+    cpu_max = float(summary.get("cpu_max", 0) or 0)
+    ram_avg = float(summary.get("ram_avg", 0) or 0)
+    ram_max = float(summary.get("ram_max", 0) or 0)
+    disk_avg = float(summary.get("disk_avg", 0) or 0)
+    disk_max = float(summary.get("disk_max", 0) or 0)
+
+    notes: List[str] = []
+    host = (device.hostname if device and device.hostname else "el equipo") if device else "el equipo"
+
+    notes.append(
+        f"Durante el rango analizado se procesaron {len(rows)} puntos de monitoreo para {host}. "
+        f"Los promedios observados fueron CPU {cpu_avg:.1f}%, RAM {ram_avg:.1f}% y Disco {disk_avg:.1f}%."
+    )
+
+    if cpu_max >= 90:
+        notes.append(
+            f"La CPU alcanzó un pico crítico de {cpu_max:.1f}%. Esto puede indicar procesos pesados, tareas en segundo plano o saturación temporal del equipo."
+        )
+    elif cpu_avg >= 70:
+        notes.append(
+            f"La CPU mantuvo un promedio alto de {cpu_avg:.1f}%. Se recomienda revisar procesos activos y carga de trabajo."
+        )
+    else:
+        notes.append(
+            f"El uso de CPU se mantuvo controlado. El pico máximo fue {cpu_max:.1f}% y el promedio fue {cpu_avg:.1f}%."
+        )
+
+    if ram_max >= 90 or ram_avg >= 80:
+        notes.append(
+            f"La memoria RAM presenta uso elevado: promedio {ram_avg:.1f}% y máximo {ram_max:.1f}%. Conviene validar aplicaciones abiertas, servicios residentes o posible necesidad de ampliar memoria."
+        )
+    else:
+        notes.append(
+            f"La memoria RAM se mantiene en un rango aceptable para el periodo revisado, con promedio {ram_avg:.1f}%."
+        )
+
+    if disk_max >= 90 or disk_avg >= 85:
+        notes.append(
+            f"El disco se encuentra cerca de saturación: promedio {disk_avg:.1f}% y máximo {disk_max:.1f}%. Se recomienda liberar espacio, depurar archivos temporales y revisar respaldos."
+        )
+    elif disk_avg >= 70:
+        notes.append(
+            f"El disco muestra ocupación considerable ({disk_avg:.1f}% promedio). Aunque no es crítico, debe monitorearse para evitar falta de espacio."
+        )
+    else:
+        notes.append(
+            f"La ocupación de disco se encuentra estable. Promedio registrado: {disk_avg:.1f}%."
+        )
+
+    if cpu_max >= 90 and ram_max >= 90:
+        notes.append(
+            "La combinación de picos altos de CPU y RAM puede generar lentitud perceptible para el usuario. Se recomienda revisar el Top de procesos incluido en este informe."
+        )
+
+    notes.append(
+        "Recomendación general: priorizar revisión si el equipo combina RAM alta, disco alto o picos frecuentes de CPU. "
+        "Estos indicadores ayudan a anticipar lentitud, bloqueos o necesidad de mantenimiento preventivo."
+    )
+    return notes
+
+
+
 def latest_processes_from_rows(rows: List[Metric]) -> Tuple[List[dict], List[dict]]:
     if not rows:
         return [], []
@@ -944,7 +1571,6 @@ def sanitize_filename(s: str) -> str:
 
 
 def _pick_logo_for_reports() -> Optional[str]:
-    # Tu UI usa /static/Logotipo.png
     return _first_existing([
         _static_path("Logotipo.png"),
         _static_path("logo.png"),
@@ -974,16 +1600,21 @@ def make_pdf_report(device: Device, start_utc: datetime, end_utc: datetime, rows
     c = rl_canvas.Canvas(buf, pagesize=A4)
     W, H = A4
 
-    bg = rl_colors.HexColor("#0b0f17")
-    fg = rl_colors.HexColor("#eaf2ff")
-    muted = rl_colors.HexColor("#8aa0bf")
-    line = rl_colors.HexColor("#1f2a3a")
+    # Tema claro para presentación y lectura del informe
+    bg = rl_colors.HexColor("#ffffff")
+    fg = rl_colors.HexColor("#0f172a")
+    muted = rl_colors.HexColor("#475569")
+    line = rl_colors.HexColor("#cbd5e1")
 
     logo_path = _pick_logo_for_reports()
 
     def header(title: str):
         c.setFillColor(bg)
         c.rect(0, 0, W, H, fill=1, stroke=0)
+
+        # Franja superior visible en tema claro
+        c.setFillColor(rl_colors.HexColor("#eaf2ff"))
+        c.roundRect(1.6 * cm, H - 2.65 * cm, W - 7.2 * cm, 1.05 * cm, 8, fill=1, stroke=0)
 
         if logo_path:
             try:
@@ -992,13 +1623,13 @@ def make_pdf_report(device: Device, start_utc: datetime, end_utc: datetime, rows
             except Exception:
                 pass
 
-        c.setFillColor(fg)
+        c.setFillColor(rl_colors.HexColor("#0f172a"))
         c.setFont("Helvetica-Bold", 16)
         c.drawString(2 * cm, H - 2.0 * cm, title)
 
-        c.setFillColor(muted)
+        c.setFillColor(rl_colors.HexColor("#1e3a8a"))
         c.setFont("Helvetica", 9)
-        c.drawString(2 * cm, H - 2.6 * cm, "SysPulse • Reporte por dispositivo")
+        c.drawString(2 * cm, H - 2.6 * cm, "SysPulse - Reporte por dispositivo")
 
         c.setStrokeColor(line)
         c.setLineWidth(1)
@@ -1015,13 +1646,15 @@ def make_pdf_report(device: Device, start_utc: datetime, end_utc: datetime, rows
     c.drawString(2 * cm, H - 4.2 * cm, f"Device ID: {device.device_id}")
     c.drawString(2 * cm, H - 4.7 * cm, f"Hostname: {hostname}")
     c.drawString(2 * cm, H - 5.2 * cm, f"OS: {device.os or '-'}")
+    c.drawString(2 * cm, H - 5.7 * cm, f"Ubicación: {device.location or '-'}")
+    c.drawString(2 * cm, H - 6.2 * cm, f"Coordenadas: {device.latitude if device.latitude is not None else '-'}, {device.longitude if device.longitude is not None else '-'}")
 
     s_local = to_bogota(start_utc) or start_utc
     e_local = to_bogota(end_utc) or end_utc
-    c.drawString(2 * cm, H - 5.7 * cm, f"Rango: {s_local.strftime('%Y-%m-%d %H:%M')} → {e_local.strftime('%Y-%m-%d %H:%M')} (Bogotá)")
-    c.drawString(2 * cm, H - 6.2 * cm, f"Puntos: {len(rows)}")
+    c.drawString(2 * cm, H - 6.7 * cm, f"Rango: {s_local.strftime('%Y-%m-%d %H:%M')} → {e_local.strftime('%Y-%m-%d %H:%M')} (Bogotá)")
+    c.drawString(2 * cm, H - 7.2 * cm, f"Puntos: {len(rows)}")
 
-    y0 = H - 7.2 * cm
+    y0 = H - 8.2 * cm
     c.setFillColor(fg)
     c.setFont("Helvetica-Bold", 11)
     c.drawString(2 * cm, y0, "Resumen del rango")
@@ -1040,7 +1673,7 @@ def make_pdf_report(device: Device, start_utc: datetime, end_utc: datetime, rows
     for label, val in chips:
         w = 5.2 * cm
         h = 0.85 * cm
-        c.setFillColor(rl_colors.HexColor("#0f172a"))
+        c.setFillColor(rl_colors.HexColor("#f8fafc"))
         c.setStrokeColor(line)
         c.roundRect(x, y - h + 0.1 * cm, w, h, 8, fill=1, stroke=1)
         c.setFillColor(muted)
@@ -1096,7 +1729,7 @@ def make_pdf_report(device: Device, start_utc: datetime, end_utc: datetime, rows
         yy -= 0.35 * cm
 
         c.setFont("Helvetica", 8)
-        c.setFillColor(rl_colors.HexColor("#cfe2ff"))
+        c.setFillColor(rl_colors.HexColor("#0f172a"))
 
         shown = 0
         for p in (procs or [])[:10]:
@@ -1145,7 +1778,7 @@ def make_pdf_report(device: Device, start_utc: datetime, end_utc: datetime, rows
     c.line(2 * cm, yy, W - 2 * cm, yy)
     yy -= 0.45 * cm
 
-    c.setFillColor(rl_colors.HexColor("#cfe2ff"))
+    c.setFillColor(rl_colors.HexColor("#0f172a"))
     c.setFont("Helvetica", 8)
     for r in sample:
         tsb = to_bogota(r.ts) or r.ts
@@ -1160,6 +1793,48 @@ def make_pdf_report(device: Device, start_utc: datetime, end_utc: datetime, rows
         yy -= 0.42 * cm
         if yy < 2.2 * cm:
             break
+
+    # Interpretación debajo de Métricas (muestra)
+    interpretation = build_report_interpretation(summary, rows, device)
+    if yy < 5.2 * cm:
+        c.showPage()
+        header(f"Informe: {hostname} (Interpretación)")
+        yy = H - 3.6 * cm
+
+    c.setFillColor(rl_colors.HexColor("#0f172a"))
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(2 * cm, yy, "Interpretación de resultados")
+    yy -= 0.55 * cm
+
+    c.setFillColor(muted)
+    c.setFont("Helvetica", 8.6)
+
+    def _wrap_text(txt: str, max_chars: int = 112) -> List[str]:
+        words = str(txt).split()
+        lines, cur = [], ""
+        for w in words:
+            if len(cur) + len(w) + 1 <= max_chars:
+                cur = (cur + " " + w).strip()
+            else:
+                if cur:
+                    lines.append(cur)
+                cur = w
+        if cur:
+            lines.append(cur)
+        return lines
+
+    for idx, item in enumerate(interpretation, start=1):
+        lines = _wrap_text(f"{idx}. {item}", 108)
+        for line_txt in lines:
+            if yy < 2.2 * cm:
+                c.showPage()
+                header(f"Informe: {hostname} (Interpretación)")
+                yy = H - 3.6 * cm
+                c.setFillColor(muted)
+                c.setFont("Helvetica", 8.6)
+            c.drawString(2 * cm, yy, line_txt)
+            yy -= 0.38 * cm
+        yy -= 0.12 * cm
 
     c.save()
     return buf.getvalue()
@@ -1177,9 +1852,9 @@ def make_xlsx_report(device: Device, start_utc: datetime, end_utc: datetime, row
 
     title_font = Font(bold=True, size=14)
     h_font = Font(bold=True, size=11)
-    muted_fill = PatternFill("solid", fgColor="0F172A")
-    header_fill = PatternFill("solid", fgColor="111827")
-    header_font = Font(bold=True, color="EAF2FF")
+    muted_fill = PatternFill("solid", fgColor="EAF2FF")
+    header_fill = PatternFill("solid", fgColor="2563EB")
+    header_font = Font(bold=True, color="FFFFFF")
     center = Alignment(horizontal="center", vertical="center")
     left = Alignment(horizontal="left", vertical="center")
 
@@ -1195,25 +1870,31 @@ def make_xlsx_report(device: Device, start_utc: datetime, end_utc: datetime, row
     ws_sum["B4"] = hostname
     ws_sum["A5"] = "OS:"
     ws_sum["B5"] = device.os or "-"
-    ws_sum["A6"] = "Rango (Bogotá):"
-    ws_sum["B6"] = f"{s_local.strftime('%Y-%m-%d %H:%M')} → {e_local.strftime('%Y-%m-%d %H:%M')}"
-    ws_sum["A7"] = "Puntos:"
-    ws_sum["B7"] = len(rows)
+    ws_sum["A6"] = "Ubicación:"
+    ws_sum["B6"] = device.location or "-"
+    ws_sum["A7"] = "Latitud:"
+    ws_sum["B7"] = device.latitude
+    ws_sum["A8"] = "Longitud:"
+    ws_sum["B8"] = device.longitude
+    ws_sum["A9"] = "Rango (Bogotá):"
+    ws_sum["B9"] = f"{s_local.strftime('%Y-%m-%d %H:%M')} → {e_local.strftime('%Y-%m-%d %H:%M')}"
+    ws_sum["A10"] = "Puntos:"
+    ws_sum["B10"] = len(rows)
 
-    for r in range(3, 8):
+    for r in range(3, 11):
         ws_sum[f"A{r}"].font = h_font
         ws_sum[f"A{r}"].fill = muted_fill
         ws_sum[f"A{r}"].alignment = left
         ws_sum[f"B{r}"].alignment = left
 
-    ws_sum["A9"] = "Resumen"
-    ws_sum["A9"].font = Font(bold=True, size=12)
+    ws_sum["A12"] = "Resumen"
+    ws_sum["A12"].font = Font(bold=True, size=12)
 
     headers = ["Métrica", "Promedio", "Máximo"]
     ws_sum.append([])
     ws_sum.append(headers)
     for col, val in enumerate(headers, start=1):
-        cell = ws_sum.cell(row=11, column=col, value=val)
+        cell = ws_sum.cell(row=14, column=col, value=val)
         cell.fill = header_fill
         cell.font = header_font
         cell.alignment = center
@@ -1223,7 +1904,7 @@ def make_xlsx_report(device: Device, start_utc: datetime, end_utc: datetime, row
         ("RAM (%)", summary["ram_avg"], summary["ram_max"]),
         ("DISCO (%)", summary["disk_avg"], summary["disk_max"]),
     ]
-    for i, (name, avg_v, max_v) in enumerate(rows_sum, start=12):
+    for i, (name, avg_v, max_v) in enumerate(rows_sum, start=15):
         ws_sum.cell(row=i, column=1, value=name)
         ws_sum.cell(row=i, column=2, value=float(avg_v))
         ws_sum.cell(row=i, column=3, value=float(max_v))
@@ -1258,6 +1939,40 @@ def make_xlsx_report(device: Device, start_utc: datetime, end_utc: datetime, row
 
     for col in range(1, len(m_headers) + 1):
         ws.column_dimensions[get_column_letter(col)].width = 18
+
+    # Interpretación debajo de la tabla de Métricas
+    interpretation = build_report_interpretation(summary, rows, device)
+    interp_start = ws.max_row + 3
+    ws.cell(row=interp_start, column=1, value="Interpretación de resultados")
+    ws.cell(row=interp_start, column=1).font = Font(bold=True, size=12)
+    ws.cell(row=interp_start, column=1).fill = PatternFill("solid", fgColor="DBEAFE")
+    ws.merge_cells(start_row=interp_start, start_column=1, end_row=interp_start, end_column=9)
+
+    rr = interp_start + 1
+    for idx, txt in enumerate(interpretation, start=1):
+        ws.cell(row=rr, column=1, value=f"{idx}. {txt}")
+        ws.cell(row=rr, column=1).alignment = Alignment(wrap_text=True, vertical="top")
+        ws.merge_cells(start_row=rr, start_column=1, end_row=rr, end_column=9)
+        ws.row_dimensions[rr].height = 42
+        rr += 1
+
+    ws_interp = wb.create_sheet("Interpretación")
+    ws_interp["A1"] = "Interpretación de resultados"
+    ws_interp["A1"].font = Font(bold=True, size=14)
+    ws_interp["A1"].fill = PatternFill("solid", fgColor="DBEAFE")
+    ws_interp["A3"] = "Equipo"
+    ws_interp["B3"] = hostname
+    ws_interp["A4"] = "Rango"
+    ws_interp["B4"] = f"{s_local.strftime('%Y-%m-%d %H:%M')} → {e_local.strftime('%Y-%m-%d %H:%M')}"
+    ws_interp["A6"] = "Detalle"
+    ws_interp["A6"].font = Font(bold=True)
+    for idx, txt in enumerate(interpretation, start=1):
+        i = idx + 6
+        ws_interp.cell(row=i, column=1, value=f"{idx}. {txt}")
+        ws_interp.cell(row=i, column=1).alignment = Alignment(wrap_text=True, vertical="top")
+        ws_interp.row_dimensions[i].height = 48
+    ws_interp.column_dimensions["A"].width = 120
+    ws_interp.column_dimensions["B"].width = 35
 
     top_cpu, top_ram = latest_processes_from_rows(rows)
     wsp = wb.create_sheet("Procesos")
@@ -1338,9 +2053,7 @@ def make_xlsx_report(device: Device, start_utc: datetime, end_utc: datetime, row
 
 
 # ==========================================================
-# ✅ EXPORT ENDPOINTS (compatibles con tu app.html)
-# Tu app usa: /export/{fmt}?from=YYYY-MM-DD&to=YYYY-MM-DD&mode=day|range&tz=America/Bogota
-# Este server también acepta: start/end (legacy)
+# ✅ EXPORT ENDPOINTS
 # ==========================================================
 def _export_normalize_params(
     start: Optional[str],
@@ -1349,13 +2062,10 @@ def _export_normalize_params(
     to_: Optional[str],
     mode: Optional[str],
 ) -> Tuple[Optional[str], Optional[str]]:
-    # prioriza los que manda tu app: from/to
     if from_ or to_:
-        # modo day: si solo from, lo tratamos como día único (end=None)
         if (mode or "").lower() == "day":
             return from_, None
         return from_, to_
-    # fallback a start/end
     return start, end
 
 
@@ -1364,7 +2074,6 @@ def export_pdf(
     device_id: str,
     start: Optional[str] = Query(default=None, description="YYYY-MM-DD or ISO datetime (Bogotá interpreted)"),
     end: Optional[str] = Query(default=None, description="YYYY-MM-DD or ISO datetime (Bogotá interpreted)"),
-    # ✅ compat app.html:
     from_: Optional[str] = Query(default=None, alias="from"),
     to_: Optional[str] = Query(default=None, alias="to"),
     mode: Optional[str] = Query(default=None, description="day|range"),
@@ -1402,7 +2111,6 @@ def export_xlsx(
     device_id: str,
     start: Optional[str] = Query(default=None, description="YYYY-MM-DD or ISO datetime (Bogotá interpreted)"),
     end: Optional[str] = Query(default=None, description="YYYY-MM-DD or ISO datetime (Bogotá interpreted)"),
-    # ✅ compat app.html:
     from_: Optional[str] = Query(default=None, alias="from"),
     to_: Optional[str] = Query(default=None, alias="to"),
     mode: Optional[str] = Query(default=None, description="day|range"),

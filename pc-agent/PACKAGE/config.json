@@ -6,5 +6,23 @@
   "timeout": 5,
   "verify_tls": true,
   "disk_path": "",
-  "regen_device_id": true
+  "regen_device_id": false,
+  "manual_location": false,
+  "location": "Oficina / Sala / Nombre del equipo",
+  "latitude": null,
+  "longitude": null,
+  "auto_location": true,
+  "location_refresh_minutes": 60,
+  "location_timeout": 5,
+  "location_provider": "https://ipapi.co/json/",
+  "location_provider_fallback": "http://ip-api.com/json/",
+  "auto_regen_id_on_hostname_change": true,
+  "auto_discover_server": true,
+  "discovery_port": 8000,
+  "discovery_timeout": 0.35,
+  "discovery_max_workers": 80,
+  "server_candidates": [
+    "http://PC-DATECSA-USC:8000",
+    "http://PC-DATECSA-USC.local:8000"
+  ]
 }
