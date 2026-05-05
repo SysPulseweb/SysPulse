@@ -81,5 +81,29 @@ La aplicación está orientada a escenarios académicos, administrativos o de so
 
 ---
 
-## Estructura del proyecto
+---
+
+## Instalación y ejecución
+
+1. Clona el repositorio:
+
+```bash
+git clone https://github.com/tu-usuario/SysPulse.git
+
+2. Ingresa al proyecto:
+cd SysPulse
+
+3. Ejecuta el servidor:
+python server.py
+
+4. Abre en el navegador:
+http://127.0.0.1:8000
+
+### Uso básico
+
+1. Iinicia sesión en la plataforma
+2. Visualiza o registra equipos
+3. Selecciona un PC para ver detalles
+4. Usa el dashboard para analizar métricas
+5. Exporta reportes en PDF o Excel
 
