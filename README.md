@@ -1,22 +1,10 @@
-# 🚀 SysPulse
-
 <p align="center">
-  <img src="assets/logo.png" width="450">
-</p>
-
-<p align="center">
-  <img src="assets/favicon.png" width="100">
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/status-active-success">
-  <img src="https://img.shields.io/badge/version-1.0-blue">
-  <img src="https://img.shields.io/badge/made%20with-HTML%20%7C%20CSS%20%7C%20JS-orange">
+  <img src="pc-monitor/static/Logotipo.png" width="450">
 </p>
 
 ---
 
-## 📌 Descripción
+## Descripción
 
 **SysPulse** es una plataforma web de monitoreo en tiempo real que permite supervisar múltiples equipos (PCs), visualizar su estado y generar reportes de forma centralizada.
 
@@ -29,42 +17,42 @@ Fue desarrollada como una solución para el monitoreo de equipos dentro de una r
 
 ---
 
-## ✨ Características principales
+## Características principales
 
-### 🖥️ Gestión de equipos
+### Gestión de equipos
 - Registro y visualización de PCs  
 - Selección de equipos  
 - Eliminación de dispositivos  
 
-### 📊 Monitoreo en tiempo real
+### Monitoreo en tiempo real
 - Estado: **Online / Offline**  
 - Último reporte recibido  
 - Información del sistema  
 
-### 🗺️ Mapa de equipos
+### Mapa de equipos
 - Visualización geográfica de dispositivos  
 - Identificación por estado:
   - 🟢 Online  
   - 🔴 Offline  
 
-### 📄 Exportación de informes
+### Exportación de informes
 - Generación en **PDF y Excel**  
 - Consulta por día o rango de fechas  
 - Incluye estado, historial y métricas  
 
-### ⚙️ Configuración
+### Configuración
 - Zona horaria  
 - Idioma (Español / Inglés)  
 - Tema (Claro, Oscuro, Azul)  
 
-### 🔐 Seguridad
+### Seguridad
 - Inicio de sesión  
 - Confirmación de acciones críticas  
 - Cierre de sesión seguro  
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - HTML5  
 - CSS3  
@@ -74,7 +62,7 @@ Fue desarrollada como una solución para el monitoreo de equipos dentro de una r
 
 ---
 
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 
 ```
 SysPulse/
@@ -89,7 +77,7 @@ SysPulse/
 
 ---
 
-## ⚙️ Instalación y ejecución
+## Instalación y ejecución
 
 Clona el repositorio:
 
@@ -117,7 +105,7 @@ http://127.0.0.1:8000
 
 ---
 
-## 🧪 Uso básico
+## Uso básico
 
 - Inicia sesión en la plataforma  
 - Visualiza o registra equipos  
@@ -127,28 +115,28 @@ http://127.0.0.1:8000
 
 ---
 
-## 👨‍💻 Autores
+## Autores
 
 **Jesús David Arbelaez Castro**  
-📧 jesus.arbelaez00@usc.edu.co  
-📱 3113437723  
+ jesus.arbelaez00@usc.edu.co  
+ 3113437723  
 
 **Joan Sebastián Aguirre Drombo**  
-📧 joan.aguirre00@usc.edu.co  
-📱 3148765216  
+ joan.aguirre00@usc.edu.co  
+ 3148765216  
 
-🎓 Estudiantes de Ingeniería en Sistemas  
-🏫 Universidad Santiago de Cali  
-
----
-
-## 📦 Estado del proyecto
-
-🟢 Proyecto funcional  
-🛠️ En mejoras visuales y optimización  
+ Estudiantes de Ingeniería en Sistemas  
+ Universidad Santiago de Cali  
 
 ---
 
-## 💬 Notas
+## Estado del proyecto
+
+ Proyecto funcional  
+ En mejoras visuales y optimización  
+
+---
+
+## Notas
 
 Este proyecto fue desarrollado como parte de la formación académica, enfocado en el desarrollo de aplicaciones web para monitoreo de sistemas y análisis de datos.
