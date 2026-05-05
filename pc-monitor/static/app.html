@@ -1426,6 +1426,509 @@ body.theme-blue .mapOverlayHint{
 .infoList li{margin:9px 0;line-height:1.45}
 .infoList strong{color:var(--text)}
 
+
+/* ==========================================================
+   FIX DASHBOARD FRONTEND - DATOS REALES EN TARJETAS Y BARRAS
+========================================================== */
+.riskList{
+  display:grid !important;
+  gap:10px !important;
+  margin-top:14px !important;
+}
+.riskItemFixed{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,255,255,.55);
+}
+body.theme-dark .riskItemFixed,
+body.theme-blue .riskItemFixed{
+  background:rgba(15,23,42,.55);
+}
+.riskItemFixedName{
+  font-weight:950;
+}
+.riskItemFixedMeta{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.4;
+}
+.riskItemFixedScore{
+  min-width:76px;
+  text-align:center;
+  padding:9px 12px;
+  border-radius:999px;
+  font-weight:950;
+  border:1px solid rgba(59,130,246,.25);
+  background:rgba(59,130,246,.12);
+}
+.riskItemFixedScore.good{color:#16a34a;border-color:rgba(34,197,94,.25);background:rgba(34,197,94,.12)}
+.riskItemFixedScore.warn{color:#d97706;border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.12)}
+.riskItemFixedScore.bad{color:#dc2626;border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.12)}
+.dashInsight.good .value{color:#16a34a !important}
+.dashInsight.warn .value{color:#d97706 !important}
+.dashInsight.bad .value{color:#dc2626 !important}
+.healthBarFill.warn{background:linear-gradient(90deg,#f59e0b,#f97316) !important}
+.healthBarFill.bad{background:linear-gradient(90deg,#ef4444,#dc2626) !important}
+
+
+/* ==========================================================
+   SYSPULSE FINAL - INFORMACIÓN Y AYUDA REALMENTE SEPARADAS
+========================================================== */
+#tab_info.sysInfoOnly,
+#tab_help.sysHelpOnly{
+  display:grid;
+  gap:18px;
+}
+
+#tab_info.hide,
+#tab_help.hide{
+  display:none !important;
+}
+
+.sysHero{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:30px;
+  padding:30px;
+  background:
+    radial-gradient(760px 300px at 0% 0%, rgba(59,130,246,.18), transparent 62%),
+    radial-gradient(760px 300px at 100% 0%, rgba(16,185,129,.14), transparent 62%),
+    rgba(255,255,255,.72);
+  box-shadow:0 22px 60px rgba(15,23,42,.09);
+}
+body.theme-dark .sysHero,
+body.theme-blue .sysHero{
+  background:
+    radial-gradient(760px 300px at 0% 0%, rgba(59,130,246,.20), transparent 62%),
+    radial-gradient(760px 300px at 100% 0%, rgba(16,185,129,.16), transparent 62%),
+    rgba(15,23,42,.76);
+}
+.sysHero h2{
+  margin:0 0 10px;
+  font-size:34px;
+  letter-spacing:-.035em;
+  color:var(--text);
+}
+.sysHero p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.6;
+  max-width:1120px;
+}
+.sysBadgeRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+.sysBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid rgba(59,130,246,.26);
+  background:rgba(255,255,255,.48);
+  color:var(--text);
+  font-weight:850;
+  font-size:13px;
+  box-shadow:0 10px 26px rgba(15,23,42,.06);
+}
+body.theme-dark .sysBadge,
+body.theme-blue .sysBadge{
+  background:rgba(15,23,42,.50);
+}
+.sysBadge::before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 0 5px rgba(34,197,94,.14);
+}
+
+.sysInfoStats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+}
+.sysInfoStat{
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:20px;
+  background:
+    radial-gradient(420px 180px at 0% 0%, rgba(59,130,246,.12), transparent 62%),
+    radial-gradient(420px 180px at 100% 0%, rgba(16,185,129,.10), transparent 62%),
+    rgba(255,255,255,.62);
+  box-shadow:0 18px 45px rgba(15,23,42,.07);
+}
+body.theme-dark .sysInfoStat,
+body.theme-blue .sysInfoStat{
+  background:
+    radial-gradient(420px 180px at 0% 0%, rgba(59,130,246,.15), transparent 62%),
+    radial-gradient(420px 180px at 100% 0%, rgba(16,185,129,.12), transparent 62%),
+    rgba(15,23,42,.66);
+}
+.sysInfoStat small{
+  display:block;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:850;
+}
+.sysInfoStat b{
+  display:block;
+  margin-top:8px;
+  font-size:24px;
+  color:var(--text);
+}
+.sysInfoStat span{
+  display:block;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.4;
+}
+.sysInfoGrid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+.sysInfoCard{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:26px;
+  padding:24px;
+  min-height:245px;
+  background:rgba(255,255,255,.62);
+  box-shadow:0 18px 45px rgba(15,23,42,.07);
+}
+body.theme-dark .sysInfoCard,
+body.theme-blue .sysInfoCard{
+  background:rgba(15,23,42,.66);
+}
+.sysInfoCard::after{
+  content:"";
+  position:absolute;
+  right:-46px;
+  bottom:-46px;
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  background:rgba(16,185,129,.10);
+}
+.sysInfoCard h3{
+  margin:0 0 10px;
+  font-size:20px;
+  color:var(--text);
+}
+.sysInfoCard p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.55;
+}
+.sysInfoCard ul{
+  position:relative;
+  z-index:1;
+  margin:16px 0 0;
+  padding:0;
+  list-style:none;
+  display:grid;
+  gap:9px;
+}
+.sysInfoCard li{
+  display:flex;
+  gap:9px;
+  color:var(--muted);
+  line-height:1.4;
+}
+.sysInfoCard li::before{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.12);
+  margin-top:7px;
+  flex:0 0 auto;
+}
+
+.sysHelpQuick{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+}
+.sysHelpQuickCard,
+.sysHelpStep,
+.sysHelpProblem{
+  border:1px solid var(--line);
+  background:
+    radial-gradient(420px 160px at 0% 0%, rgba(59,130,246,.12), transparent 62%),
+    radial-gradient(420px 160px at 100% 0%, rgba(16,185,129,.10), transparent 62%),
+    rgba(255,255,255,.62);
+  box-shadow:0 18px 45px rgba(15,23,42,.07);
+}
+body.theme-dark .sysHelpQuickCard,
+body.theme-dark .sysHelpStep,
+body.theme-dark .sysHelpProblem,
+body.theme-blue .sysHelpQuickCard,
+body.theme-blue .sysHelpStep,
+body.theme-blue .sysHelpProblem{
+  background:
+    radial-gradient(420px 160px at 0% 0%, rgba(59,130,246,.15), transparent 62%),
+    radial-gradient(420px 160px at 100% 0%, rgba(16,185,129,.12), transparent 62%),
+    rgba(15,23,42,.66);
+}
+.sysHelpQuickCard{
+  border-radius:24px;
+  padding:18px;
+}
+.sysHelpQuickCard b{
+  display:block;
+  color:var(--text);
+  font-size:18px;
+  margin-bottom:6px;
+}
+.sysHelpQuickCard span{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.4;
+}
+.sysHelpSteps{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.sysHelpStep{
+  display:grid;
+  grid-template-columns:62px 1fr;
+  gap:16px;
+  align-items:flex-start;
+  border-radius:26px;
+  padding:22px;
+}
+.sysHelpNum{
+  width:62px;
+  height:62px;
+  border-radius:20px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:950;
+  font-size:22px;
+  background:linear-gradient(135deg,#2563eb,#10b981);
+  box-shadow:0 16px 32px rgba(37,99,235,.22);
+}
+.sysHelpStep h3{
+  margin:0 0 8px;
+  color:var(--text);
+  font-size:20px;
+}
+.sysHelpStep p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.55;
+}
+.sysHelpProblems{
+  border:1px solid rgba(59,130,246,.28);
+  border-radius:26px;
+  padding:24px;
+  background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(16,185,129,.09));
+  box-shadow:0 18px 45px rgba(15,23,42,.07);
+}
+.sysHelpProblems h3{
+  margin:0 0 14px;
+  color:var(--text);
+}
+.sysHelpProblemGrid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.sysHelpProblem{
+  border-radius:18px;
+  padding:15px;
+  color:var(--muted);
+  line-height:1.45;
+}
+.sysHelpProblem b{
+  color:var(--text);
+}
+@media(max-width:1100px){
+  .sysInfoStats{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .sysInfoGrid{grid-template-columns:1fr;}
+  .sysHelpQuick{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .sysHelpSteps{grid-template-columns:1fr;}
+  .sysHelpProblemGrid{grid-template-columns:1fr;}
+}
+@media(max-width:620px){
+  .sysInfoStats,
+  .sysHelpQuick{grid-template-columns:1fr;}
+  .sysHelpStep{grid-template-columns:1fr;}
+}
+
+
+/* ==========================================================
+   FINAL PRO - MODALES Y SELECTS DE EXPORTAR / CONFIGURACIÓN
+========================================================== */
+.modalBackdrop{
+  background:rgba(15,23,42,.52) !important;
+  backdrop-filter:blur(10px) saturate(1.15) !important;
+}
+.modalCard{
+  width:min(620px, calc(100% - 38px)) !important;
+  border-radius:28px !important;
+  padding:22px !important;
+  border:1px solid rgba(59,130,246,.22) !important;
+  background:
+    radial-gradient(720px 260px at 0% 0%, rgba(59,130,246,.16), transparent 62%),
+    radial-gradient(720px 260px at 100% 0%, rgba(16,185,129,.13), transparent 62%),
+    rgba(255,255,255,.96) !important;
+  box-shadow:0 28px 90px rgba(15,23,42,.28) !important;
+}
+body.theme-dark .modalCard,
+body.theme-blue .modalCard{
+  background:
+    radial-gradient(720px 260px at 0% 0%, rgba(59,130,246,.22), transparent 62%),
+    radial-gradient(720px 260px at 100% 0%, rgba(16,185,129,.16), transparent 62%),
+    rgba(15,23,42,.96) !important;
+  box-shadow:0 28px 90px rgba(0,0,0,.55) !important;
+}
+.modalIcon{
+  width:48px !important;
+  height:48px !important;
+  border-radius:18px !important;
+  font-size:22px !important;
+  background:linear-gradient(135deg, rgba(219,234,254,.95), rgba(209,250,229,.95)) !important;
+  border:1px solid rgba(59,130,246,.24) !important;
+  color:#2563eb !important;
+}
+.modalIcon.dangerIcon{
+  background:linear-gradient(135deg, rgba(254,226,226,.95), rgba(255,237,213,.95)) !important;
+  border-color:rgba(239,68,68,.28) !important;
+  color:#dc2626 !important;
+}
+.modalIcon.logoutIcon{
+  background:linear-gradient(135deg, rgba(219,234,254,.95), rgba(224,242,254,.95)) !important;
+  border-color:rgba(37,99,235,.28) !important;
+  color:#2563eb !important;
+}
+.modalTitle{
+  font-size:21px !important;
+  letter-spacing:-.02em !important;
+}
+.modalText{
+  color:var(--muted) !important;
+  font-size:15px !important;
+  line-height:1.6 !important;
+}
+.modalActions{
+  margin-top:20px !important;
+  padding-top:14px !important;
+  border-top:1px solid var(--line);
+}
+.modalActions .btn{
+  min-width:118px;
+  justify-content:center;
+  min-height:44px;
+}
+.modalActions .btn.primary{
+  background:linear-gradient(135deg, rgba(59,130,246,.22), rgba(16,185,129,.16)) !important;
+  border-color:rgba(59,130,246,.36) !important;
+}
+.modalActions .btn.danger{
+  background:linear-gradient(135deg, rgba(239,68,68,.20), rgba(245,158,11,.10)) !important;
+  border-color:rgba(239,68,68,.35) !important;
+}
+.proNotice{
+  display:grid;
+  grid-template-columns:54px 1fr;
+  gap:14px;
+  align-items:flex-start;
+}
+.proNoticeIcon{
+  width:54px;
+  height:54px;
+  border-radius:20px;
+  display:grid;
+  place-items:center;
+  font-size:24px;
+  background:linear-gradient(135deg,#2563eb,#10b981);
+  color:#fff;
+  box-shadow:0 16px 36px rgba(37,99,235,.24);
+}
+.proNoticeTitle{
+  margin:0;
+  color:var(--text);
+  font-size:22px;
+  font-weight:950;
+  letter-spacing:-.03em;
+}
+.proNoticeText{
+  margin:7px 0 0;
+  color:var(--muted);
+  line-height:1.55;
+  font-size:14.5px;
+}
+.proNoticeHint{
+  margin-top:13px;
+  padding:12px 14px;
+  border-radius:18px;
+  border:1px solid rgba(59,130,246,.20);
+  background:rgba(59,130,246,.08);
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+
+/* Exportar también usa lista moderna */
+#exportModal .customSelectWrap{
+  z-index:1000000 !important;
+}
+#exportModal .customSelectWrap.open{
+  z-index:1000002 !important;
+}
+#exportModal .customSelectMenu{
+  z-index:1000003 !important;
+}
+#exportModal .modalCard{
+  overflow:visible !important;
+}
+#exportModal .field,
+#exportModal .exportGrid{
+  overflow:visible !important;
+}
+#exportModal .customSelectBtn{
+  min-height:56px !important;
+  font-size:15px !important;
+}
+
+/* Ajuste final listas modernas en Configuración */
+#tab_settings .customSelectBtn,
+#exportModal .customSelectBtn{
+  background:
+    radial-gradient(520px 150px at 0% 0%, rgba(59,130,246,.18), transparent 62%),
+    radial-gradient(520px 150px at 100% 0%, rgba(16,185,129,.14), transparent 62%),
+    rgba(255,255,255,.82) !important;
+  border:1px solid rgba(59,130,246,.42) !important;
+}
+body.theme-dark #tab_settings .customSelectBtn,
+body.theme-blue #tab_settings .customSelectBtn,
+body.theme-dark #exportModal .customSelectBtn,
+body.theme-blue #exportModal .customSelectBtn{
+  background:
+    radial-gradient(520px 150px at 0% 0%, rgba(59,130,246,.22), transparent 62%),
+    radial-gradient(520px 150px at 100% 0%, rgba(16,185,129,.16), transparent 62%),
+    rgba(15,23,42,.88) !important;
+}
+
 </style>
 </head>
 
@@ -1566,10 +2069,10 @@ body.theme-blue .mapOverlayHint{
         <div class="right">
           <div class="pill hide" id="whoamiPill"></div>
 
-          <button class="btn primary" id="btnRefresh"><span class="ico">↺</span><span class="txt">Actualizar</span></button>
-          <button class="btn" id="btnExport"><span class="ico">⎙</span><span class="txt">Exportar</span></button>
-          <button class="btn danger" id="btnDelete"><span class="ico">⌦</span><span class="txt">Eliminar PC</span></button>
-          <button class="btn" id="btnLogout"><span class="ico">⎘</span><span class="txt">Cerrar Sesión</span></button>
+          <button class="btn primary" id="btnRefresh"><span class="txt">Actualizar</span></button>
+          <button class="btn" id="btnExport"><span class="txt">Exportar</span></button>
+          <button class="btn danger" id="btnDelete"><span class="txt">Eliminar PC</span></button>
+          <button class="btn" id="btnLogout"><span class="txt">Cerrar Sesión</span></button>
 
           <div class="pill hide" id="selectedPill"></div>
         </div>
@@ -2109,156 +2612,213 @@ body.theme-blue .mapOverlayHint{
       </div>
 
       <!-- Info -->
-      <div id="tab_info" class="grid hide">
-        <div class="card">
-          <div class="infoHeroClean">
-            <div class="infoMark"></div>
-            <div>
-              <h2>Información – SysPulse</h2>
-              <p class="muted">
-                SysPulse es una plataforma web de monitoreo en tiempo real diseñada para supervisar computadores dentro de una red.
-                Centraliza métricas de rendimiento, estado de conexión, ubicación, alertas, gráficas, exportaciones y análisis para facilitar la toma de decisiones.
-              </p>
-              <div class="chips">
-                <span class="cleanBadge">CPU</span>
-                <span class="cleanBadge">RAM</span>
-                <span class="cleanBadge">Disco</span>
-                <span class="cleanBadge">Mapa de equipos</span>
-                <span class="cleanBadge">Dashboard Pro</span>
-                <span class="cleanBadge">Alertas</span>
-                <span class="cleanBadge">PDF y Excel</span>
-                <span class="cleanBadge">Español / Inglés</span>
-              </div>
-            </div>
+      <div id="tab_info" class="grid hide sysInfoOnly">
+        <section class="sysHero">
+          <h2>Información – SysPulse</h2>
+          <p>
+            SysPulse es una plataforma web de monitoreo en tiempo real creada para supervisar computadores dentro de una red.
+            Su objetivo es centralizar el estado de los equipos, el consumo de recursos, las alertas, la ubicación,
+            las gráficas y los reportes en una sola interfaz clara y profesional.
+          </p>
+          <div class="sysBadgeRow">
+            <span class="sysBadge">Monitoreo en tiempo real</span>
+            <span class="sysBadge">Control de equipos</span>
+            <span class="sysBadge">Dashboard de análisis</span>
+            <span class="sysBadge">Mapa de ubicación</span>
+            <span class="sysBadge">Alertas preventivas</span>
+            <span class="sysBadge">Reportes PDF y Excel</span>
           </div>
-        </div>
+        </section>
 
-        <div class="grid two" style="margin-top:14px;">
-          <div class="card">
-            <h2 class="infoSectionTitle">Qué monitorea SysPulse</h2>
-            <ul class="infoList">
-              <li>Uso actual y promedio de <strong>CPU</strong>.</li>
-              <li>Consumo de <strong>memoria RAM</strong>.</li>
-              <li>Ocupación de <strong>disco</strong>.</li>
-              <li>Estado del dispositivo: <strong>online</strong> u <strong>offline</strong>.</li>
-              <li>Tiempo de actividad o <strong>uptime</strong>.</li>
-              <li>Procesos con mayor consumo de CPU y RAM.</li>
-              <li>Ubicación registrada o aproximada de cada computador.</li>
-              <li>Historial de métricas para análisis y reportes.</li>
+        <section class="sysInfoStats">
+          <div class="sysInfoStat">
+            <small>Métricas principales</small>
+            <b>CPU · RAM · Disco</b>
+            <span>Recibe y organiza el consumo actual de recursos reportado por cada computador.</span>
+          </div>
+          <div class="sysInfoStat">
+            <small>Estado de conexión</small>
+            <b>Online / Offline</b>
+            <span>Permite conocer rápidamente qué equipos están activos y cuáles dejaron de reportar.</span>
+          </div>
+          <div class="sysInfoStat">
+            <small>Ubicación</small>
+            <b>Mapa integrado</b>
+            <span>Cada equipo puede visualizarse en el mapa cuando cuenta con coordenadas registradas.</span>
+          </div>
+          <div class="sysInfoStat">
+            <small>Análisis</small>
+            <b>Informes</b>
+            <span>Los datos pueden exportarse para revisión técnica, presentación o seguimiento.</span>
+          </div>
+        </section>
+
+        <section class="sysInfoGrid">
+          <article class="sysInfoCard">
+            <h3>Propósito del sistema</h3>
+            <p>SysPulse ayuda a supervisar computadores de forma centralizada para detectar fallas, consumo alto de recursos y desconexiones antes de que afecten al usuario.</p>
+            <ul>
+              <li>Monitoreo continuo de equipos.</li>
+              <li>Visualización clara del estado actual.</li>
+              <li>Apoyo a mantenimiento preventivo.</li>
             </ul>
-          </div>
+          </article>
 
-          <div class="card">
-            <h2 class="infoSectionTitle">Módulos principales</h2>
-            <ul class="infoList">
-              <li><strong>Inicio:</strong> vista general y accesos rápidos.</li>
-              <li><strong>PCs:</strong> administración y detalle de equipos monitoreados.</li>
-              <li><strong>Dashboard:</strong> mapa, salud general, rankings y gráficas.</li>
-              <li><strong>Alertas:</strong> eventos por umbrales o desconexión.</li>
-              <li><strong>Configuración:</strong> tema, idioma, zona horaria, umbrales y auto-refresh.</li>
-              <li><strong>Exportación:</strong> informes PDF y Excel con interpretación automática.</li>
+          <article class="sysInfoCard">
+            <h3>Componentes principales</h3>
+            <p>La aplicación se compone de un servidor web, agentes instalados en los PCs y una interfaz visual donde se consultan métricas y reportes.</p>
+            <ul>
+              <li>Agente de monitoreo por computador.</li>
+              <li>Servidor central SysPulse.</li>
+              <li>Panel web para administración.</li>
             </ul>
-          </div>
+          </article>
 
-          <div class="card">
-            <h2 class="infoSectionTitle">Funciones agregadas</h2>
-            <ul class="infoList">
-              <li>Registro de usuarios con correo electrónico y confirmación.</li>
-              <li>Recuperación de contraseña por correo.</li>
-              <li>Tema blanco predeterminado para presentación.</li>
-              <li>Mapa con Google Maps y marcadores por estado.</li>
-              <li>Dashboard Pro con ranking de riesgo.</li>
-              <li>Reportes claros en PDF y Excel con explicación de resultados.</li>
-              <li>Interfaz bilingüe español e inglés.</li>
+          <article class="sysInfoCard">
+            <h3>Dashboard de rendimiento</h3>
+            <p>El dashboard resume la salud general del parque de equipos y permite identificar computadores con mayor consumo o riesgo.</p>
+            <ul>
+              <li>Promedios online de CPU, RAM y disco.</li>
+              <li>Distribución online/offline.</li>
+              <li>Ranking de equipos con mayor riesgo.</li>
             </ul>
-          </div>
+          </article>
 
-          <div class="card">
-            <h2 class="infoSectionTitle">Cómo funciona internamente</h2>
-            <ol class="infoList">
-              <li>Cada computador ejecuta un <strong>agente de monitoreo</strong>.</li>
-              <li>El agente recolecta métricas del sistema.</li>
-              <li>El agente envía datos periódicamente al servidor.</li>
-              <li>El servidor almacena y expone la información por API.</li>
-              <li>El panel web consulta los datos y actualiza la interfaz.</li>
-              <li>El usuario puede consultar, filtrar, exportar y analizar resultados.</li>
-            </ol>
-          </div>
-        </div>
+          <article class="sysInfoCard">
+            <h3>Mapa de equipos</h3>
+            <p>El mapa permite ubicar visualmente los computadores monitoreados y distinguir su estado mediante marcadores de color.</p>
+            <ul>
+              <li>Marcadores verdes para equipos online.</li>
+              <li>Marcadores rojos para equipos offline.</li>
+              <li>Búsqueda, filtros y centrado del mapa.</li>
+            </ul>
+          </article>
+
+          <article class="sysInfoCard">
+            <h3>Alertas e historial</h3>
+            <p>SysPulse registra eventos cuando un equipo supera umbrales configurados o deja de reportar información.</p>
+            <ul>
+              <li>Alertas por CPU, RAM y disco.</li>
+              <li>Alertas por desconexión.</li>
+              <li>Historial para diagnóstico.</li>
+            </ul>
+          </article>
+
+          <article class="sysInfoCard">
+            <h3>Exportación de informes</h3>
+            <p>Los reportes permiten presentar resultados de forma clara, con métricas, procesos, gráficas e interpretación automática.</p>
+            <ul>
+              <li>Exportación en PDF.</li>
+              <li>Exportación en Excel.</li>
+              <li>Interpretación técnica de resultados.</li>
+            </ul>
+          </article>
+        </section>
       </div>
 
       <!-- Help -->
-      <div id="tab_help" class="grid hide">
-        <div class="card">
-          <h2>Ayuda – Guía rápida de uso</h2>
-          <p class="muted">
-            Esta guía resume cómo operar SysPulse y cómo validar cada función principal del aplicativo.
+      <div id="tab_help" class="grid hide sysHelpOnly">
+        <section class="sysHero">
+          <h2>Ayuda – Guía de uso</h2>
+          <p>
+            Esta sección explica cómo utilizar SysPulse paso a paso. Aquí encontrarás instrucciones prácticas para conectar agentes,
+            revisar equipos, usar el dashboard, interpretar alertas, manejar el mapa y exportar informes correctamente.
           </p>
-        </div>
-
-        <div class="grid two" style="margin-top:14px;">
-          <div class="card">
-            <h2 class="infoSectionTitle">Monitoreo de equipos</h2>
-            <ul class="infoList">
-              <li>Instala y ejecuta el agente en cada computador.</li>
-              <li>Verifica que el token del agente coincida con el token del servidor.</li>
-              <li>Cuando el agente reporta correctamente, el equipo aparece en la pestaña <strong>PCs</strong>.</li>
-              <li>El estado online/offline depende del último reporte recibido.</li>
-            </ul>
+          <div class="sysBadgeRow">
+            <span class="sysBadge">Instalación</span>
+            <span class="sysBadge">Conexión</span>
+            <span class="sysBadge">Uso del panel</span>
+            <span class="sysBadge">Mapa</span>
+            <span class="sysBadge">Reportes</span>
           </div>
+        </section>
 
-          <div class="card">
-            <h2 class="infoSectionTitle">Uso del mapa</h2>
-            <ul class="infoList">
-              <li>El mapa muestra equipos con coordenadas guardadas.</li>
-              <li>Los marcadores verdes indican equipos online.</li>
-              <li>Los marcadores rojos indican equipos offline.</li>
-              <li>El buscador permite filtrar por nombre, ubicación o sistema operativo.</li>
-              <li>El botón <strong>Centrar mapa</strong> reorganiza la vista.</li>
-            </ul>
+        <section class="sysHelpQuick">
+          <div class="sysHelpQuickCard">
+            <b>1. Instala</b>
+            <span>Copia el agente en el PC que deseas monitorear.</span>
           </div>
+          <div class="sysHelpQuickCard">
+            <b>2. Ejecuta</b>
+            <span>Inicia agent.exe y valida que reporte al servidor.</span>
+          </div>
+          <div class="sysHelpQuickCard">
+            <b>3. Revisa</b>
+            <span>Consulta el equipo en la pestaña PCs o en el mapa.</span>
+          </div>
+          <div class="sysHelpQuickCard">
+            <b>4. Exporta</b>
+            <span>Genera PDF o Excel para entregar resultados.</span>
+          </div>
+        </section>
 
-          <div class="card">
-            <h2 class="infoSectionTitle">Dashboard Pro</h2>
-            <ul class="infoList">
-              <li>La salud general combina desconexión y uso de recursos.</li>
-              <li>Los promedios se calculan con el último punto reportado por cada PC.</li>
-              <li>El ranking de riesgo ayuda a priorizar equipos para revisión.</li>
-              <li>Las gráficas permiten comparar CPU, RAM, disco y estado.</li>
-            </ul>
-          </div>
+        <section class="sysHelpSteps">
+          <article class="sysHelpStep">
+            <div class="sysHelpNum">1</div>
+            <div>
+              <h3>Preparar el agente</h3>
+              <p>En cada computador monitoreado debe existir la carpeta del agente con agent.exe, config.json, device_id y la carpeta logs. Cada PC debe tener un device_id único para evitar colisiones.</p>
+            </div>
+          </article>
 
-          <div class="card">
-            <h2 class="infoSectionTitle">Exportación de informes</h2>
-            <ul class="infoList">
-              <li>Selecciona un equipo y pulsa <strong>Exportar</strong>.</li>
-              <li>Escoge PDF o Excel y define el rango de fechas.</li>
-              <li>El informe incluye resumen, métricas, procesos, gráficas e interpretación.</li>
-              <li>La interpretación explica picos de CPU, uso de RAM y ocupación de disco.</li>
-            </ul>
-          </div>
+          <article class="sysHelpStep">
+            <div class="sysHelpNum">2</div>
+            <div>
+              <h3>Validar conexión</h3>
+              <p>El agente debe poder llegar al servidor SysPulse por el puerto configurado. Si no conecta, revisa red, firewall, nombre del servidor, puerto 8000 y configuración del archivo config.json.</p>
+            </div>
+          </article>
 
-          <div class="card">
-            <h2 class="infoSectionTitle">Configuración</h2>
-            <ul class="infoList">
-              <li>Cambia tema, idioma y zona horaria desde configuración.</li>
-              <li>Ajusta umbrales de CPU, RAM, disco y tiempo offline.</li>
-              <li>El tema blanco es el predeterminado.</li>
-              <li>El idioma puede cambiarse entre español e inglés.</li>
-            </ul>
-          </div>
+          <article class="sysHelpStep">
+            <div class="sysHelpNum">3</div>
+            <div>
+              <h3>Revisar computadores</h3>
+              <p>En la pestaña PCs puedes seleccionar un equipo y ver su estado, último reporte, sistema operativo, ubicación, CPU, RAM, disco y procesos principales.</p>
+            </div>
+          </article>
 
-          <div class="card">
-            <h2 class="infoSectionTitle">Solución de problemas</h2>
-            <ul class="infoList">
-              <li><strong>No aparece un equipo:</strong> revisa agente, token y conexión.</li>
-              <li><strong>No aparece en el mapa:</strong> valida que tenga coordenadas.</li>
-              <li><strong>El informe sale sin datos:</strong> verifica que haya métricas en el rango seleccionado.</li>
-              <li><strong>No ves cambios:</strong> reinicia servidor y recarga con Ctrl + F5.</li>
-            </ul>
+          <article class="sysHelpStep">
+            <div class="sysHelpNum">4</div>
+            <div>
+              <h3>Usar el Dashboard</h3>
+              <p>El dashboard permite revisar salud general, promedios online, distribución de estado, comparativos de recursos y equipos que requieren atención.</p>
+            </div>
+          </article>
+
+          <article class="sysHelpStep">
+            <div class="sysHelpNum">5</div>
+            <div>
+              <h3>Trabajar con el mapa</h3>
+              <p>El mapa muestra equipos con coordenadas guardadas. Puedes filtrar por online/offline, buscar por nombre y usar centrar mapa para reorganizar la vista.</p>
+            </div>
+          </article>
+
+          <article class="sysHelpStep">
+            <div class="sysHelpNum">6</div>
+            <div>
+              <h3>Exportar informes</h3>
+              <p>Selecciona un equipo, pulsa Exportar, elige PDF o Excel y define el rango de fechas. El reporte incluye métricas, procesos e interpretación de resultados.</p>
+            </div>
+          </article>
+        </section>
+
+        <section class="sysHelpProblems">
+          <h3>Solución rápida de problemas</h3>
+          <div class="sysHelpProblemGrid">
+            <div class="sysHelpProblem">
+              <b>El PC no aparece:</b> verifica que el agente esté encendido, que el servidor sea correcto y que no exista conflicto de device_id.
+            </div>
+            <div class="sysHelpProblem">
+              <b>No muestra ubicación:</b> revisa que el agente envíe latitud/longitud o que la ubicación haya sido guardada manualmente.
+            </div>
+            <div class="sysHelpProblem">
+              <b>No cargan datos:</b> pulsa Actualizar, revisa que existan métricas recientes y recarga el navegador con Ctrl + F5.
+            </div>
           </div>
-        </div>
+        </section>
       </div>
+
+
 
 
 
@@ -2282,6 +2842,28 @@ body.theme-blue .mapOverlayHint{
     </div>
   </div>
 
+
+  <div id="noSelectionModal" class="modal hide" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modalBackdrop" id="noSelectionBackdrop"></div>
+    <div class="modalCard">
+      <div class="proNotice">
+        <div class="proNoticeIcon" id="noSelectionIcon">ℹ</div>
+        <div>
+          <h3 class="proNoticeTitle" id="noSelectionTitle">Selecciona un PC primero</h3>
+          <p class="proNoticeText" id="noSelectionText">
+            Para continuar con esta acción debes elegir un equipo desde la pestaña PCs, desde el mapa o desde la lista de dispositivos.
+          </p>
+          <div class="proNoticeHint" id="noSelectionHint">
+            Consejo: haz clic sobre una fila de la tabla o sobre una tarjeta del mapa para seleccionar el computador.
+          </div>
+        </div>
+      </div>
+      <div class="modalActions">
+        <button class="btn primary" id="noSelectionOk" type="button"><span class="txt">Entendido</span></button>
+      </div>
+    </div>
+  </div>
+
   <div id="exportModal" class="modal hide" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modalBackdrop" id="exportBackdrop"></div>
     <div class="modalCard">
@@ -2290,7 +2872,7 @@ body.theme-blue .mapOverlayHint{
         <h3 class="modalTitle">Exportar informe</h3>
       </div>
       <div class="modalText" id="exportSub">
-        Elige el formato y el rango de fechas (Bogotá). Incluye estado (online/offline), último reporte, detalle y gráficas.
+        Elige el formato y el rango de fechas. Incluye estado (online/offline), último reporte, detalle y gráficas.
       </div>
 
       <div class="segTabs" style="margin-top:12px">
@@ -2389,7 +2971,7 @@ const APP = {
 
 
 function enhanceSettingsSelects(){
-  const ids = ["setTimezone","setLang","setTheme"];
+  const ids = ["setTimezone","setLang","setTheme","exportFormat"];
 
   ids.forEach(id=>{
     const select = document.getElementById(id);
@@ -2843,7 +3425,12 @@ function confirmCenter(message, title="Confirmar", icon="⚠️"){
 
     elTitle.textContent = title;
     elText.textContent = message;
-    if (elIcon) elIcon.textContent = icon;
+    if (elIcon){
+      elIcon.textContent = icon;
+      elIcon.classList.remove("dangerIcon","logoutIcon");
+      if ((title || "").toLowerCase().includes("eliminar")) elIcon.classList.add("dangerIcon");
+      if ((title || "").toLowerCase().includes("cerrar")) elIcon.classList.add("logoutIcon");
+    }
 
     modal.classList.remove("hide");
     modal.setAttribute("aria-hidden","false");
@@ -2857,12 +3444,59 @@ function confirmCenter(message, title="Confirmar", icon="⚠️"){
   });
 }
 
+
+function showNoSelectionModal(title, text, hint, icon="ℹ"){
+  const modal = document.getElementById("noSelectionModal");
+  const backdrop = document.getElementById("noSelectionBackdrop");
+  const btn = document.getElementById("noSelectionOk");
+  const elTitle = document.getElementById("noSelectionTitle");
+  const elText = document.getElementById("noSelectionText");
+  const elHint = document.getElementById("noSelectionHint");
+  const elIcon = document.getElementById("noSelectionIcon");
+
+  if (!modal){
+    alert(title || "Selecciona un PC primero.");
+    return;
+  }
+
+  elTitle.textContent = title || "Selecciona un PC primero";
+  elText.textContent = text || "Debes seleccionar un equipo antes de continuar.";
+  elHint.textContent = hint || "Haz clic sobre un equipo en la pestaña PCs.";
+  elIcon.textContent = icon || "ℹ";
+
+  function close(){
+    modal.classList.add("hide");
+    modal.setAttribute("aria-hidden","true");
+    cleanup();
+  }
+  function onKey(e){
+    if (e.key === "Escape" || e.key === "Enter") close();
+  }
+  function cleanup(){
+    btn?.removeEventListener("click", close);
+    backdrop?.removeEventListener("click", close);
+    document.removeEventListener("keydown", onKey);
+  }
+
+  modal.classList.remove("hide");
+  modal.setAttribute("aria-hidden","false");
+  btn?.addEventListener("click", close);
+  backdrop?.addEventListener("click", close);
+  document.addEventListener("keydown", onKey);
+  setTimeout(()=>btn?.focus(), 0);
+}
+
 /* =========================
    MODAL EXPORT
 ========================= */
 function openExportModal(){
   if (!APP.selectedDeviceId){
-    alert("Selecciona un PC primero.");
+    showNoSelectionModal(
+      "Selecciona un PC primero",
+      "Para exportar un informe debes seleccionar el computador que quieres analizar.",
+      "Ve a la pestaña PCs o al mapa, haz clic sobre un equipo y luego vuelve a pulsar Exportar.",
+      "📄"
+    );
     return;
   }
   const modal = document.getElementById("exportModal");
@@ -2878,6 +3512,7 @@ function openExportModal(){
   if (!to.value) to.value = todayBogota;
 
   setExportMode(APP.exportMode || "day");
+  enhanceSettingsSelects();
   setTimeout(()=>document.getElementById("exportDownload")?.focus(), 0);
 }
 
@@ -3238,8 +3873,24 @@ function showTab(name){
 
   if (!map[name]) name = "home";
 
-  Object.values(map).forEach(id => document.getElementById(id).classList.add("hide"));
-  document.getElementById(map[name]).classList.remove("hide");
+  Object.values(map).forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.classList.add("hide");
+  });
+
+  const current = document.getElementById(map[name]);
+  if (current) current.classList.remove("hide");
+
+  const info = document.getElementById("tab_info");
+  const help = document.getElementById("tab_help");
+  if (name === "info"){
+    if (info) info.classList.remove("hide");
+    if (help) help.classList.add("hide");
+  }
+  if (name === "help"){
+    if (help) help.classList.remove("hide");
+    if (info) info.classList.add("hide");
+  }
 
   if (name === "dash") { loadDashboard().catch(()=>{}); setTimeout(()=>renderDevicesMap(), 120); }
   if (name === "alerts") renderAlerts();
@@ -5220,13 +5871,33 @@ document.getElementById("btnRefresh")?.addEventListener("click", ()=>refreshAll(
   if (btnMapFit) btnMapFit.addEventListener("click", ()=>renderDevicesMap());
 
 document.getElementById("btnLogout")?.addEventListener("click", async ()=>{
+  const ok = await confirmCenter(
+    "¿Deseas cerrar sesión y volver al Login?",
+    "Cerrar sesión",
+    "↪"
+  );
+  if (!ok) return;
+
   try{ await apiFetch("/api/logout", { method:"POST", body:"{}" }); }catch{}
   clearSession();
-  location.reload();
+
+  document.getElementById("appView")?.classList.add("hide");
+  document.getElementById("loginView")?.classList.remove("hide");
+  showLoginError("");
+  APP.selectedDeviceId = null;
+  document.getElementById("loginUser")?.focus();
 });
 
 document.getElementById("btnDelete")?.addEventListener("click", async ()=>{
-  if (!APP.selectedDeviceId) return alert("Selecciona un PC primero.");
+  if (!APP.selectedDeviceId){
+    showNoSelectionModal(
+      "Selecciona un PC primero",
+      "Para eliminar un equipo debes seleccionar primero el computador que quieres quitar del sistema.",
+      "Ve a la pestaña PCs o al mapa, selecciona el equipo correcto y luego pulsa Eliminar PC.",
+      "🗑"
+    );
+    return;
+  }
   const dev = APP.devices.find(d=>d.device_id===APP.selectedDeviceId);
   const name = dev ? (dev.hostname || dev.device_id) : APP.selectedDeviceId;
 
@@ -5535,7 +6206,327 @@ document.addEventListener("keydown", (e)=>{
     alert("Sesión inválida. Vuelve a iniciar. ("+e.message+")");
   }
 })();
+
+
+/* ==========================================================
+   FIX DASHBOARD FRONTEND - loadDashboard COMPLETO
+   Llena:
+   - Salud general
+   - CPU/RAM/Disco promedio online
+   - Estado general
+   - Lectura rápida
+   - Resumen automático
+   - Distribución de estado
+   - Comparativo recursos
+   - Ranking de riesgo
+   - Top CPU / Top RAM
+========================================================== */
+function dashFixNum(v, def=0){
+  const n = Number(v);
+  return Number.isFinite(n) ? n : def;
+}
+function dashFixPct(used,total){
+  used = dashFixNum(used, 0);
+  total = dashFixNum(total, 0);
+  if(!total || total <= 0) return 0;
+  return Math.max(0, Math.min(100, (used / total) * 100));
+}
+function dashFixAvg(values){
+  const clean = values.map(Number).filter(Number.isFinite);
+  return clean.length ? clean.reduce((a,b)=>a+b,0) / clean.length : 0;
+}
+function dashFixFmt(v){
+  const n = Number(v);
+  if(!Number.isFinite(n)) return "-";
+  return `${Math.max(0, Math.min(100, n)).toFixed(1)}%`;
+}
+function dashFixSetText(id, value){
+  const el = document.getElementById(id);
+  if(el) el.textContent = value;
+}
+function dashFixSetCardState(valueElId, value, inverse=false){
+  const el = document.getElementById(valueElId);
+  const card = el ? el.closest(".dashInsight") : null;
+  if(!card) return;
+  card.classList.remove("good","warn","bad");
+  const v = Number(value) || 0;
+  if(inverse){
+    if(v >= 75) card.classList.add("good");
+    else if(v >= 55) card.classList.add("warn");
+    else card.classList.add("bad");
+  }else{
+    if(v >= 80) card.classList.add("bad");
+    else if(v >= 65) card.classList.add("warn");
+    else card.classList.add("good");
+  }
+}
+function dashFixSetBar(id, value){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const v = Math.max(0, Math.min(100, Number(value)||0));
+  el.style.width = `${v.toFixed(1)}%`;
+  el.classList.remove("warn","bad");
+  if(v >= 80) el.classList.add("bad");
+  else if(v >= 65) el.classList.add("warn");
+}
+function dashFixRiskClass(v){
+  v = Number(v)||0;
+  if(v >= 80) return "bad";
+  if(v >= 60) return "warn";
+  return "good";
+}
+function dashFixBuildSummary({rows, onlineCount, offlineCount, cpuOnline, ramOnline, diskOnline, health}){
+  if(!rows.length){
+    return ["Hay equipos registrados, pero todavía no hay métricas suficientes para calcular el rendimiento."];
+  }
+
+  const lines = [];
+  lines.push(`Se analizaron ${rows.length} equipo(s) con métricas recientes. Actualmente hay ${onlineCount} online y ${offlineCount} offline.`);
+  lines.push(`Promedios online: CPU ${dashFixFmt(cpuOnline)}, RAM ${dashFixFmt(ramOnline)} y Disco ${dashFixFmt(diskOnline)}.`);
+
+  if(health >= 75){
+    lines.push("El estado general del parque es estable según los últimos reportes recibidos.");
+  }else if(health >= 55){
+    lines.push("El estado general requiere seguimiento. Revisa los equipos con mayor riesgo para prevenir lentitud o fallos.");
+  }else{
+    lines.push("El estado general requiere atención prioritaria por equipos offline o consumo alto de recursos.");
+  }
+
+  if(cpuOnline >= 80) lines.push("La CPU promedio está elevada; puede indicar procesos pesados o tareas en segundo plano.");
+  if(ramOnline >= 80) lines.push("La RAM promedio está elevada; conviene revisar aplicaciones abiertas o servicios residentes.");
+  if(diskOnline >= 85) lines.push("El disco promedio está alto; revisa espacio disponible, archivos temporales o limpieza preventiva.");
+
+  return lines;
+}
+function dashFixRenderRiskList(rows){
+  const root = document.getElementById("riskList");
+  if(!root) return;
+
+  const ranked = [...rows].sort((a,b)=>b.risk-a.risk).slice(0,5);
+
+  if(!ranked.length){
+    root.innerHTML = `<div class="muted">Esperando métricas de los equipos.</div>`;
+    return;
+  }
+
+  root.innerHTML = ranked.map(r=>{
+    const cls = dashFixRiskClass(r.risk);
+    return `
+      <div class="riskItemFixed">
+        <div>
+          <div class="riskItemFixedName">${escapeHtml(r.name)}</div>
+          <div class="riskItemFixedMeta">
+            CPU ${dashFixFmt(r.cpu)} · RAM ${dashFixFmt(r.ram)} · Disco ${dashFixFmt(r.disk)} · Estado: ${escapeHtml(r.status)}
+          </div>
+        </div>
+        <div class="riskItemFixedScore ${cls}">${Math.round(r.risk)}/100</div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* Esta función reemplaza la loadDashboard anterior */
+async function loadDashboard(){
+  const devices = Array.isArray(APP.devices) ? APP.devices : [];
+
+  const onlineCount = devices.filter(d=>d.status === "online").length;
+  const offlineCount = devices.length - onlineCount;
+
+  dashFixSetText("dashOnline", onlineCount);
+  dashFixSetText("dashOffline", offlineCount);
+
+  loadAlerts();
+  dashFixSetText("dashAlerts", Array.isArray(APP.alerts) ? APP.alerts.length : 0);
+
+  if(!devices.length){
+    dashFixSetText("dashHealthText", "-");
+    dashFixSetText("dashHealthDesc", "No hay equipos registrados.");
+    dashFixSetText("dashCpuAvgText", "-");
+    dashFixSetText("dashRamAvgText", "-");
+    dashFixSetText("dashDiskAvgText", "-");
+    dashFixSetText("healthScore", "-");
+    dashFixSetText("healthLabel", "Sin datos");
+    dashFixSetText("healthDescription", "Registra equipos para iniciar el análisis.");
+    dashFixSetText("healthCpuText", "-");
+    dashFixSetText("healthRamText", "-");
+    dashFixSetText("healthDiskText", "-");
+    dashFixSetBar("healthCpuBar", 0);
+    dashFixSetBar("healthRamBar", 0);
+    dashFixSetBar("healthDiskBar", 0);
+    dashFixRenderRiskList([]);
+    requestAnimationFrame(()=>forceResizeCharts());
+    return;
+  }
+
+  const items = (await Promise.all(devices.map(d =>
+    loadLatest(d.device_id)
+      .then(latest => ({ device:d, latest }))
+      .catch(()=>null)
+  ))).filter(x => x && x.latest);
+
+  const rows = items.map(x=>{
+    const cpu = dashFixNum(x.latest.cpu, 0);
+    const ram = dashFixPct(x.latest.ram_used, x.latest.ram_total);
+    const disk = dashFixPct(x.latest.disk_used, x.latest.disk_total);
+    const offlinePenalty = x.device.status === "online" ? 0 : 25;
+
+    const risk = Math.max(0, Math.min(100,
+      Math.max(cpu, ram, disk) * 0.55 +
+      ((cpu + ram + disk) / 3) * 0.30 +
+      offlinePenalty
+    ));
+
+    return {
+      name: x.device.hostname || x.device.device_id,
+      status: x.device.status || "unknown",
+      cpu,
+      ram,
+      disk,
+      risk
+    };
+  });
+
+  const onlineRows = rows.filter(r=>r.status === "online");
+  const offlineRows = rows.filter(r=>r.status !== "online");
+
+  const cpuOnline = dashFixAvg(onlineRows.map(r=>r.cpu));
+  const ramOnline = dashFixAvg(onlineRows.map(r=>r.ram));
+  const diskOnline = dashFixAvg(onlineRows.map(r=>r.disk));
+
+  const cpuOffline = dashFixAvg(offlineRows.map(r=>r.cpu));
+  const ramOffline = dashFixAvg(offlineRows.map(r=>r.ram));
+  const diskOffline = dashFixAvg(offlineRows.map(r=>r.disk));
+
+  const resourceScore = (cpuOnline + ramOnline + diskOnline) / 3;
+  const offlineScore = devices.length ? (offlineCount / devices.length) * 100 : 0;
+  const health = Math.max(0, Math.min(100, 100 - (resourceScore * 0.55) - (offlineScore * 0.45)));
+
+  let healthLabel = "Buen estado";
+  let healthDesc = "El parque se encuentra estable.";
+  if(health < 55){
+    healthLabel = "Atención prioritaria";
+    healthDesc = "Hay equipos offline o consumo alto de recursos.";
+  }else if(health < 75){
+    healthLabel = "Revisión recomendada";
+    healthDesc = "Conviene revisar los equipos con mayor riesgo.";
+  }
+
+  dashFixSetText("dashHealthText", `${Math.round(health)}%`);
+  dashFixSetText("dashHealthDesc", healthLabel);
+  dashFixSetText("dashCpuAvgText", onlineRows.length ? dashFixFmt(cpuOnline) : "-");
+  dashFixSetText("dashRamAvgText", onlineRows.length ? dashFixFmt(ramOnline) : "-");
+  dashFixSetText("dashDiskAvgText", onlineRows.length ? dashFixFmt(diskOnline) : "-");
+
+  dashFixSetCardState("dashHealthText", health, true);
+  dashFixSetCardState("dashCpuAvgText", cpuOnline);
+  dashFixSetCardState("dashRamAvgText", ramOnline);
+  dashFixSetCardState("dashDiskAvgText", diskOnline);
+
+  dashFixSetText("healthScore", `${Math.round(health)}%`);
+  dashFixSetText("healthLabel", healthLabel);
+  dashFixSetText("healthDescription", `${healthDesc} Online: ${onlineCount} · Offline: ${offlineCount} · Equipos con métricas: ${rows.length}`);
+
+  const circle = document.getElementById("healthCircle");
+  if(circle){
+    circle.style.setProperty("--health-deg", `${Math.round(health * 3.6)}deg`);
+    circle.style.setProperty("--health-color", health >= 75 ? "#22c55e" : health >= 55 ? "#f59e0b" : "#ef4444");
+  }
+
+  dashFixSetText("healthCpuText", onlineRows.length ? dashFixFmt(cpuOnline) : "-");
+  dashFixSetText("healthRamText", onlineRows.length ? dashFixFmt(ramOnline) : "-");
+  dashFixSetText("healthDiskText", onlineRows.length ? dashFixFmt(diskOnline) : "-");
+
+  dashFixSetBar("healthCpuBar", cpuOnline);
+  dashFixSetBar("healthRamBar", ramOnline);
+  dashFixSetBar("healthDiskBar", diskOnline);
+
+  const explain = document.getElementById("dashExplainList");
+  if(explain){
+    explain.innerHTML = dashFixBuildSummary({
+      rows,
+      onlineCount,
+      offlineCount,
+      cpuOnline,
+      ramOnline,
+      diskOnline,
+      health
+    }).map(line => `<li>${escapeHtml(line)}</li>`).join("");
+  }
+
+  dashFixRenderRiskList(rows);
+
+  /* Gráficas */
+  upsertChart("statusDonutChart","statusDonutChart", buildStatusDonutConfig(onlineCount, offlineCount));
+
+  upsertChart("resourceCompareChart","resourceCompareChart",
+    buildResourceCompareConfig(["CPU","RAM","Disco"], [cpuOnline, ramOnline, diskOnline], [cpuOffline, ramOffline, diskOffline])
+  );
+
+  const riskItems = [...rows].sort((a,b)=>b.risk-a.risk).slice(0,8);
+  upsertChart("riskRankingChart","riskRankingChart", buildRiskRankingConfig(riskItems));
+
+  const topCpu = [...rows].sort((a,b)=>b.cpu-a.cpu).slice(0,10);
+  const topRam = [...rows].sort((a,b)=>b.ram-a.ram).slice(0,10);
+
+  upsertChart("topCpuChart","topCpuChart",
+    buildHorizontalBarConfig(topCpu.map(x=>x.name), topCpu.map(x=>x.cpu), "CPU %", 100)
+  );
+
+  upsertChart("topRamChart","topRamChart",
+    buildHorizontalBarConfig(topRam.map(x=>x.name), topRam.map(x=>x.ram), "RAM %", 100)
+  );
+
+  if(typeof autoTranslatePage === "function"){
+    setTimeout(()=>autoTranslatePage(), 60);
+  }
+
+  requestAnimationFrame(()=>forceResizeCharts());
+}
+
 </script>
+
+<script>
+/* SEGURO FINAL: Información y Ayuda nunca se muestran juntas */
+(function(){
+  function fixInfoHelpVisibility(){
+    const active = document.querySelector(".tab.active[data-tab]");
+    const name = active ? active.dataset.tab : "";
+    const info = document.getElementById("tab_info");
+    const help = document.getElementById("tab_help");
+    if(!info || !help) return;
+    if(name === "info"){
+      info.classList.remove("hide");
+      help.classList.add("hide");
+    }else if(name === "help"){
+      help.classList.remove("hide");
+      info.classList.add("hide");
+    }
+  }
+  document.addEventListener("click", function(e){
+    if(e.target.closest(".tab[data-tab]")){
+      setTimeout(fixInfoHelpVisibility, 40);
+      setTimeout(fixInfoHelpVisibility, 120);
+    }
+  });
+  window.addEventListener("load", fixInfoHelpVisibility);
+})();
+</script>
+
+
+<script>
+/* FINAL PRO: refuerza selects modernos y modales sin alert nativo */
+(function(){
+  window.addEventListener("load", function(){
+    try{ enhanceSettingsSelects(); }catch(e){}
+  });
+  document.addEventListener("click", function(e){
+    if(e.target && (e.target.id === "btnExport" || e.target.id === "btnExportInline")){
+      setTimeout(function(){ try{ enhanceSettingsSelects(); }catch(err){} }, 60);
+    }
+  });
+})();
+</script>
+
 </body>
 </html>  
  
